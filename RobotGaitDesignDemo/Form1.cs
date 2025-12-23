@@ -1,0 +1,341 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using DevComponents.DotNetBar;
+using FormSet;
+using System.Threading;
+using CommonUtility;
+using System.Security.Cryptography;
+using LogHelper;
+using System.Collections.ObjectModel;
+namespace RobotGaitDesign
+{
+    public partial class Form1 : Office2007Form
+    {
+        public static readonly ILogEntity log = LogHelper.EasyLogger.GetLoggerInstance_log4Net("demo");
+        CanFDAdapter.CanFDAdapterMain _canFDAdapterMain;
+        private Queue<byte[]> _motorMsgReceivedQueue;
+        private readonly object _motorMsgReceivedLock = new object();
+        Thread _processQueueThread;
+        bool _isProcessQueueThreadContiue = false;
+        bool _isFilterByMotorId = false;
+
+        List<byte> _motorIdList = new List<byte>();
+        byte _filterID = 0;
+        public Form1()
+        {
+            InitializeComponent();
+            this.EnableGlass = false;
+            this.FormBorderStyle = FormBorderStyle.SizableToolWindow;
+            _motorMsgReceivedQueue = new Queue<byte[]>();
+        }
+        bool _IsProcessing = false;
+        private void btn_analysis_Click(object sender, EventArgs e)
+        {
+            if (_IsProcessing)
+            {
+                FormSet.BaseFrmControl.ShowDefalutMessageBox(this, "其他任务正在处理中");
+                return;
+            }
+            List<string> listIDStr = new List<string>();
+            List<string> listIData = new List<string>();
+            listIDStr = txt_id.Text.Replace("\n", "").Split('\r').ToList();
+            listIData = txt_motorData.Text.Replace("\n", "").Split('\r').ToList();
+            if (listIDStr.Count == 0 || listIData.Count == 0)
+            {
+                FormSet.BaseFrmControl.ShowErrorMessageBox(this, "id或data为空");
+                return;
+            }
+            else if (listIDStr.Count != listIData.Count)
+            {
+                FormSet.BaseFrmControl.ShowErrorMessageBox(this, $"id和data数据长度不一致,listIDStr.Count :{listIDStr.Count}, listIData.Count:{listIData.Count}");
+                return;
+            }
+
+            try
+            {
+                _IsProcessing = true;
+                AnalysisMotorData(listIDStr, listIData);
+            }
+            catch (Exception ex)
+            {
+                BaseFrmControl.ShowErrorMessageBox(this, $"{ex.ToString()}");
+                _IsProcessing = false;
+            }
+
+        }
+
+
+
+
+
+        private void AnalysisMotorData(List<string> listIDStr, List<string> listIData)
+        {
+            List<byte[]> listID = new List<byte[]>();
+            List<byte[]> listData = new List<byte[]>();
+            for (int i = 0; i < listIDStr.Count; i++)
+            {
+                LZMotor.ExtendData_ID id = new LZMotor.ExtendData_ID(listIDStr[i]);
+                LZMotor.Data_Motor data = new LZMotor.Data_Motor(listIData[i]);
+                string ret = LZMotor.DataAnalysisHelper.AnalysisData_ReturnString(id, data);
+                ShowMessage($"第{i}行:{ret}");
+            }
+            _IsProcessing = false;
+
+        }
+
+
+
+
+        private void ShowMessage(string msg, Enum_Log4Net_RecordLevel level = Enum_Log4Net_RecordLevel.DEBUG)
+        {
+
+            BaseFrmControl.ShowMessageOnTextBox(this, txt_showMessage, msg);
+            switch (level)
+            {
+                case Enum_Log4Net_RecordLevel.ALL:
+                    break;
+                case Enum_Log4Net_RecordLevel.DEBUG:
+                    log.Debug(msg);
+                    break;
+                case Enum_Log4Net_RecordLevel.INFO:
+                    log.Info(msg);
+                    break;
+                case Enum_Log4Net_RecordLevel.WARN:
+                    log.Warn(msg);
+                    break;
+                case Enum_Log4Net_RecordLevel.ERROR:
+                    log.Error(msg);
+                    break;
+                case Enum_Log4Net_RecordLevel.FATAL:
+                    log.Fatal(msg);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void btn_log_Click(object sender, EventArgs e)
+        {
+            LogHelper.EasyLogger.ShowDiagnoseForm();
+        }
+
+        private void btn_refresh_Click(object sender, EventArgs e)
+        {
+            cmb_comList.Items.Clear();
+            List<string> comList = CanFDAdapter.CanFDAdapterMain.GetComlist();
+
+            foreach (var item in comList)
+            {
+                cmb_comList.Items.Add(item);
+            }
+            cmb_comList.SelectedIndex = 0;
+
+        }
+
+        private void btn_connect_Click(object sender, EventArgs e)
+        {
+            if (_canFDAdapterMain != null)
+            {
+                _canFDAdapterMain.DisConnect();
+                _canFDAdapterMain.MessageReceiveEvent -= ComMessageReceived;
+            }
+            _canFDAdapterMain = new CanFDAdapter.CanFDAdapterMain(cmb_comList.Text, 115200);
+            if (_canFDAdapterMain.Connect())
+            {
+                _isProcessQueueThreadContiue = true;
+                _canFDAdapterMain.MessageReceiveEvent += ComMessageReceived;
+                _processQueueThread = new Thread(ProcessComMessage);
+                _processQueueThread.Name = "processMotorData";
+                _processQueueThread.IsBackground = true;
+                _processQueueThread.Start();
+                ShowMessage($"{cmb_comList.Text}   连接成功");
+                this.btn_connect.Enabled = false;
+                this.btn_disConnect.Enabled = true;
+            }
+            else
+            {
+                ShowMessage($"{cmb_comList.Text}   连接失败");
+            }
+
+        }
+
+
+        private void ComMessageReceived(byte[] msg)
+        {
+            lock (_motorMsgReceivedLock)
+            {
+                if (_motorMsgReceivedQueue.Count < 1000000)
+                {
+                    if (msg[0] != 2 || msg.Length < 18 && msg.Length % 18 != 0)//异常或者粘包的数据
+                    {
+                        ShowMessage($"COM回传的数据，发现异常，数据：{BitConverter.ToString(msg).Replace('-', ' ')}", Enum_Log4Net_RecordLevel.ERROR);
+                        return;
+                    }
+                    int total = msg.Length / 18;
+                    for (int i = 0; i < total; i++)
+                    {
+                        _motorMsgReceivedQueue.Enqueue(msg.Skip(i * 18).Take(18).ToArray());
+                    }
+
+                }
+            }
+
+        }
+        private void ProcessComMessage()
+        {
+            while (_isProcessQueueThreadContiue)
+            {
+                ProcessComMessageSub();
+                Thread.Sleep(10);
+            }
+        }
+
+        private void ProcessComMessageSub()
+        {
+            List<byte[]> recMsg = null;
+            lock (_motorMsgReceivedLock)
+            {
+                if (_motorMsgReceivedQueue.Count > 0)
+                {
+                    recMsg = _motorMsgReceivedQueue.ToList();
+                    _motorMsgReceivedQueue.Clear();
+                }
+            }
+            if (recMsg != null)
+            {
+
+                foreach (var item in recMsg)
+                {
+
+                    //检查数据完整性
+                    if (item[0] != 0x02 || item[item.Length - 1] != 0xAA)
+                    {
+                        ShowMessage($"COM回传的数据，数据头部或尾部发现异常，数据：{BitConverter.ToString(item).Replace('-', ' ')}", Enum_Log4Net_RecordLevel.ERROR);
+                        continue;
+                    }
+                    byte temp = (byte)(item[4] << 3);
+                    //拆解数据
+                    byte[] id = new byte[] { item[1], item[2], item[3], (byte)(temp >> 3) };
+                    int dataLength = BitConverter.ToInt16(new byte[] { item[8], item[7] }, 0);
+                    byte[] data = item.Skip(9).Take(8).ToArray();
+                    try
+                    {
+                        _IsProcessing = true;
+                        LZMotor.ExtendData_ID extendData_ID = new LZMotor.ExtendData_ID(id);
+                        LZMotor.Data_Motor data_Motor = new LZMotor.Data_Motor(data);
+                        string ret = LZMotor.DataAnalysisHelper.AnalysisData_ReturnString(extendData_ID, data_Motor);
+                        if (!_isFilterByMotorId)//未通过ID筛选时就智能录入id
+                        {
+                            if (!_motorIdList.Contains(extendData_ID.MotorIDSend))//不包含就录入
+                            {
+                                _motorIdList.Add(extendData_ID.MotorIDSend);
+                                _motorIdList.Sort();
+                                ThreadPool.QueueUserWorkItem(IniMotorIdFilterCmb);
+                            }
+                            ShowMessage($"id:{extendData_ID.MotorIDSend} ,msg:{ret}");
+                        }
+                        else
+                        {
+
+                            if (extendData_ID.MotorIDSend == (this._filterID))
+                            {
+                                ShowMessage($"id:{extendData_ID.MotorIDReceive} ,msg:{ret}");
+                            }
+                            else
+                            {
+                                log.Debug($"id:{extendData_ID.MotorIDReceive} ,msg:{ret}");
+                            }
+                        }
+
+                    }
+                    catch (Exception ex)
+                    {
+                        BaseFrmControl.ShowErrorMessageBox(this, $"{ex.ToString()}");
+                        _IsProcessing = false;
+                    }
+                }
+            }
+        }
+
+
+        private void IniMotorIdFilterCmb(object state)
+        {
+            lock (this)
+            {
+                this.Invoke(new Action(() =>
+                {
+                    this.cmb_idFilter.Items.Clear();
+                    foreach (var item in _motorIdList)
+                    {
+                        this.cmb_idFilter.Items.Add(item);
+                    }
+                    this.cmb_idFilter.SelectedIndex = this.cmb_idFilter.Items.Count - 1;
+                }));
+            }
+
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            this.btn_disConnect.Enabled = false;
+            btn_refresh_Click(sender, e);
+        }
+
+        private void btn_disConnect_Click(object sender, EventArgs e)
+        {
+            _isProcessQueueThreadContiue = false;
+            if (_canFDAdapterMain != null)
+            {
+                _canFDAdapterMain.DisConnect();
+                _canFDAdapterMain.MessageReceiveEvent -= ComMessageReceived;
+            }
+            _canFDAdapterMain = null;
+            BaseFrmControl.ShowDefalutMessageBox(this, $"{cmb_comList.Text}   连接已断开");
+            this.btn_connect.Enabled = true;
+            this.btn_disConnect.Enabled = false;
+        }
+
+        private void chk_filterByMotorID_CheckedChanged(object sender, EventArgs e)
+        {
+            _isFilterByMotorId = chk_filterByMotorID.Checked;
+        }
+
+        private void cmb_idFilter_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                this._filterID = Convert.ToByte(cmb_idFilter.Text);
+            }
+            catch (Exception)
+            {
+
+            }
+
+        }
+
+        private void cmb_idFilter_RightToLeftChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                this._filterID = Convert.ToByte(cmb_idFilter.Text);
+            }
+            catch (Exception)
+            {
+
+            }
+        }
+
+        private void cmb_idFilter_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            BaseFrmControl.KeyPressWithDigital(this, sender, e);
+            this._filterID = Convert.ToByte(cmb_idFilter.Text);
+        }
+    }
+}

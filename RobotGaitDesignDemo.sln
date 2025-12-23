@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35222.181
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RobotGaitDesignDemo", "RobotGaitDesignDemo\RobotGaitDesignDemo.csproj", "{522CAEF6-FAA7-437A-A3D1-EE3CFBD86702}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LZMotor", "LZMotor\LZMotor.csproj", "{2B026051-E50D-44AC-A7F6-FCE93778D360}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CanFDAdapter", "CanFDAdapter\CanFDAdapter.csproj", "{C91C05F7-B445-4AF1-9375-FD2D6EBE5437}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{522CAEF6-FAA7-437A-A3D1-EE3CFBD86702}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{522CAEF6-FAA7-437A-A3D1-EE3CFBD86702}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{522CAEF6-FAA7-437A-A3D1-EE3CFBD86702}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{522CAEF6-FAA7-437A-A3D1-EE3CFBD86702}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B026051-E50D-44AC-A7F6-FCE93778D360}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B026051-E50D-44AC-A7F6-FCE93778D360}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B026051-E50D-44AC-A7F6-FCE93778D360}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B026051-E50D-44AC-A7F6-FCE93778D360}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C91C05F7-B445-4AF1-9375-FD2D6EBE5437}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C91C05F7-B445-4AF1-9375-FD2D6EBE5437}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C91C05F7-B445-4AF1-9375-FD2D6EBE5437}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C91C05F7-B445-4AF1-9375-FD2D6EBE5437}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {18315DB0-3106-4D1C-81D6-4E3CAD1E9180}
+	EndGlobalSection
+EndGlobal
