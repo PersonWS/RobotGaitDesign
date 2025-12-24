@@ -11,10 +11,23 @@ namespace LZMotor
     {
         ExtendData_ID id;
         Data_Motor motorData;
+        static DataTable _dt_motorAck = new DataTable();
+        static DataAnalysisHelper()
+        {
+            _dt_motorAck.Columns.Add("canIdSend");
+            //_dt_motorAck.Columns.Add("canIdRec");
+            _dt_motorAck.Columns.Add("Angle");
+            _dt_motorAck.Columns.Add("RotSpeed");
+            _dt_motorAck.Columns.Add("Torque");
+            _dt_motorAck.Columns.Add("Temperature");
+            _dt_motorAck.Columns.Add("Mode");
+            _dt_motorAck.Columns.Add("Alarm");
+        }
         public DataAnalysisHelper(ExtendData_ID id, Data_Motor data)
         {
             this.id = id;
             this.motorData = data;
+
         }
 
         public string AnalysisData_ReturnString()
@@ -49,14 +62,12 @@ namespace LZMotor
                 return null;
             }
             Enum_CommunicationType cType;
-            if (Enum.IsDefined(typeof(Enum_CommunicationType), id.CommunicationTypeByte))
-            {
-            }
-            else
+            if (!Enum.IsDefined(typeof(Enum_CommunicationType), id.CommunicationTypeByte))
             {
                 Log.log.Error($"unknow communicaitonType:{id.CommunicationTypeByte}");
                 return null;
             }
+
 
             DataTable dataTable = null;
             switch ((Enum_CommunicationType)id.CommunicationTypeByte)
@@ -94,13 +105,64 @@ namespace LZMotor
 
         private static DataTable AnalysisDataInternal_AckInformation(ExtendData_ID id, byte[] data)
         {
-            DataTable dataTable = new DataTable();
-            dataTable.Columns.Add("Angle");
-            dataTable.Columns.Add("RotSpeed");
-            dataTable.Columns.Add("Torque");
-            dataTable.Columns.Add("Temperature");
+            DataTable dataTable = _dt_motorAck.Clone();
             DataRow dr = dataTable.NewRow();
+            dr["canIdSend"] = id.MotorIDSend;
+            //dr["canIdRec"] = id.MotorIDReceive;
             dr["Angle"] = MapUInt16ToFloat(new byte[] { data[1], data[0] }).ToString("0.0000");
+            //检查错误代码
+            byte errorCode = (byte)(id.UserDefineByte << 2);
+            if (errorCode > 0)
+            {
+                if ((byte)(id.UserDefineByte & (byte)MotorAralmInfo1.encoderError) == ((byte)MotorAralmInfo1.encoderError))
+                {
+                    dr["Alarm"] = dr["Alarm"].ToString() + "  " + "encoderError";
+                }
+                if ((byte)(id.UserDefineByte & (byte)MotorAralmInfo1.highTemperature) == ((byte)MotorAralmInfo1.highTemperature))
+                {
+                    dr["Alarm"] = dr["Alarm"].ToString() + "  " + "highTemperature";
+                }
+                if ((byte)(id.UserDefineByte & (byte)MotorAralmInfo1.driverError) == ((byte)MotorAralmInfo1.driverError))
+                {
+                    dr["Alarm"] = dr["Alarm"].ToString() + "  " + "driverError";
+                }
+                if ((byte)(id.UserDefineByte & (byte)MotorAralmInfo1.lowVoltage) == ((byte)MotorAralmInfo1.lowVoltage))
+                {
+                    dr["Alarm"] = dr["Alarm"].ToString() + "  " + "lowVoltage";
+                }
+                if ((byte)(id.UserDefineByte & (byte)MotorAralmInfo1.unCalibrate) == ((byte)MotorAralmInfo1.unCalibrate))
+                {
+                    dr["Alarm"] = dr["Alarm"].ToString() + "  " + "unCalibrate";
+                }
+                if ((byte)(id.UserDefineByte & (byte)MotorAralmInfo1.lockedMotor) == ((byte)MotorAralmInfo1.unCalibrate))
+                {
+                    dr["Alarm"] = dr["Alarm"].ToString() + "  " + "lockedMotor";
+                }
+                if (string.IsNullOrEmpty(dr["Alarm"].ToString()))
+                {
+                    dr["Alarm"] = errorCode;
+                }
+            }
+            //检查电机模式
+            byte motorMode = (byte)(id.UserDefineByte >> 6);
+            if (Enum.IsDefined(typeof(MotorMode), motorMode))
+            {
+                switch ((MotorMode)motorMode)
+                {
+                    case MotorMode.Reset:
+                        dr["Mode"] = "Reset";
+                        break;
+                    case MotorMode.Calibrate:
+                        dr["Mode"] = "Calibrate";
+                        break;
+                    case MotorMode.Run:
+                        dr["Mode"] = "Run";
+                        break;
+                    default:
+                        break;
+                }
+            }
+
             if (id.MotorIDSend < 100)
             {
                 dr["RotSpeed"] = (MapUInt16ToFloat(new byte[] { data[3], data[2] }, -15, 15) * 19.1082).ToString("0.0000");
@@ -108,7 +170,7 @@ namespace LZMotor
             }
             else
             {
-                dr["RotSpeed"] = (MapUInt16ToFloat(new byte[] { data[3], data[2] }, -50 ,50)*19.1082 ).ToString("0.0000");//* 114.61968
+                dr["RotSpeed"] = (MapUInt16ToFloat(new byte[] { data[3], data[2] }, -50, 50) * 19.1082).ToString("0.0000");//* 114.61968
                 dr["Torque"] = (MapUInt16ToFloat(new byte[] { data[5], data[4] }, -5.5f, 5.5f)).ToString("0.0000");
             }
 

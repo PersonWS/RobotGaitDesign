@@ -144,7 +144,7 @@ namespace FormSet
             ShowMessageOnTextBox(f, textBox, message, true);
         }
 
-        public static void ShowMessageOnTextBox(Form f, TextBox textBox, string message,bool isScrollToCaret=true)
+        public static void ShowMessageOnTextBox(Form f, TextBox textBox, string message,bool isAppendTimeStamp=true,bool isScrollToCaret=true)
         {
             if (!f.IsHandleCreated)
             {
@@ -156,7 +156,14 @@ namespace FormSet
                 {
                     textBox.Text = textBox.Text.Substring(textBox.Text.Length / 2, textBox.Text.Length - textBox.Text.Length / 2);
                 }
-                textBox.AppendText($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff")} {message} \r\n");
+                if (isAppendTimeStamp)
+                {
+                    textBox.AppendText($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff")}: {message} \r\n");
+                }
+                else
+                {
+                    textBox.AppendText($"{message} \r\n");
+                }
                 textBox.Select(textBox.Text.Length, 0);
                 if (isScrollToCaret) 
                 textBox.ScrollToCaret();

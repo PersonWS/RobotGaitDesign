@@ -50,6 +50,7 @@
     <Compile Include="ExtendData_ID.cs" />
     <Compile Include="Data_Motor.cs" />
     <Compile Include="Log.cs" />
+    <Compile Include="MotorAralmInfo1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

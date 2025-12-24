@@ -66,11 +66,11 @@ namespace LZMotor
                 try
                 {
                     this._dataByte = HexStringToByteArray(this._hexDataString);
-                    Array.Reverse(this._dataByte);
+                  //  Array.Reverse(this._dataByte);
                     MotorIDReceive = _dataByte[0];
                     MotorIDSend = _dataByte[1];
                     UserDefineByte = _dataByte[2];
-                    CommunicationTypeByte = _dataByte[3];
+                    CommunicationTypeByte = (byte)((byte)( _dataByte[3]<<3)>>3);
                 }
                 catch (Exception ex)
                 {

@@ -106,16 +106,16 @@ namespace CanFDAdapter
                 Byte[] readBuffer = new Byte[len];
 
                 _serialPort.Read(readBuffer, 0, len); //将数据读入缓存
-                log.Debug(BitConverter.ToString(readBuffer));
+                log.Debug($"原始数据：{BitConverter.ToString(readBuffer)}");
                 if (ReceivedMessage != null)
                 {
 
-                    log.Debug(string.Format("{0},{1}", "接收到的信息 ，处理后的信息：", "", Encoding.UTF8.GetString(readBuffer)));
+                    //log.Debug(string.Format("{0},{1}", "接收到的信息 ，处理后的信息：", "", Encoding.UTF8.GetString(readBuffer)));
                     ReceivedMessage(readBuffer);
                 }
-                //处理readBuffer中的数据，自定义处理过程
-                string msg = Encoding.UTF8.GetString(readBuffer, 0, len); //获取出入库产品编号
-                log.Debug(string.Format("{0},{1}", "接收到的原始信息", msg));
+                ////处理readBuffer中的数据，自定义处理过程
+                //string msg = Encoding.UTF8.GetString(readBuffer, 0, len); //获取出入库产品编号
+                //log.Debug(string.Format("{0},{1}", "接收到的原始信息", msg));
             }
             catch (Exception ex)
             {
