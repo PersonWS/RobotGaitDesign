@@ -13,7 +13,7 @@ namespace FormSet
         public static void WriteToFile(string fileName, object data)
         {
             string content = data?.ToString() ?? string.Empty;
-            string directoryPath = "TraceSignal"; // 目录名
+            string directoryPath = "TraceData"; // 目录名
             string filePath = Path.Combine(directoryPath, $"{fileName}.txt"); // 完整文件路径
 
             lock (_fileLock)

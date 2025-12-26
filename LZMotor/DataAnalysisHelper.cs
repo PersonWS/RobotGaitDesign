@@ -32,12 +32,13 @@ namespace LZMotor
 
         public string AnalysisData_ReturnString()
         {
-            return AnalysisData_ReturnString(id, motorData);
+            DataTable dt = new DataTable();
+            return AnalysisData_ReturnString(id, motorData,out dt);
         }
 
-        public static string AnalysisData_ReturnString(ExtendData_ID id, Data_Motor data)
+        public static string AnalysisData_ReturnString(ExtendData_ID id, Data_Motor data ,out DataTable dt)
         {
-            DataTable dt = AnalysisDataInternal(id, data);
+             dt = AnalysisDataInternal(id, data);
             if (dt != null && dt.Rows.Count > 0)
             {
                 StringBuilder sb = new StringBuilder();
@@ -106,10 +107,24 @@ namespace LZMotor
         private static DataTable AnalysisDataInternal_AckInformation(ExtendData_ID id, byte[] data)
         {
             DataTable dataTable = _dt_motorAck.Clone();
+            dataTable.TableName = "motorAck";
             DataRow dr = dataTable.NewRow();
             dr["canIdSend"] = id.MotorIDSend;
             //dr["canIdRec"] = id.MotorIDReceive;
-            dr["Angle"] = MapUInt16ToFloat(new byte[] { data[1], data[0] }).ToString("0.0000");
+            dr["Angle"] = (MapUInt16ToFloat(new byte[] { data[1], data[0] }) * 114.59156F).ToString("0.0000") ;
+
+            if (id.MotorIDSend < 100)
+            {
+                dr["RotSpeed"] = (MapUInt16ToFloat(new byte[] { data[3], data[2] }, -15, 15) * 19.1082).ToString("0.0000");
+                dr["Torque"] = (MapUInt16ToFloat(new byte[] { data[5], data[4] }, -120, 120)).ToString("0.0000");
+            }
+            else
+            {
+                dr["RotSpeed"] = (MapUInt16ToFloat(new byte[] { data[3], data[2] }, -50, 50) * 19.1082).ToString("0.0000");//* 114.61968
+                dr["Torque"] = (MapUInt16ToFloat(new byte[] { data[5], data[4] }, -5.5f, 5.5f)).ToString("0.0000");
+            }
+
+            dr["Temperature"] = BitConverter.ToUInt16(new byte[] { data[7], data[6] }, 0) / 10;
             //检查错误代码
             byte errorCode = (byte)(id.UserDefineByte << 2);
             if (errorCode > 0)
@@ -163,18 +178,6 @@ namespace LZMotor
                 }
             }
 
-            if (id.MotorIDSend < 100)
-            {
-                dr["RotSpeed"] = (MapUInt16ToFloat(new byte[] { data[3], data[2] }, -15, 15) * 19.1082).ToString("0.0000");
-                dr["Torque"] = (MapUInt16ToFloat(new byte[] { data[5], data[4] }, -120, 120)).ToString("0.0000");
-            }
-            else
-            {
-                dr["RotSpeed"] = (MapUInt16ToFloat(new byte[] { data[3], data[2] }, -50, 50) * 19.1082).ToString("0.0000");//* 114.61968
-                dr["Torque"] = (MapUInt16ToFloat(new byte[] { data[5], data[4] }, -5.5f, 5.5f)).ToString("0.0000");
-            }
-
-            dr["Temperature"] = BitConverter.ToUInt16(new byte[] { data[7], data[6] }, 0) / 10;
             dataTable.Rows.Add(dr);
             return dataTable;
         }
@@ -187,7 +190,13 @@ namespace LZMotor
 
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="minOutput"></param>
+        /// <param name="maxOutput"></param>
+        /// <returns>输出角度值</returns>
         public static float MapUInt16ToFloat(ushort value, float minOutput = -12.57f, float maxOutput = 12.57f)
         {
             // 输入范围：0 - 65535

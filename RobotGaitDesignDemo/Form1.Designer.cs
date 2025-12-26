@@ -49,10 +49,13 @@
             this.groupPanel1 = new DevComponents.DotNetBar.Controls.GroupPanel();
             this.groupPanel2 = new DevComponents.DotNetBar.Controls.GroupPanel();
             this.btn_clearShowMessage = new DevComponents.DotNetBar.ButtonX();
-            this.buttonX1 = new DevComponents.DotNetBar.ButtonX();
             this.btn_saveShowMessage = new DevComponents.DotNetBar.ButtonX();
+            this.txt_MotorAckData = new DevComponents.DotNetBar.Controls.TextBoxX();
+            this.groupPanel3 = new DevComponents.DotNetBar.Controls.GroupPanel();
+            this.btn_saveMotorAckData = new DevComponents.DotNetBar.ButtonX();
             this.groupPanel1.SuspendLayout();
             this.groupPanel2.SuspendLayout();
+            this.groupPanel3.SuspendLayout();
             this.SuspendLayout();
             // 
             // btn_analysis
@@ -224,7 +227,7 @@
             this.txt_batchCan.Multiline = true;
             this.txt_batchCan.Name = "txt_batchCan";
             this.txt_batchCan.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txt_batchCan.Size = new System.Drawing.Size(1237, 164);
+            this.txt_batchCan.Size = new System.Drawing.Size(595, 164);
             this.txt_batchCan.TabIndex = 13;
             // 
             // labelX4
@@ -286,7 +289,7 @@
             // 
             this.btn_batchCanAnalysis.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
             this.btn_batchCanAnalysis.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
-            this.btn_batchCanAnalysis.Location = new System.Drawing.Point(1246, 3);
+            this.btn_batchCanAnalysis.Location = new System.Drawing.Point(604, 3);
             this.btn_batchCanAnalysis.Name = "btn_batchCanAnalysis";
             this.btn_batchCanAnalysis.Size = new System.Drawing.Size(119, 164);
             this.btn_batchCanAnalysis.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
@@ -345,7 +348,7 @@
             this.groupPanel2.Controls.Add(this.btn_batchCanAnalysis);
             this.groupPanel2.Location = new System.Drawing.Point(0, 177);
             this.groupPanel2.Name = "groupPanel2";
-            this.groupPanel2.Size = new System.Drawing.Size(1382, 225);
+            this.groupPanel2.Size = new System.Drawing.Size(752, 220);
             // 
             // 
             // 
@@ -389,17 +392,6 @@
             this.btn_clearShowMessage.Text = "ClearOutput";
             this.btn_clearShowMessage.Click += new System.EventHandler(this.btn_clearShowMessage_Click);
             // 
-            // buttonX1
-            // 
-            this.buttonX1.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
-            this.buttonX1.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
-            this.buttonX1.Location = new System.Drawing.Point(1956, 354);
-            this.buttonX1.Name = "buttonX1";
-            this.buttonX1.Size = new System.Drawing.Size(200, 59);
-            this.buttonX1.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this.buttonX1.TabIndex = 22;
-            this.buttonX1.Text = "ClearOutput";
-            // 
             // btn_saveShowMessage
             // 
             this.btn_saveShowMessage.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
@@ -412,13 +404,79 @@
             this.btn_saveShowMessage.Text = "保存数据";
             this.btn_saveShowMessage.Click += new System.EventHandler(this.btn_saveShowMessage_Click);
             // 
+            // txt_MotorAckData
+            // 
+            // 
+            // 
+            // 
+            this.txt_MotorAckData.Border.Class = "TextBoxBorder";
+            this.txt_MotorAckData.Border.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.txt_MotorAckData.Location = new System.Drawing.Point(17, 13);
+            this.txt_MotorAckData.Multiline = true;
+            this.txt_MotorAckData.Name = "txt_MotorAckData";
+            this.txt_MotorAckData.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txt_MotorAckData.Size = new System.Drawing.Size(518, 154);
+            this.txt_MotorAckData.TabIndex = 25;
+            // 
+            // groupPanel3
+            // 
+            this.groupPanel3.CanvasColor = System.Drawing.SystemColors.Control;
+            this.groupPanel3.ColorSchemeStyle = DevComponents.DotNetBar.eDotNetBarStyle.Office2007;
+            this.groupPanel3.Controls.Add(this.btn_saveMotorAckData);
+            this.groupPanel3.Controls.Add(this.txt_MotorAckData);
+            this.groupPanel3.Location = new System.Drawing.Point(758, 177);
+            this.groupPanel3.Name = "groupPanel3";
+            this.groupPanel3.Size = new System.Drawing.Size(684, 220);
+            // 
+            // 
+            // 
+            this.groupPanel3.Style.BackColor2SchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBackground2;
+            this.groupPanel3.Style.BackColorGradientAngle = 90;
+            this.groupPanel3.Style.BackColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBackground;
+            this.groupPanel3.Style.BorderBottom = DevComponents.DotNetBar.eStyleBorderType.Solid;
+            this.groupPanel3.Style.BorderBottomWidth = 1;
+            this.groupPanel3.Style.BorderColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBorder;
+            this.groupPanel3.Style.BorderLeft = DevComponents.DotNetBar.eStyleBorderType.Solid;
+            this.groupPanel3.Style.BorderLeftWidth = 1;
+            this.groupPanel3.Style.BorderRight = DevComponents.DotNetBar.eStyleBorderType.Solid;
+            this.groupPanel3.Style.BorderRightWidth = 1;
+            this.groupPanel3.Style.BorderTop = DevComponents.DotNetBar.eStyleBorderType.Solid;
+            this.groupPanel3.Style.BorderTopWidth = 1;
+            this.groupPanel3.Style.CornerDiameter = 4;
+            this.groupPanel3.Style.CornerType = DevComponents.DotNetBar.eCornerType.Rounded;
+            this.groupPanel3.Style.TextAlignment = DevComponents.DotNetBar.eStyleTextAlignment.Center;
+            this.groupPanel3.Style.TextColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelText;
+            this.groupPanel3.Style.TextLineAlignment = DevComponents.DotNetBar.eStyleTextAlignment.Near;
+            // 
+            // 
+            // 
+            this.groupPanel3.StyleMouseDown.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            // 
+            // 
+            // 
+            this.groupPanel3.StyleMouseOver.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.groupPanel3.TabIndex = 26;
+            this.groupPanel3.Text = "电机ACK数据";
+            // 
+            // btn_saveMotorAckData
+            // 
+            this.btn_saveMotorAckData.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
+            this.btn_saveMotorAckData.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
+            this.btn_saveMotorAckData.Location = new System.Drawing.Point(552, 13);
+            this.btn_saveMotorAckData.Name = "btn_saveMotorAckData";
+            this.btn_saveMotorAckData.Size = new System.Drawing.Size(113, 154);
+            this.btn_saveMotorAckData.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this.btn_saveMotorAckData.TabIndex = 26;
+            this.btn_saveMotorAckData.Text = "保存数据";
+            this.btn_saveMotorAckData.Click += new System.EventHandler(this.btn_saveMotorAckData_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(2179, 1122);
+            this.Controls.Add(this.groupPanel3);
             this.Controls.Add(this.btn_saveShowMessage);
-            this.Controls.Add(this.buttonX1);
             this.Controls.Add(this.btn_clearShowMessage);
             this.Controls.Add(this.groupPanel2);
             this.Controls.Add(this.groupPanel1);
@@ -439,6 +497,7 @@
             this.Load += new System.EventHandler(this.Form1_Load);
             this.groupPanel1.ResumeLayout(false);
             this.groupPanel2.ResumeLayout(false);
+            this.groupPanel3.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -466,8 +525,10 @@
         private DevComponents.DotNetBar.Controls.GroupPanel groupPanel1;
         private DevComponents.DotNetBar.Controls.GroupPanel groupPanel2;
         private DevComponents.DotNetBar.ButtonX btn_clearShowMessage;
-        private DevComponents.DotNetBar.ButtonX buttonX1;
         private DevComponents.DotNetBar.ButtonX btn_saveShowMessage;
+        private DevComponents.DotNetBar.Controls.TextBoxX txt_MotorAckData;
+        private DevComponents.DotNetBar.Controls.GroupPanel groupPanel3;
+        private DevComponents.DotNetBar.ButtonX btn_saveMotorAckData;
     }
 }
 

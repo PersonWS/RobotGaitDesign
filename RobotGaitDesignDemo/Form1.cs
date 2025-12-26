@@ -15,6 +15,7 @@ using System.Security.Cryptography;
 using LogHelper;
 using System.Collections.ObjectModel;
 using LZMotor;
+using System.Diagnostics.SymbolStore;
 namespace RobotGaitDesign
 {
     public partial class Form1 : Office2007Form
@@ -23,6 +24,7 @@ namespace RobotGaitDesign
         CanFDAdapter.CanFDAdapterMain _canFDAdapterMain;
         private Queue<byte[]> _motorMsgReceivedQueue;
         private readonly object _motorMsgReceivedLock = new object();
+        private readonly object _lock = new object();
         Thread _processQueueThread;
         bool _isProcessQueueThreadContiue = false;
         bool _isFilterByMotorId = false;
@@ -87,7 +89,8 @@ namespace RobotGaitDesign
             {
                 LZMotor.ExtendData_ID id = new LZMotor.ExtendData_ID(listIDStr[i]);
                 LZMotor.Data_Motor data = new LZMotor.Data_Motor(listIData[i]);
-                string ret = LZMotor.DataAnalysisHelper.AnalysisData_ReturnString(id, data);
+                DataTable dataTable;
+                string ret = LZMotor.DataAnalysisHelper.AnalysisData_ReturnString(id, data, out dataTable);
                 if (!string.IsNullOrEmpty(ret))
                 {
                     ShowMessage(ret);
@@ -101,10 +104,20 @@ namespace RobotGaitDesign
 
 
 
-        private void ShowMessage(string msg,  bool isAppendTimeStamp=true, Enum_Log4Net_RecordLevel level = Enum_Log4Net_RecordLevel.DEBUG)
+        private void ShowMessage(string msg, bool isAppendTimeStamp = true, Enum_Log4Net_RecordLevel level = Enum_Log4Net_RecordLevel.DEBUG)
         {
-
-            BaseFrmControl.ShowMessageOnTextBox(this, txt_showMessage, msg,isAppendTimeStamp);
+            if (txt_showMessage.Text.Length>104857000)
+            {
+                lock (_lock)
+                {
+                    this.Invoke(new Action(() =>
+                    {
+                        txt_showMessage.Text = txt_showMessage.Text.Substring(txt_showMessage.Text.Length / 2, txt_showMessage.Text.Length - txt_showMessage.Text.Length / 2 - 1);
+                    }));
+                    
+                }
+            }
+            BaseFrmControl.ShowMessageOnTextBox(this, txt_showMessage, msg, isAppendTimeStamp);
             switch (level)
             {
                 case Enum_Log4Net_RecordLevel.ALL:
@@ -127,6 +140,12 @@ namespace RobotGaitDesign
                 default:
                     break;
             }
+        }
+
+        private void ShowMessage_motorAck(string msg)
+        {
+
+            BaseFrmControl.ShowMessageOnTextBox(this, txt_MotorAckData, msg, false, true);
         }
 
         private void btn_log_Click(object sender, EventArgs e)
@@ -183,7 +202,7 @@ namespace RobotGaitDesign
                 {
                     if (msg[0] != 2 || msg.Length < 18 && msg.Length % 18 != 0)//异常或者粘包的数据
                     {
-                        ShowMessage($"COM回传的数据，发现异常，数据：{BitConverter.ToString(msg).Replace('-', ' ')}",true, Enum_Log4Net_RecordLevel.ERROR);
+                        ShowMessage($"COM回传的数据，发现异常，数据：{BitConverter.ToString(msg).Replace('-', ' ')}", true, Enum_Log4Net_RecordLevel.ERROR);
                         return;
                     }
                     int total = msg.Length / 18;
@@ -218,13 +237,14 @@ namespace RobotGaitDesign
             if (recMsg != null)
             {
                 StringBuilder sb = new StringBuilder();
+                StringBuilder sb2 = new StringBuilder();
                 foreach (var item in recMsg)
                 {
 
                     //检查数据完整性
                     if (item[0] != 0x02 || item[item.Length - 1] != 0xAA)
                     {
-                        ShowMessage($"COM回传的数据，数据头部或尾部发现异常，数据：{BitConverter.ToString(item).Replace('-', ' ')}",true, Enum_Log4Net_RecordLevel.ERROR);
+                        ShowMessage($"COM回传的数据，数据头部或尾部发现异常，数据：{BitConverter.ToString(item).Replace('-', ' ')}", true, Enum_Log4Net_RecordLevel.ERROR);
                         continue;
                     }
                     byte temp = (byte)(item[4] << 3);
@@ -237,7 +257,8 @@ namespace RobotGaitDesign
                         _IsProcessing = true;
                         LZMotor.ExtendData_ID extendData_ID = new LZMotor.ExtendData_ID(id);
                         LZMotor.Data_Motor data_Motor = new LZMotor.Data_Motor(data);
-                        string ret = LZMotor.DataAnalysisHelper.AnalysisData_ReturnString(extendData_ID, data_Motor);
+                        DataTable dtRet;
+                        string ret = LZMotor.DataAnalysisHelper.AnalysisData_ReturnString(extendData_ID, data_Motor, out dtRet);
                         if (string.IsNullOrEmpty(ret))//如果没解析就直接显示原始报文
                         {
                             //   byte[] temp2 ;
@@ -250,7 +271,7 @@ namespace RobotGaitDesign
                         //先进行是否是电机数据返回的筛选
                         if (_isOnlyFeedBackData)//只显示电机返回的数据
                         {
-                            if (!(extendData_ID.CommunicationTypeByte==0x02|| extendData_ID.CommunicationTypeByte ==0X18))
+                            if (!(extendData_ID.CommunicationTypeByte == 0x02 || extendData_ID.CommunicationTypeByte == 0X18))
                             {
                                 log.Debug($"id:{extendData_ID.MotorIDSend} ,msg:{ret}");
                                 continue;
@@ -264,6 +285,13 @@ namespace RobotGaitDesign
                                 _motorIdList.Sort();
                                 ThreadPool.QueueUserWorkItem(IniMotorIdFilterCmb);
                             }
+                            if (dtRet?.TableName == "motorAck" && dtRet?.Rows.Count > 0)
+                            {
+                                foreach (DataRow row in dtRet.Rows)
+                                {
+                                    sb2.Append($"{row[0]},{row[1]},{row[2]},{row[3]},{row[4]}\r\n");
+                                }
+                            }
                             sb.Append(ret + "\r\n");
                             //ShowMessage($"id:{extendData_ID.MotorIDSend} ,msg:{ret}");
                         }
@@ -272,6 +300,13 @@ namespace RobotGaitDesign
 
                             if (extendData_ID.MotorIDSend == (this._filterID))
                             {
+                                if (dtRet?.TableName == "motorAck" && dtRet?.Rows.Count > 0)
+                                {
+                                    foreach (DataRow row in dtRet.Rows)
+                                    {
+                                        sb2.Append($"{row[0]},{row[1]},{row[2]},{row[3]},{row[4]}\r\n");
+                                    }
+                                }
                                 sb.Append(ret + "\r\n");
                             }
                             else
@@ -287,7 +322,15 @@ namespace RobotGaitDesign
                         _IsProcessing = false;
                     }
                 }
-                ShowMessage($"{sb.ToString()}",false);
+                if (sb.Length>0)
+                {
+                    ShowMessage($"{sb.ToString()}", false);
+                }
+                if (sb2.Length>2)
+                {
+                    ShowMessage_motorAck($"{sb2.ToString().Substring(0, sb2.ToString().Length - 2)}");
+                }
+
             }
         }
 
@@ -324,7 +367,7 @@ namespace RobotGaitDesign
                 _canFDAdapterMain.MessageReceiveEvent -= ComMessageReceived;
             }
             _canFDAdapterMain = null;
-            ShowMessage( $"{cmb_comList.Text}   连接已断开");
+            ShowMessage($"{cmb_comList.Text}   连接已断开");
             this.btn_connect.Enabled = true;
             this.btn_disConnect.Enabled = false;
         }
@@ -367,7 +410,7 @@ namespace RobotGaitDesign
 
         private void chk_OnlyFeedBackData_CheckedChanged(object sender, EventArgs e)
         {
-            this._isOnlyFeedBackData=chk_OnlyFeedBackData.Checked;
+            this._isOnlyFeedBackData = chk_OnlyFeedBackData.Checked;
         }
 
         private void btn_batchCanAnalysis_Click(object sender, EventArgs e)
@@ -377,10 +420,10 @@ namespace RobotGaitDesign
                 FormSet.BaseFrmControl.ShowDefalutMessageBox(this, "其他任务正在处理中");
                 return;
             }
-            string content = txt_batchCan.Text.Replace(" ", "").Replace("-", "").Replace("\r","").Replace("\n","");
+            string content = txt_batchCan.Text.Replace(" ", "").Replace("-", "").Replace("\r", "").Replace("\n", "");
             List<string> listIDStr = new List<string>();
             List<string> listIData = new List<string>();
-            for (int i = 0; i < content.Length/36; i++)
+            for (int i = 0; i < content.Length / 36; i++)
             {
                 string str = content.Substring(i * 36, 36);
                 if (!str.StartsWith("02") && str.EndsWith("AA"))
@@ -389,7 +432,7 @@ namespace RobotGaitDesign
                 }
                 else
                 {
-                    listIDStr.Add(str.Substring(2,8));
+                    listIDStr.Add(str.Substring(2, 8));
                     listIData.Add(str.Substring(18, 16));
                 }
             }
@@ -423,9 +466,17 @@ namespace RobotGaitDesign
 
         private void btn_saveShowMessage_Click(object sender, EventArgs e)
         {
-            string fileName = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
+            string fileName = "MessageData" + DateTime.Now.ToString("MM-dd-HH-mm-ss-fff");
             TextOperate.WriteToFile(fileName, this.txt_showMessage.Text);
             ShowMessage($"保存完成 fileName:{fileName}");
+        }
+
+        private void btn_saveMotorAckData_Click(object sender, EventArgs e)
+        {
+            string fileName = "motorAckData" + DateTime.Now.ToString("MM-dd-HH-mm-ss-fff");
+            TextOperate.WriteToFile(fileName, this.txt_MotorAckData.Text);
+            ShowMessage($"保存完成 fileName:{fileName}");
+            txt_MotorAckData.Text = "";
         }
     }
 }
