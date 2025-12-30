@@ -14,7 +14,7 @@ namespace LZMotor
         /// <summary>
         /// 输入的数据
         /// </summary>
-        byte[] _dataByte;
+        byte[] _dataBytes;
         string _hexDataString;
         /// <summary>
         /// 接收信息的can  id   0-7byte
@@ -35,15 +35,16 @@ namespace LZMotor
         /// </summary>
         public byte CommunicationTypeByte;
 
+        public byte[] DataBytes { get => _dataBytes;  }
 
         public ExtendData_ID() { }
         public ExtendData_ID(byte[] dataByte)
         {
-            this._dataByte = dataByte;
-            MotorIDReceive = _dataByte[0];
-            MotorIDSend = _dataByte[1];
-            UserDefineByte = _dataByte[2];
-            CommunicationTypeByte = _dataByte[3];
+            this._dataBytes = dataByte;
+            MotorIDReceive = _dataBytes[3];
+            MotorIDSend = _dataBytes[2];
+            UserDefineByte = _dataBytes[1];
+            CommunicationTypeByte = _dataBytes[0];
         }
         public ExtendData_ID(string hexDataString)
         {
@@ -65,12 +66,12 @@ namespace LZMotor
                 }
                 try
                 {
-                    this._dataByte = HexStringToByteArray(this._hexDataString);
+                    this._dataBytes = HexStringToByteArray(this._hexDataString);
                   //  Array.Reverse(this._dataByte);
-                    MotorIDReceive = _dataByte[0];
-                    MotorIDSend = _dataByte[1];
-                    UserDefineByte = _dataByte[2];
-                    CommunicationTypeByte = (byte)((byte)( _dataByte[3]<<3)>>3);
+                    MotorIDReceive = _dataBytes[0];
+                    MotorIDSend = _dataBytes[1];
+                    UserDefineByte = _dataBytes[2];
+                    CommunicationTypeByte = (byte)((byte)( _dataBytes[3]<<3)>>3);
                 }
                 catch (Exception ex)
                 {

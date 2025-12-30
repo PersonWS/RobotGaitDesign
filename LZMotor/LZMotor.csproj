@@ -50,8 +50,15 @@
     <Compile Include="ExtendData_ID.cs" />
     <Compile Include="Data_Motor.cs" />
     <Compile Include="Log.cs" />
+    <Compile Include="LZMotorDataMain.cs" />
     <Compile Include="MotorAralmInfo1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CanFDAdapter\CanFDAdapter.csproj">
+      <Project>{c91c05f7-b445-4af1-9375-fd2d6ebe5437}</Project>
+      <Name>CanFDAdapter</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

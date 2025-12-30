@@ -34,6 +34,14 @@ namespace RobotGaitDesign
         bool _isOnlyFeedBackData = false;
         List<byte> _motorIdList = new List<byte>();
         byte _filterID = 0;
+        /// <summary>
+        /// 显示串口名称 sttring：描述  string2：COM名称
+        /// </summary>
+        Dictionary<string, string> _comDic;
+        /// <summary>
+        /// CAN FD的实例信息
+        /// </summary>
+        CanFDAdapter.CanAdapterEntity _canFDAdapterEntity;
         public Form1()
         {
             InitializeComponent();
@@ -106,15 +114,15 @@ namespace RobotGaitDesign
 
         private void ShowMessage(string msg, bool isAppendTimeStamp = true, Enum_Log4Net_RecordLevel level = Enum_Log4Net_RecordLevel.DEBUG)
         {
-            if (txt_showMessage.Text.Length>104857000)
+            if (txt_showMessage.Text.Length > 104857000)
             {
                 lock (_lock)
                 {
                     this.Invoke(new Action(() =>
                     {
-                        txt_showMessage.Text = txt_showMessage.Text.Substring(txt_showMessage.Text.Length / 2, txt_showMessage.Text.Length - txt_showMessage.Text.Length / 2 - 1);
+                        txt_showMessage.Text = txt_showMessage.Text.Substring(txt_showMessage.Text.Length / 2);
                     }));
-                    
+
                 }
             }
             BaseFrmControl.ShowMessageOnTextBox(this, txt_showMessage, msg, isAppendTimeStamp);
@@ -156,11 +164,11 @@ namespace RobotGaitDesign
         private void btn_refresh_Click(object sender, EventArgs e)
         {
             cmb_comList.Items.Clear();
-            List<string> comList = CanFDAdapter.CanFDAdapterMain.GetComlist();
-
-            foreach (var item in comList)
+            // List<string> comList = CanFDAdapter.COM_Server.GetComlist();
+            _comDic = CanFDAdapter.COM_Server.GetComPortsWithNames();
+            foreach (var item in _comDic)
             {
-                cmb_comList.Items.Add(item);
+                cmb_comList.Items.Add(item.Key);
             }
             cmb_comList.SelectedIndex = 0;
 
@@ -168,12 +176,35 @@ namespace RobotGaitDesign
 
         private void btn_connect_Click(object sender, EventArgs e)
         {
+            int baudRate = 115200;
             if (_canFDAdapterMain != null)
             {
                 _canFDAdapterMain.DisConnect();
                 _canFDAdapterMain.MessageReceiveEvent -= ComMessageReceived;
             }
-            _canFDAdapterMain = new CanFDAdapter.CanFDAdapterMain(cmb_comList.Text, 115200);
+            if (cmb_comList.Text.Contains("CH340"))
+            {
+                baudRate = 921600;
+                _canFDAdapterEntity = new CanFDAdapter.CanAdapterEntity();
+                _canFDAdapterEntity.ChipType = CanFDAdapter.CanAdapterTypeEnum.CH340;
+                _canFDAdapterEntity.Description = txt_batchCan.Text;
+                _canFDAdapterEntity.ComPort = _comDic[cmb_comList.Text];
+            }
+            else if (cmb_comList.Text.Contains("USB 串行设备"))
+            {
+
+                baudRate = 115200;
+                _canFDAdapterEntity = new CanFDAdapter.CanAdapterEntity();
+                _canFDAdapterEntity.ChipType = CanFDAdapter.CanAdapterTypeEnum.ch341;
+                _canFDAdapterEntity.Description = txt_batchCan.Text;
+                _canFDAdapterEntity.ComPort = _comDic[cmb_comList.Text];
+            }
+            else
+            {
+                BaseFrmControl.ShowErrorMessageBox(this, "该COM不支持CAN数据收发");
+                return;
+            }
+            _canFDAdapterMain = new CanFDAdapter.CanFDAdapterMain(_comDic[cmb_comList.Text], baudRate);
             if (_canFDAdapterMain.Connect())
             {
                 _isProcessQueueThreadContiue = true;
@@ -185,6 +216,7 @@ namespace RobotGaitDesign
                 ShowMessage($"{cmb_comList.Text}   连接成功");
                 this.btn_connect.Enabled = false;
                 this.btn_disConnect.Enabled = true;
+
             }
             else
             {
@@ -198,19 +230,9 @@ namespace RobotGaitDesign
         {
             lock (_motorMsgReceivedLock)
             {
-                if (_motorMsgReceivedQueue.Count < 1000000)
-                {
-                    if (msg[0] != 2 || msg.Length < 18 && msg.Length % 18 != 0)//异常或者粘包的数据
-                    {
-                        ShowMessage($"COM回传的数据，发现异常，数据：{BitConverter.ToString(msg).Replace('-', ' ')}", true, Enum_Log4Net_RecordLevel.ERROR);
-                        return;
-                    }
-                    int total = msg.Length / 18;
-                    for (int i = 0; i < total; i++)
-                    {
-                        _motorMsgReceivedQueue.Enqueue(msg.Skip(i * 18).Take(18).ToArray());
-                    }
-                }
+
+                _motorMsgReceivedQueue.Enqueue(msg);
+
             }
 
         }
@@ -241,65 +263,47 @@ namespace RobotGaitDesign
                 foreach (var item in recMsg)
                 {
 
-                    //检查数据完整性
-                    if (item[0] != 0x02 || item[item.Length - 1] != 0xAA)
+                    LZMotor.ExtendData_ID extendData_ID;
+                    LZMotor.Data_Motor data_Motor;
+                    List<LZMotorDataMain> lZMotorData = DataAnalysisHelper.AnalysisBytesArrayToCanidAndCandata(_canFDAdapterEntity, item);
+                    if (lZMotorData.Count == 0)
                     {
-                        ShowMessage($"COM回传的数据，数据头部或尾部发现异常，数据：{BitConverter.ToString(item).Replace('-', ' ')}", true, Enum_Log4Net_RecordLevel.ERROR);
+                        ShowMessage($"报文解析失败，源报文：{BitConverter.ToString(item).Replace('-', ' ')}", true, Enum_Log4Net_RecordLevel.ERROR);
                         continue;
                     }
-                    byte temp = (byte)(item[4] << 3);
-                    //拆解数据
-                    byte[] id = new byte[] { item[1], item[2], item[3], (byte)(temp >> 3) };
-                    int dataLength = BitConverter.ToInt16(new byte[] { item[8], item[7] }, 0);
-                    byte[] data = item.Skip(9).Take(8).ToArray();
-                    try
+                    foreach (var item2 in lZMotorData)
                     {
-                        _IsProcessing = true;
-                        LZMotor.ExtendData_ID extendData_ID = new LZMotor.ExtendData_ID(id);
-                        LZMotor.Data_Motor data_Motor = new LZMotor.Data_Motor(data);
-                        DataTable dtRet;
-                        string ret = LZMotor.DataAnalysisHelper.AnalysisData_ReturnString(extendData_ID, data_Motor, out dtRet);
-                        if (string.IsNullOrEmpty(ret))//如果没解析就直接显示原始报文
+                        try
                         {
-                            //   byte[] temp2 ;
-                            ret = $"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff")}: id:{BitConverter.ToString(id)}, data:{BitConverter.ToString(data)}";
-                        }
-                        else
-                        {
-                            ret = $"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff")}: {ret}";
-                        }
-                        //先进行是否是电机数据返回的筛选
-                        if (_isOnlyFeedBackData)//只显示电机返回的数据
-                        {
-                            if (!(extendData_ID.CommunicationTypeByte == 0x02 || extendData_ID.CommunicationTypeByte == 0X18))
+                            _IsProcessing = true;
+                            DataTable dtRet;
+                            string ret = LZMotor.DataAnalysisHelper.AnalysisData_ReturnString(item2.ExtendData_ID, item2.Data_Motor, out dtRet);
+                            if (string.IsNullOrEmpty(ret))//如果没解析就直接显示原始报文
                             {
-                                log.Debug($"id:{extendData_ID.MotorIDSend} ,msg:{ret}");
-                                continue;
+                                //   byte[] temp2 ;
+                                ret = $"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff")}: id:{BitConverter.ToString(item2.ExtendData_ID.DataBytes)}, data:{BitConverter.ToString(item2.Data_Motor.DataBytes)}";
                             }
-                        }
-                        if (!_isFilterByMotorId)//未通过ID筛选时就智能录入id
-                        {
-                            if (!_motorIdList.Contains(extendData_ID.MotorIDSend))//不包含就录入
+                            else
                             {
-                                _motorIdList.Add(extendData_ID.MotorIDSend);
-                                _motorIdList.Sort();
-                                ThreadPool.QueueUserWorkItem(IniMotorIdFilterCmb);
+                                ret = $"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff")}: {ret}";
                             }
-                            if (dtRet?.TableName == "motorAck" && dtRet?.Rows.Count > 0)
+                            //先进行是否是电机数据返回的筛选
+                            if (_isOnlyFeedBackData)//只显示电机返回的数据
                             {
-                                foreach (DataRow row in dtRet.Rows)
+                                if (!(item2.ExtendData_ID.CommunicationTypeByte == 0x02 || item2.ExtendData_ID.CommunicationTypeByte == 0X18))
                                 {
-                                    sb2.Append($"{row[0]},{row[1]},{row[2]},{row[3]},{row[4]}\r\n");
+                                    log.Debug($"id:{item2.ExtendData_ID.MotorIDSend} ,msg:{ret}");
+                                    continue;
                                 }
                             }
-                            sb.Append(ret + "\r\n");
-                            //ShowMessage($"id:{extendData_ID.MotorIDSend} ,msg:{ret}");
-                        }
-                        else
-                        {
-
-                            if (extendData_ID.MotorIDSend == (this._filterID))
+                            if (!_isFilterByMotorId)//未通过ID筛选时就智能录入id
                             {
+                                if (!_motorIdList.Contains(item2.ExtendData_ID.MotorIDSend))//不包含就录入
+                                {
+                                    _motorIdList.Add(item2.ExtendData_ID.MotorIDSend);
+                                    _motorIdList.Sort();
+                                    ThreadPool.QueueUserWorkItem(IniMotorIdFilterCmb);
+                                }
                                 if (dtRet?.TableName == "motorAck" && dtRet?.Rows.Count > 0)
                                 {
                                     foreach (DataRow row in dtRet.Rows)
@@ -308,25 +312,42 @@ namespace RobotGaitDesign
                                     }
                                 }
                                 sb.Append(ret + "\r\n");
+                                //ShowMessage($"id:{extendData_ID.MotorIDSend} ,msg:{ret}");
                             }
                             else
                             {
-                                log.Debug($"id:{extendData_ID.MotorIDSend} ,msg:{ret}");
-                            }
-                        }
 
+                                if (item2.ExtendData_ID.MotorIDSend == (this._filterID))
+                                {
+                                    if (dtRet?.TableName == "motorAck" && dtRet?.Rows.Count > 0)
+                                    {
+                                        foreach (DataRow row in dtRet.Rows)
+                                        {
+                                            sb2.Append($"{row[0]},{row[1]},{row[2]},{row[3]},{row[4]}\r\n");
+                                        }
+                                    }
+                                    sb.Append(ret + "\r\n");
+                                }
+                                else
+                                {
+                                    log.Debug($"id:{item2.ExtendData_ID.MotorIDSend} ,msg:{ret}");
+                                }
+                            }
+
+                        }
+                        catch (Exception ex)
+                        {
+                            BaseFrmControl.ShowErrorMessageBox(this, $"{ex.ToString()}");
+                            _IsProcessing = false;
+                        }
                     }
-                    catch (Exception ex)
-                    {
-                        BaseFrmControl.ShowErrorMessageBox(this, $"{ex.ToString()}");
-                        _IsProcessing = false;
-                    }
+
                 }
-                if (sb.Length>0)
+                if (sb.Length > 0)
                 {
                     ShowMessage($"{sb.ToString()}", false);
                 }
-                if (sb2.Length>2)
+                if (sb2.Length > 2)
                 {
                     ShowMessage_motorAck($"{sb2.ToString().Substring(0, sb2.ToString().Length - 2)}");
                 }
@@ -370,6 +391,7 @@ namespace RobotGaitDesign
             ShowMessage($"{cmb_comList.Text}   连接已断开");
             this.btn_connect.Enabled = true;
             this.btn_disConnect.Enabled = false;
+            this._IsProcessing = false;
         }
 
         private void chk_filterByMotorID_CheckedChanged(object sender, EventArgs e)

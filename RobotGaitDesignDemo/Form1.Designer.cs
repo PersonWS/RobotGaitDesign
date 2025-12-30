@@ -161,7 +161,7 @@
             // 
             // 
             this.labelX3.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.labelX3.Location = new System.Drawing.Point(69, 12);
+            this.labelX3.Location = new System.Drawing.Point(36, -2);
             this.labelX3.Name = "labelX3";
             this.labelX3.Size = new System.Drawing.Size(86, 53);
             this.labelX3.TabIndex = 7;
@@ -171,7 +171,7 @@
             // 
             this.btn_connect.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
             this.btn_connect.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
-            this.btn_connect.Location = new System.Drawing.Point(496, 6);
+            this.btn_connect.Location = new System.Drawing.Point(548, 6);
             this.btn_connect.Name = "btn_connect";
             this.btn_connect.Size = new System.Drawing.Size(204, 59);
             this.btn_connect.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
@@ -210,9 +210,9 @@
             this.cmb_comList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmb_comList.FormattingEnabled = true;
             this.cmb_comList.ItemHeight = 29;
-            this.cmb_comList.Location = new System.Drawing.Point(161, 26);
+            this.cmb_comList.Location = new System.Drawing.Point(128, 12);
             this.cmb_comList.Name = "cmb_comList";
-            this.cmb_comList.Size = new System.Drawing.Size(226, 35);
+            this.cmb_comList.Size = new System.Drawing.Size(398, 35);
             this.cmb_comList.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.cmb_comList.TabIndex = 12;
             // 
@@ -236,7 +236,7 @@
             // 
             // 
             this.labelX4.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.labelX4.Location = new System.Drawing.Point(37, 80);
+            this.labelX4.Location = new System.Drawing.Point(4, 66);
             this.labelX4.Name = "labelX4";
             this.labelX4.Size = new System.Drawing.Size(109, 49);
             this.labelX4.TabIndex = 14;
@@ -248,9 +248,9 @@
             this.cmb_idFilter.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmb_idFilter.FormattingEnabled = true;
             this.cmb_idFilter.ItemHeight = 29;
-            this.cmb_idFilter.Location = new System.Drawing.Point(161, 94);
+            this.cmb_idFilter.Location = new System.Drawing.Point(128, 80);
             this.cmb_idFilter.Name = "cmb_idFilter";
-            this.cmb_idFilter.Size = new System.Drawing.Size(226, 35);
+            this.cmb_idFilter.Size = new System.Drawing.Size(398, 35);
             this.cmb_idFilter.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.cmb_idFilter.TabIndex = 15;
             this.cmb_idFilter.SelectedIndexChanged += new System.EventHandler(this.cmb_idFilter_SelectedIndexChanged);
@@ -263,7 +263,7 @@
             // 
             // 
             this.chk_filterByMotorID.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.chk_filterByMotorID.Location = new System.Drawing.Point(496, 80);
+            this.chk_filterByMotorID.Location = new System.Drawing.Point(548, 80);
             this.chk_filterByMotorID.Name = "chk_filterByMotorID";
             this.chk_filterByMotorID.Size = new System.Drawing.Size(223, 58);
             this.chk_filterByMotorID.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;

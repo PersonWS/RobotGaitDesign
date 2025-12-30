@@ -13,13 +13,13 @@ namespace LZMotor
         /// <summary>
         /// 输入的数据
         /// </summary>
-        byte[] _dataByte;
+        byte[] _dataBytes;
         string _hexDataString;
-        public byte[] DataByte { get => _dataByte; set => _dataByte = value; }
+        public byte[] DataBytes { get => _dataBytes;  }
 
         public Data_Motor(byte[] data)
         {
-            this._dataByte = data;
+            this._dataBytes = data;
         }
         public Data_Motor(string hexDataString, int length=8)
         {
@@ -41,7 +41,7 @@ namespace LZMotor
                 }
                 try
                 {
-                    this._dataByte = ExtendData_ID.HexStringToByteArray(this._hexDataString);
+                    this._dataBytes = ExtendData_ID.HexStringToByteArray(this._hexDataString);
                     //Array.Reverse(this._dataByte);
                 }
                 catch (Exception ex)

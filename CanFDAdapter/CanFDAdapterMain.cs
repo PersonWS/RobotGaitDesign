@@ -45,7 +45,7 @@ namespace CanFDAdapter
         /// <returns>true：连接成功   false ：连接失败，查看日志确定错误信息</returns>
         public bool Connect()
         {
-            List<string> comList = CanFDAdapterMain.GetComlist(false); //首先获取本机关联的串行端口列表            
+            List<string> comList = COM_Server.GetComlist(false); //首先获取本机关联的串行端口列表            
             if (comList.Count == 0)
             {
                 log.Error(string.Format("{0},{1}", "提示信息：", "当前设备不存在串行端口！"));
@@ -141,42 +141,7 @@ namespace CanFDAdapter
             }
         }
 
-        /// <summary>
-        /// 获取本机串口列表
-        /// </summary>
-        /// <param name="isUseReg">是否使用注册表信息，默认不传，使用默认值</param>
-        /// <returns></returns>
-        public static List<string> GetComlist(bool isUseReg=false)
-        {
-            List<string> list = new List<string>();
-            try
-            {
-                if (isUseReg)
-                {
-                    RegistryKey RootKey = Registry.LocalMachine;
-                    RegistryKey Comkey = RootKey.OpenSubKey(@"HARDWARE\DEVICEMAP\SERIALCOMM");
 
-                    String[] ComNames = Comkey.GetValueNames();
-
-                    foreach (String ComNamekey in ComNames)
-                    {
-                        string TemS = Comkey.GetValue(ComNamekey).ToString();
-                        list.Add(TemS);
-                    }
-                }
-                else
-                {
-                    foreach (string com in SerialPort.GetPortNames())  //自动获取串行口名称  
-                        list.Add(com);
-                }
-            }
-            catch
-            {
-                log.Error(string.Format("{0},{1}", "提示信息", "串行端口检查异常！"));
-                System.Environment.Exit(0); //彻底退出应用程序   
-            }
-            return list;
-        }
 
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CanFDAdapter;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -33,12 +34,57 @@ namespace LZMotor
         public string AnalysisData_ReturnString()
         {
             DataTable dt = new DataTable();
-            return AnalysisData_ReturnString(id, motorData,out dt);
+            return AnalysisData_ReturnString(id, motorData, out dt);
+        }
+        #region 通过适配器的原始报文来解析出can的信息
+        public static List<LZMotorDataMain> AnalysisBytesArrayToCanidAndCandata(CanFDAdapter.CanAdapterEntity canAdapterEntity, byte[] bytes)
+        {
+            List<LZMotorDataMain> lZMotorData = new List<LZMotorDataMain>();
+            CanAdapterDataProcess canAdapterDataProcess;
+            switch (canAdapterEntity.ChipType)
+            {
+                case CanFDAdapter.CanAdapterTypeEnum.CH340:
+                    canAdapterDataProcess = new CanAdapterDataProcess_RobstrideDynamics(null);
+                    lZMotorData = AnalysisBytesArrayToCanidAndCandataSub(canAdapterDataProcess, bytes);
+                    break;
+                case CanFDAdapter.CanAdapterTypeEnum.ch341:
+                    canAdapterDataProcess = new CanAdapterDataProcess_BaoFengFD(null);
+                    lZMotorData = AnalysisBytesArrayToCanidAndCandataSub(canAdapterDataProcess, bytes);
+                    break;
+                default:
+                    Log.log.Error($"AnalysisBytesArrayToCanidAndCandata,unkonwn type:{canAdapterEntity.ChipType}");
+                    break;
+            }
+            return lZMotorData;
+
+        }
+        private static List<LZMotorDataMain> AnalysisBytesArrayToCanidAndCandataSub(CanAdapterDataProcess canAdapterDataProcess, byte[] bytes)
+        {
+            List<LZMotorDataMain> lZMotorDatas = new List<LZMotorDataMain>();
+            List<byte[]> anaBytes = canAdapterDataProcess.AnalysisData(bytes);
+            foreach (var item in anaBytes)
+            {
+                //if (bytes.Length != 17)
+                //{
+                //    Log.log.Error($"AnalysisBytesArrayToCanidAndCandata_CH340 ,报文长度不等于17，报文：{BitConverter.ToString(bytes)}");
+                //    continue;
+                //}
+                //byte temp = (byte)(bytes[2] << 3);
+                //拆解数据
+                byte[] idArray = new byte[] { item[3], item[2], item[1], item[0] };
+                int dataLength = BitConverter.ToInt16(new byte[] { item[7], item[6] }, 0);
+                byte[] dataArray = item.Skip(8).Take(8).ToArray();
+                LZMotorDataMain data = new LZMotorDataMain(new LZMotor.Data_Motor(dataArray), new LZMotor.ExtendData_ID(idArray));
+                lZMotorDatas.Add(data);
+            }
+            return lZMotorDatas;
         }
 
-        public static string AnalysisData_ReturnString(ExtendData_ID id, Data_Motor data ,out DataTable dt)
+        #endregion
+
+        public static string AnalysisData_ReturnString(ExtendData_ID id, Data_Motor data, out DataTable dt)
         {
-             dt = AnalysisDataInternal(id, data);
+            dt = AnalysisDataInternal(id, data);
             if (dt != null && dt.Rows.Count > 0)
             {
                 StringBuilder sb = new StringBuilder();
@@ -57,7 +103,7 @@ namespace LZMotor
 
         private static DataTable AnalysisDataInternal(ExtendData_ID id, Data_Motor data)
         {
-            if (data == null || data.DataByte == null || id == null)
+            if (data == null || data.DataBytes == null || id == null)
             {
                 Log.log.Error($"AnalysisDataInternal ,id or data is null");
                 return null;
@@ -78,7 +124,7 @@ namespace LZMotor
                 case Enum_CommunicationType.MotionControlInstruction:
                     break;
                 case Enum_CommunicationType.AckInformation:
-                    dataTable = AnalysisDataInternal_AckInformation(id, data.DataByte);
+                    dataTable = AnalysisDataInternal_AckInformation(id, data.DataBytes);
                     break;
                 case Enum_CommunicationType.MotorEnable:
                     break;
@@ -95,7 +141,7 @@ namespace LZMotor
                 case Enum_CommunicationType.FaultFeedback:
                     break;
                 case Enum_CommunicationType.MotorInformationFeedbackOrSet:
-                    dataTable = AnalysisDataInternal_AckInformation(id, data.DataByte);
+                    dataTable = AnalysisDataInternal_AckInformation(id, data.DataBytes);
                     break;
                 default:
                     break;
@@ -111,7 +157,7 @@ namespace LZMotor
             DataRow dr = dataTable.NewRow();
             dr["canIdSend"] = id.MotorIDSend;
             //dr["canIdRec"] = id.MotorIDReceive;
-            dr["Angle"] = (MapUInt16ToFloat(new byte[] { data[1], data[0] }) * 114.59156F).ToString("0.0000") ;
+            dr["Angle"] = (MapUInt16ToFloat(new byte[] { data[1], data[0] }) * 114.59156F).ToString("0.0000");
 
             if (id.MotorIDSend < 100)
             {

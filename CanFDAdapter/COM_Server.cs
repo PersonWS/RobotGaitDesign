@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.IO.Ports;
 using LogHelper;
+using Microsoft.Win32;
+using System.Management;
 
 namespace CanFDAdapter
 {
@@ -146,6 +148,142 @@ namespace CanFDAdapter
 
 
         #endregion 串口监听
+
+
+        /// <summary>
+        /// 获取本机串口列表
+        /// </summary>
+        /// <param name="isUseReg">是否使用注册表信息，默认不传，使用默认值</param>
+        /// <returns></returns>
+        public static List<string> GetComlist(bool isUseReg = false)
+        {
+            List<string> list = new List<string>();
+            try
+            {
+                if (isUseReg)
+                {
+                    RegistryKey RootKey = Registry.LocalMachine;
+                    RegistryKey Comkey = RootKey.OpenSubKey(@"HARDWARE\DEVICEMAP\SERIALCOMM");
+
+                    String[] ComNames = Comkey.GetValueNames();
+
+                    foreach (String ComNamekey in ComNames)
+                    {
+                        string TemS = Comkey.GetValue(ComNamekey).ToString();
+                        list.Add(TemS);
+                    }
+                }
+                else
+                {
+                    foreach (string com in SerialPort.GetPortNames())  //自动获取串行口名称  
+                        list.Add(com);
+                }
+            }
+            catch
+            {
+                log.Error(string.Format("{0},{1}", "提示信息", "串行端口检查异常！"));
+                System.Environment.Exit(0); //彻底退出应用程序   
+            }
+            return list;
+        }
+
+        public static Dictionary<string , string > GetComPortsWithNames()
+        {
+            var comPorts = new Dictionary<string , string >();
+
+            try
+            {
+                // 方法1: 使用WMI查询（推荐，最简单）
+                ManagementObjectSearcher searcher = new ManagementObjectSearcher(
+                    "SELECT DeviceID, Description, Caption FROM  Win32_PnPEntity WHERE PNPClass = 'Ports' OR PNPClass = 'SerialPort'");
+
+                foreach (ManagementObject queryObj in searcher.Get())
+                {
+                    string portName = queryObj["Caption"]?.ToString();
+                    portName = portName.Substring(portName.IndexOf('(')+1, portName.LastIndexOf(')')- portName.IndexOf('(')-1);
+                    string description = queryObj["Caption"]?.ToString() ??
+                                       queryObj["DeviceID"]?.ToString() ??
+                                       "Serial Device"; 
+
+                    if (!string.IsNullOrEmpty(description))
+                    {
+                        if (!comPorts.Keys.Contains(description))
+                        {
+                            comPorts.Add(description, portName);
+                        }
+
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // 如果WMI查询失败，回退到基本方法
+                Console.WriteLine($"WMI查询失败: {ex.Message}");
+
+                try
+                {
+                    // 方法2: 获取端口后附加默认描述
+                    foreach (string port in SerialPort.GetPortNames())
+                    {
+                        comPorts.Add(port, $"{port}");
+                    }
+                }
+                catch
+                {
+                    // 如果都失败，记录错误
+                    log.Error("获取串口列表失败");
+                }
+            }
+
+            return comPorts;
+        }
+        /// <summary>
+        /// 获取串口名称和描述
+        /// </summary>
+        /// <returns></returns>
+        public static Dictionary<string, string> GetComListDic()
+        {
+            var result = new Dictionary<string, string>();
+
+            try
+            {
+                // 获取所有COM端口
+                string[] ports = GetComlist(false).ToArray();
+
+                foreach (string port in ports)
+                {
+                    // 尝试获取描述，如果没有则使用默认
+                    string description = GetSimplePortDescription(port);
+                    result[port] = description;
+                }
+            }
+            catch (Exception ex)
+            {
+                log.Error($"获取串口列表失败: {ex.Message}");
+            }
+
+            return result;
+        }
+
+        private static string GetSimplePortDescription(string port)
+        {
+            try
+            {
+                // 简化版的描述获取
+                if (port.Contains("COM"))
+                {
+                    return $"Serial Port {port}";
+                }
+            }
+            catch
+            {
+                // 忽略错误
+            }
+
+            return "Unknown Serial Device";
+        }
+
+
 
     }
 }
