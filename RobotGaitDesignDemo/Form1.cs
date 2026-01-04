@@ -42,6 +42,10 @@ namespace RobotGaitDesign
         /// CAN FD的实例信息
         /// </summary>
         CanFDAdapter.CanAdapterEntity _canFDAdapterEntity;
+        //保存数据的list
+        StringBuilder _sb_txt_showMessage = new StringBuilder();
+        StringBuilder _sb_txt_MotorAckData = new StringBuilder();
+
         public Form1()
         {
             InitializeComponent();
@@ -93,18 +97,21 @@ namespace RobotGaitDesign
         {
             //List<byte[]> listID = new List<byte[]>();
             //List<byte[]> listData = new List<byte[]>();
+            StringBuilder sb = new StringBuilder();
             for (int i = 0; i < listIDStr.Count; i++)
             {
                 LZMotor.ExtendData_ID id = new LZMotor.ExtendData_ID(listIDStr[i]);
                 LZMotor.Data_Motor data = new LZMotor.Data_Motor(listIData[i]);
                 DataTable dataTable;
                 string ret = LZMotor.DataAnalysisHelper.AnalysisData_ReturnString(id, data, out dataTable);
+
                 if (!string.IsNullOrEmpty(ret))
                 {
-                    ShowMessage(ret);
+                    sb.Append(ret);
                 }
                 //ShowMessage($"第{i}行:{ret}");
             }
+            ShowMessage(sb.ToString());
             _IsProcessing = false;
 
         }
@@ -114,18 +121,18 @@ namespace RobotGaitDesign
 
         private void ShowMessage(string msg, bool isAppendTimeStamp = true, Enum_Log4Net_RecordLevel level = Enum_Log4Net_RecordLevel.DEBUG)
         {
-            if (txt_showMessage.Text.Length > 104857000)
+            if (_sb_txt_showMessage.Length > BaseFrmControl.TextBoxMaxLength * 100)
             {
                 lock (_lock)
                 {
-                    this.Invoke(new Action(() =>
-                    {
-                        txt_showMessage.Text = txt_showMessage.Text.Substring(txt_showMessage.Text.Length / 2);
-                    }));
-
+                    StringBuilder stemp=new StringBuilder();
+                    stemp.Append( _sb_txt_showMessage.ToString().Substring(_sb_txt_showMessage.Length / 2));
+                    _sb_txt_showMessage = stemp;
                 }
             }
-            BaseFrmControl.ShowMessageOnTextBox(this, txt_showMessage, msg, isAppendTimeStamp);
+
+            _sb_txt_showMessage.Append( BaseFrmControl.ShowMessageOnTextBox(this, txt_showMessage, msg, isAppendTimeStamp));
+
             switch (level)
             {
                 case Enum_Log4Net_RecordLevel.ALL:
@@ -152,8 +159,16 @@ namespace RobotGaitDesign
 
         private void ShowMessage_motorAck(string msg)
         {
-
-            BaseFrmControl.ShowMessageOnTextBox(this, txt_MotorAckData, msg, false, true);
+            if (_sb_txt_MotorAckData.Length > BaseFrmControl.TextBoxMaxLength*100)
+            {
+                lock (_lock)
+                {
+                    StringBuilder stemp = new StringBuilder();
+                    stemp.Append(_sb_txt_MotorAckData.ToString().Substring(_sb_txt_MotorAckData.Length / 2));
+                    _sb_txt_MotorAckData = stemp;
+                }
+            }
+            _sb_txt_MotorAckData.Append( BaseFrmControl.ShowMessageOnTextBox(this, txt_MotorAckData, msg, false, true));
         }
 
         private void btn_log_Click(object sender, EventArgs e)
@@ -241,7 +256,7 @@ namespace RobotGaitDesign
             while (_isProcessQueueThreadContiue)
             {
                 ProcessComMessageSub();
-                Thread.Sleep(10);
+                Thread.Sleep(100);
             }
         }
 
@@ -489,14 +504,23 @@ namespace RobotGaitDesign
         private void btn_saveShowMessage_Click(object sender, EventArgs e)
         {
             string fileName = "MessageData" + DateTime.Now.ToString("MM-dd-HH-mm-ss-fff");
-            TextOperate.WriteToFile(fileName, this.txt_showMessage.Text);
+            lock (_lock)
+            {
+                TextOperate.WriteToFile(fileName, _sb_txt_showMessage.ToString());
+                _sb_txt_showMessage.Clear();
+            }
+
             ShowMessage($"保存完成 fileName:{fileName}");
         }
 
         private void btn_saveMotorAckData_Click(object sender, EventArgs e)
         {
             string fileName = "motorAckData" + DateTime.Now.ToString("MM-dd-HH-mm-ss-fff");
-            TextOperate.WriteToFile(fileName, this.txt_MotorAckData.Text);
+            lock (_lock)
+            {
+                TextOperate.WriteToFile(fileName, _sb_txt_MotorAckData.ToString());
+                _sb_txt_MotorAckData.Clear();
+            }
             ShowMessage($"保存完成 fileName:{fileName}");
             txt_MotorAckData.Text = "";
         }

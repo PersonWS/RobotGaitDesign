@@ -11,7 +11,7 @@ namespace FormSet
 {
     public static class BaseFrmControl
     {
-      public static  Color _color_ON = Color.Lime;
+        public static Color _color_ON = Color.Lime;
         public static Color _color_OFF = Color.DimGray;
         public static Color _color_ERROR = Color.Red;
         public static Color _color_Warn = Color.Yellow;
@@ -40,7 +40,7 @@ namespace FormSet
             DialogResult dr = DialogResult.OK;
             f.Invoke(new Action(() =>
             {
-                dr = MessageBoxEx.Show(f,text, "询问信息", MessageBoxButtons.OKCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
+                dr = MessageBoxEx.Show(f, text, "询问信息", MessageBoxButtons.OKCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
             }));
 
             return dr;
@@ -52,12 +52,12 @@ namespace FormSet
             MessageBoxEx.MessageBoxTextColor = Color.Red;
             f.Invoke(new Action(() =>
             {
-                MessageBoxEx.Show(f,text, "错误信息", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+                MessageBoxEx.Show(f, text, "错误信息", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
             }));
             return;
         }
 
-        public static void ShowErrorMessageBox(Form f, string text ,Exception ex)
+        public static void ShowErrorMessageBox(Form f, string text, Exception ex)
         {
             MessageBoxEx.MessageBoxTextColor = Color.Red;
             f.Invoke(new Action(() =>
@@ -144,11 +144,21 @@ namespace FormSet
             ShowMessageOnTextBox(f, textBox, message, true);
         }
 
-        public static void ShowMessageOnTextBox(Form f, TextBox textBox, string message,bool isAppendTimeStamp=true,bool isScrollToCaret=true)
+        public static string ShowMessageOnTextBox(Form f, TextBox textBox, string message, bool isAppendTimeStamp = true, bool isScrollToCaret = true)
         {
+            string str = "";
             if (!f.IsHandleCreated)
             {
-                return;
+                return str;
+            }
+            if (isAppendTimeStamp)
+            {
+                str = $"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff")}: {message} \r\n";
+
+            }
+            else
+            {
+                str = $"{message} \r\n";
             }
             f.BeginInvoke(new Action(() =>
             {
@@ -156,20 +166,14 @@ namespace FormSet
                 {
                     textBox.Text = textBox.Text.Substring(textBox.Text.Length / 2, textBox.Text.Length - textBox.Text.Length / 2);
                 }
-                if (isAppendTimeStamp)
-                {
-                    textBox.AppendText($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff")}: {message} \r\n");
-                }
-                else
-                {
-                    textBox.AppendText($"{message} \r\n");
-                }
+
+                textBox.AppendText(str);
                 textBox.Select(textBox.Text.Length, 0);
-                if (isScrollToCaret) 
-                textBox.ScrollToCaret();
+                if (isScrollToCaret)
+                    textBox.ScrollToCaret();
 
             }));
-           
+            return str;
         }
 
 
