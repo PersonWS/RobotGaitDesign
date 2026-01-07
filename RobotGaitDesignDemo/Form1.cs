@@ -17,6 +17,7 @@ using System.Collections.ObjectModel;
 using LZMotor;
 using System.Diagnostics.SymbolStore;
 using CanFDAdapter;
+using System.Reflection;
 namespace RobotGaitDesign
 {
     public partial class Form1 : Office2007Form
@@ -42,6 +43,7 @@ namespace RobotGaitDesign
         Thread _motorReadParameterReceivedThread;
         DataTable _dt_motorReadParameterReceived = new DataTable();
         bool _isMotorReadParameterReceivedContiue = false;
+        int[] _dgv_motorParameterPosition = new int[2]; 
 
         bool _isFilterByMotorId = false;
         /// <summary>
@@ -284,6 +286,7 @@ namespace RobotGaitDesign
             {
                 _motorMsgReceivedQueue.Enqueue(msg);
 
+                log.Debug($"ComMessageReceived:{BitConverter.ToString(msg).Replace("-", " ")}");
             }
 
         }
@@ -444,24 +447,71 @@ namespace RobotGaitDesign
                 {
                     string functionName = BitConverter.ToString(new byte[] { rec.Data_Motor.DataBytes[1], rec.Data_Motor.DataBytes[0] } ).Replace("-","");
                     DataRow[] drs = _dt_motorReadParameterReceived.Select($"电机id={rec.ExtendData_ID.MotorIDSend} and 功能码='{functionName}'");
+                    Enum_MotorParameter enum_MotorParameter = (Enum_MotorParameter)BitConverter.ToInt16(rec.Data_Motor.DataBytes, 0);
+                    object value = null ;
+                    string scription = GetDescription(enum_MotorParameter);
+                    switch (scription)
+                    {
+                        case "uint8":
+                            value= rec.Data_Motor.DataBytes[4];
+                            break;
+                        case "int8":
+                            value = rec.Data_Motor.DataBytes[4];
+                            break;
+                        case "uint16":
+                            value = BitConverter.ToUInt16(rec.Data_Motor.DataBytes, 4);
+                            break;
+                        case "int16":
+                            value = BitConverter.ToInt16(rec.Data_Motor.DataBytes, 4);
+                            break;
+                        case "float":
+                            value = BitConverter.ToSingle(rec.Data_Motor.DataBytes, 4);
+                            break;
+                        case "int32":
+                            value = BitConverter.ToInt32(rec.Data_Motor.DataBytes, 4);
+                            break;
+                        case "uint32":
+                            value = BitConverter.ToUInt32(rec.Data_Motor.DataBytes, 4);
+                            break;
+                        default:
+                            break;
+                    }
                     if (drs.Length > 0)
                     {
-                        drs[0]["当前值"] = BitConverter.ToSingle(rec.Data_Motor.DataBytes, 4);
+                        drs[0]["当前值"] = value?.ToString(); ;
                     }
                     else
                     {
                         DataRow dr = _dt_motorReadParameterReceived.NewRow();
                         dr["电机id"] = rec.ExtendData_ID.MotorIDSend.ToString();
                         dr["功能码"] = functionName;
-                        dr["名称"] = Enum.GetName(typeof(Enum_MotorParameter), BitConverter.ToInt16(rec.Data_Motor.DataBytes, 0));
-                        dr["当前值"] = BitConverter.ToSingle(rec.Data_Motor.DataBytes, 4);
+                        dr["名称"] = Enum.GetName(typeof(Enum_MotorParameter), enum_MotorParameter);
+                        dr["当前值"] = value?.ToString();
                         _dt_motorReadParameterReceived.Rows.Add(dr);
                     }
-                    this.Invoke(new Action(() => { dgv_motorParameter.DataSource = _dt_motorReadParameterReceived; }));
+                    this.Invoke(new Action(() =>
+                    {
+                        dgv_motorParameter.DataSource = _dt_motorReadParameterReceived;
+                        dgv_motorParameter.Refresh();  // 强制刷新
+                    }));
                 }
-
-
             }
+        }
+
+        // 简单方法：使用反射获取Description
+        public string GetDescription( Enum value)
+        {
+            FieldInfo field = value.GetType().GetField(value.ToString());
+
+            if (field != null)
+            {
+                DescriptionAttribute attribute =
+                    field.GetCustomAttribute<DescriptionAttribute>();
+
+                return attribute?.Description ?? value.ToString();
+            }
+
+            return value.ToString();
         }
 
 
@@ -970,6 +1020,7 @@ namespace RobotGaitDesign
             if (string.IsNullOrEmpty(txt_gprw_motorID.Text))
             {
                 BaseFrmControl.ShowErrorMessageBox(this, "需输入需要控制的电机id，多个id可以用【,】分割");
+                return;
             }
 
             List<byte> listId = new List<byte>();
@@ -1021,6 +1072,18 @@ namespace RobotGaitDesign
             str = BitConverter.ToString(sendBuffer[0]).Replace("-", " ");
             _canFDAdapterMain?.Send(sendBuffer);
 
+        }
+
+        private void dgv_motorParameter_Scroll(object sender, ScrollEventArgs e)
+        {
+            if (e.ScrollOrientation == ScrollOrientation.VerticalScroll)
+            {
+                this._dgv_motorParameterPosition[1] = dgv_motorParameter.FirstDisplayedScrollingRowIndex;
+            }
+            else if (e.ScrollOrientation == ScrollOrientation.HorizontalScroll)
+            {
+                this._dgv_motorParameterPosition[0] = dgv_motorParameter.HorizontalScrollingOffset;
+            }
         }
     }
 }

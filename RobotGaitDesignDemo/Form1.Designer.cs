@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.btn_analysis = new DevComponents.DotNetBar.ButtonX();
             this.labelX1 = new DevComponents.DotNetBar.LabelX();
             this.labelX2 = new DevComponents.DotNetBar.LabelX();
@@ -535,7 +535,7 @@
             this.gp_motorRW.Controls.Add(this.btn_gprw_SetMotorParameter);
             this.gp_motorRW.Location = new System.Drawing.Point(201, 177);
             this.gp_motorRW.Name = "gp_motorRW";
-            this.gp_motorRW.Size = new System.Drawing.Size(1656, 815);
+            this.gp_motorRW.Size = new System.Drawing.Size(1759, 815);
             // 
             // 
             // 
@@ -650,7 +650,7 @@
             // 
             this.btn_clearMotorError.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
             this.btn_clearMotorError.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
-            this.btn_clearMotorError.Location = new System.Drawing.Point(735, 124);
+            this.btn_clearMotorError.Location = new System.Drawing.Point(1183, 21);
             this.btn_clearMotorError.Name = "btn_clearMotorError";
             this.btn_clearMotorError.Size = new System.Drawing.Size(204, 59);
             this.btn_clearMotorError.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
@@ -767,7 +767,7 @@
             this.labelX9.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
             this.labelX9.Font = new System.Drawing.Font("宋体", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.labelX9.ForeColor = System.Drawing.Color.Red;
-            this.labelX9.Location = new System.Drawing.Point(1546, -3);
+            this.labelX9.Location = new System.Drawing.Point(1695, 3);
             this.labelX9.Name = "labelX9";
             this.labelX9.Size = new System.Drawing.Size(51, 49);
             this.labelX9.TabIndex = 26;
@@ -819,28 +819,29 @@
             this.dgv_motorParameter.AllowUserToDeleteRows = false;
             this.dgv_motorParameter.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
             this.dgv_motorParameter.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgv_motorParameter.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgv_motorParameter.DefaultCellStyle = dataGridViewCellStyle1;
             this.dgv_motorParameter.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(208)))), ((int)(((byte)(215)))), ((int)(((byte)(229)))));
-            this.dgv_motorParameter.Location = new System.Drawing.Point(971, 101);
+            this.dgv_motorParameter.Location = new System.Drawing.Point(735, 101);
             this.dgv_motorParameter.Name = "dgv_motorParameter";
             this.dgv_motorParameter.RowHeadersVisible = false;
             this.dgv_motorParameter.RowHeadersWidth = 82;
             this.dgv_motorParameter.RowTemplate.Height = 37;
-            this.dgv_motorParameter.Size = new System.Drawing.Size(646, 651);
+            this.dgv_motorParameter.Size = new System.Drawing.Size(991, 651);
             this.dgv_motorParameter.TabIndex = 34;
+            this.dgv_motorParameter.Scroll += new System.Windows.Forms.ScrollEventHandler(this.dgv_motorParameter_Scroll);
             // 
             // btn_gprw_motorParameterRead
             // 
             this.btn_gprw_motorParameterRead.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
             this.btn_gprw_motorParameterRead.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
-            this.btn_gprw_motorParameterRead.Location = new System.Drawing.Point(1196, 17);
+            this.btn_gprw_motorParameterRead.Location = new System.Drawing.Point(1404, 21);
             this.btn_gprw_motorParameterRead.Name = "btn_gprw_motorParameterRead";
             this.btn_gprw_motorParameterRead.Size = new System.Drawing.Size(204, 59);
             this.btn_gprw_motorParameterRead.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
