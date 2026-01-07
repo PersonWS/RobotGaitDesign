@@ -35,9 +35,9 @@ namespace LZMotor
         /// </summary>
         public byte CommunicationTypeByte;
 
-        public byte[] DataBytes { get => _dataBytes;  }
+        public byte[] DataBytes { get => new byte[] { CommunicationTypeByte, UserDefineByte, MotorIDSend, MotorIDReceive }; }
 
-        public ExtendData_ID() { }
+        //public ExtendData_ID() { }
         public ExtendData_ID(byte[] dataByte)
         {
             this._dataBytes = dataByte;

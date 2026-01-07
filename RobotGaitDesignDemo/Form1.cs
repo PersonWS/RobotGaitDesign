@@ -16,17 +16,33 @@ using LogHelper;
 using System.Collections.ObjectModel;
 using LZMotor;
 using System.Diagnostics.SymbolStore;
+using CanFDAdapter;
 namespace RobotGaitDesign
 {
     public partial class Form1 : Office2007Form
     {
         public static readonly ILogEntity log = LogHelper.EasyLogger.GetLoggerInstance_log4Net("demo");
         CanFDAdapter.CanFDAdapterMain _canFDAdapterMain;
+        /// <summary>
+        /// 读取电机主动上报数据的队列
+        /// </summary>
         private Queue<byte[]> _motorMsgReceivedQueue;
         private readonly object _motorMsgReceivedLock = new object();
-        private readonly object _lock = new object();
         Thread _processQueueThread;
         bool _isProcessQueueThreadContiue = false;
+        /// <summary>
+        /// 全局lock
+        /// </summary>
+        private readonly object _lock = new object();
+        /// <summary>
+        /// 读取电机主动上报数据的队列
+        /// </summary>
+        private Queue<LZMotorDataMain> _motorReadParameterReceivedQueue = new Queue<LZMotorDataMain>();
+        private readonly object _motorReadParameterReceivedQueueLock = new object();
+        Thread _motorReadParameterReceivedThread;
+        DataTable _dt_motorReadParameterReceived = new DataTable();
+        bool _isMotorReadParameterReceivedContiue = false;
+
         bool _isFilterByMotorId = false;
         /// <summary>
         /// 只显示电机返回数据
@@ -52,6 +68,26 @@ namespace RobotGaitDesign
             this.EnableGlass = false;
             this.FormBorderStyle = FormBorderStyle.SizableToolWindow;
             _motorMsgReceivedQueue = new Queue<byte[]>();
+            Ini();
+        }
+        private void Ini()
+        {
+
+            foreach (var item in Enum.GetNames(typeof(LZMotor.Enum_RunMode)))
+            {
+                cmb_gprw_motorRunMode.Items.Add(item);
+                cmb_gprw_motorRunMode.SelectedIndex = 0;
+            }
+            foreach (var item in Enum.GetNames(typeof(LZMotor.Enum_MotorParameter)))
+            {
+                cmb_gprw_SetMotorParameter.Items.Add(item);
+                cmb_gprw_SetMotorParameter.SelectedIndex = 0;
+            }
+            _dt_motorReadParameterReceived.Columns.Add("电机id");
+            _dt_motorReadParameterReceived.Columns.Add("功能码");
+            _dt_motorReadParameterReceived.Columns.Add("名称");
+            _dt_motorReadParameterReceived.Columns.Add("当前值");
+
         }
         bool _IsProcessing = false;
         private void btn_analysis_Click(object sender, EventArgs e)
@@ -86,7 +122,6 @@ namespace RobotGaitDesign
                 BaseFrmControl.ShowErrorMessageBox(this, $"{ex.ToString()}");
                 _IsProcessing = false;
             }
-
         }
 
 
@@ -125,13 +160,13 @@ namespace RobotGaitDesign
             {
                 lock (_lock)
                 {
-                    StringBuilder stemp=new StringBuilder();
-                    stemp.Append( _sb_txt_showMessage.ToString().Substring(_sb_txt_showMessage.Length / 2));
+                    StringBuilder stemp = new StringBuilder();
+                    stemp.Append(_sb_txt_showMessage.ToString().Substring(_sb_txt_showMessage.Length / 2));
                     _sb_txt_showMessage = stemp;
                 }
             }
 
-            _sb_txt_showMessage.Append( BaseFrmControl.ShowMessageOnTextBox(this, txt_showMessage, msg, isAppendTimeStamp));
+            _sb_txt_showMessage.Append(BaseFrmControl.ShowMessageOnTextBox(this, txt_showMessage, msg, isAppendTimeStamp));
 
             switch (level)
             {
@@ -159,7 +194,7 @@ namespace RobotGaitDesign
 
         private void ShowMessage_motorAck(string msg)
         {
-            if (_sb_txt_MotorAckData.Length > BaseFrmControl.TextBoxMaxLength*100)
+            if (_sb_txt_MotorAckData.Length > BaseFrmControl.TextBoxMaxLength * 100)
             {
                 lock (_lock)
                 {
@@ -168,7 +203,7 @@ namespace RobotGaitDesign
                     _sb_txt_MotorAckData = stemp;
                 }
             }
-            _sb_txt_MotorAckData.Append( BaseFrmControl.ShowMessageOnTextBox(this, txt_MotorAckData, msg, false, true));
+            _sb_txt_MotorAckData.Append(BaseFrmControl.ShowMessageOnTextBox(this, txt_MotorAckData, msg, false, true));
         }
 
         private void btn_log_Click(object sender, EventArgs e)
@@ -191,7 +226,7 @@ namespace RobotGaitDesign
 
         private void btn_connect_Click(object sender, EventArgs e)
         {
-            int baudRate = 115200;
+            int baudRate = 921600;
             if (_canFDAdapterMain != null)
             {
                 _canFDAdapterMain.DisConnect();
@@ -200,26 +235,28 @@ namespace RobotGaitDesign
             if (cmb_comList.Text.Contains("CH340"))
             {
                 baudRate = 921600;
-                _canFDAdapterEntity = new CanFDAdapter.CanAdapterEntity();
+                _canFDAdapterEntity = new CanFDAdapter.CanAdapterEntity(_comDic[cmb_comList.Text], baudRate);
                 _canFDAdapterEntity.ChipType = CanFDAdapter.CanAdapterTypeEnum.CH340;
                 _canFDAdapterEntity.Description = txt_batchCan.Text;
                 _canFDAdapterEntity.ComPort = _comDic[cmb_comList.Text];
+                _canFDAdapterMain = new CanFDAdapter.CanFDAdapterMain(_canFDAdapterEntity);
             }
             else if (cmb_comList.Text.Contains("USB 串行设备"))
             {
 
-                baudRate = 115200;
-                _canFDAdapterEntity = new CanFDAdapter.CanAdapterEntity();
+                baudRate = 921600;
+                _canFDAdapterEntity = new CanFDAdapter.CanAdapterEntity(_comDic[cmb_comList.Text], baudRate);
                 _canFDAdapterEntity.ChipType = CanFDAdapter.CanAdapterTypeEnum.ch341;
                 _canFDAdapterEntity.Description = txt_batchCan.Text;
                 _canFDAdapterEntity.ComPort = _comDic[cmb_comList.Text];
+                _canFDAdapterMain = new CanFDAdapter.CanFDAdapterMain_BaoFeng(_canFDAdapterEntity);
             }
             else
             {
                 BaseFrmControl.ShowErrorMessageBox(this, "该COM不支持CAN数据收发");
                 return;
             }
-            _canFDAdapterMain = new CanFDAdapter.CanFDAdapterMain(_comDic[cmb_comList.Text], baudRate);
+
             if (_canFDAdapterMain.Connect())
             {
                 _isProcessQueueThreadContiue = true;
@@ -245,7 +282,6 @@ namespace RobotGaitDesign
         {
             lock (_motorMsgReceivedLock)
             {
-
                 _motorMsgReceivedQueue.Enqueue(msg);
 
             }
@@ -290,6 +326,15 @@ namespace RobotGaitDesign
                     {
                         try
                         {
+                            //当界面显示时，识别到是读取的系统参数，则开始处理，丢到对应的队列中
+                            if (_isMotorReadParameterReceivedContiue && item2.ExtendData_ID.CommunicationTypeByte == (byte)Enum_CommunicationType.ReadParameter)
+                            {
+                                lock (_motorReadParameterReceivedQueueLock)
+                                {
+                                    _motorReadParameterReceivedQueue.Enqueue(item2);
+                                }
+                                continue;
+                            }
                             _IsProcessing = true;
                             DataTable dtRet;
                             string ret = LZMotor.DataAnalysisHelper.AnalysisData_ReturnString(item2.ExtendData_ID, item2.Data_Motor, out dtRet);
@@ -366,6 +411,55 @@ namespace RobotGaitDesign
                 {
                     ShowMessage_motorAck($"{sb2.ToString().Substring(0, sb2.ToString().Length - 2)}");
                 }
+
+            }
+        }
+
+
+        private void ProcessReadParameterMessage()
+        {
+            while (gp_motorRW.Visible)
+            {
+                ProcessReadParameterMessageSub();
+                Thread.Sleep(100);
+            }
+        }
+        /// <summary>
+        /// 处理读取到的电机参数
+        /// </summary>
+        private void ProcessReadParameterMessageSub()
+        {
+            List<LZMotorDataMain> recMsg = null;
+            lock (_motorReadParameterReceivedQueueLock)
+            {
+                if (_motorReadParameterReceivedQueue.Count > 0)
+                {
+                    recMsg = _motorReadParameterReceivedQueue.ToList();
+                    _motorReadParameterReceivedQueue.Clear();
+                }
+            }
+            if (recMsg != null)
+            {
+                foreach (var rec in recMsg)
+                {
+                    string functionName = BitConverter.ToString(new byte[] { rec.Data_Motor.DataBytes[1], rec.Data_Motor.DataBytes[0] } ).Replace("-","");
+                    DataRow[] drs = _dt_motorReadParameterReceived.Select($"电机id={rec.ExtendData_ID.MotorIDSend} and 功能码='{functionName}'");
+                    if (drs.Length > 0)
+                    {
+                        drs[0]["当前值"] = BitConverter.ToSingle(rec.Data_Motor.DataBytes, 4);
+                    }
+                    else
+                    {
+                        DataRow dr = _dt_motorReadParameterReceived.NewRow();
+                        dr["电机id"] = rec.ExtendData_ID.MotorIDSend.ToString();
+                        dr["功能码"] = functionName;
+                        dr["名称"] = Enum.GetName(typeof(Enum_MotorParameter), BitConverter.ToInt16(rec.Data_Motor.DataBytes, 0));
+                        dr["当前值"] = BitConverter.ToSingle(rec.Data_Motor.DataBytes, 4);
+                        _dt_motorReadParameterReceived.Rows.Add(dr);
+                    }
+                    this.Invoke(new Action(() => { dgv_motorParameter.DataSource = _dt_motorReadParameterReceived; }));
+                }
+
 
             }
         }
@@ -523,6 +617,410 @@ namespace RobotGaitDesign
             }
             ShowMessage($"保存完成 fileName:{fileName}");
             txt_MotorAckData.Text = "";
+        }
+        bool _IsMouseDown = false;
+        private void gp_motorRW_MouseDown(object sender, MouseEventArgs e)
+        {
+            _IsMouseDown = true;
+            gp_motorRW.Tag = Control.MousePosition;
+        }
+
+        private void gp_motorRW_MouseMove(object sender, MouseEventArgs e)
+        {
+            try
+            {
+                if (_IsMouseDown)
+                {
+                    gp_motorRW.Location = new Point(gp_motorRW.Location.X + Control.MousePosition.X - ((Point)gp_motorRW.Tag).X, gp_motorRW.Location.Y + Control.MousePosition.Y - ((Point)gp_motorRW.Tag).Y);
+                    gp_motorRW.Tag = Control.MousePosition;
+                }
+            }
+            catch (Exception)
+            {
+
+            }
+        }
+
+        private void gp_motorRW_MouseUp(object sender, MouseEventArgs e)
+        {
+            _IsMouseDown = false;
+        }
+
+        private void btn_motorRW_Click(object sender, EventArgs e)
+        {
+            if (_isMotorReadParameterReceivedContiue)
+            {
+                return;
+            }
+            _motorReadParameterReceivedThread = new Thread(ProcessReadParameterMessage);
+            _motorReadParameterReceivedThread.Name = "ProcessReadParameterMessage";
+            _motorReadParameterReceivedThread.IsBackground = true;
+            _motorReadParameterReceivedThread.Start();
+            gp_motorRW.Visible = true;
+            _isMotorReadParameterReceivedContiue = gp_motorRW.Visible;
+            //  gp_motorRW.Location = new Point(10, 160);
+        }
+
+        private void btn_motorEnable_Click(object sender, EventArgs e)
+        {
+
+            if (string.IsNullOrEmpty(txt_gprw_motorID.Text))
+            {
+                BaseFrmControl.ShowErrorMessageBox(this, "需输入需要控制的电机id，多个id可以用【,】分割");
+            }
+
+            List<byte> listId = new List<byte>();
+            foreach (var item in txt_gprw_motorID.Text.Replace("\r", "").Replace("\n", "").Replace(" ", "").Split(','))
+            {
+                byte id;
+                if (byte.TryParse(item, out id))
+                {
+                    listId.Add(id);
+                }
+                else
+                {
+                    ShowMessage($"电机id:{item}错误！", true, Enum_Log4Net_RecordLevel.ERROR);
+                }
+
+            }
+            List<byte[]> sendBufferTemp = LZMotor.LZMotoInteropeMain.W_MotorEnable(listId);//生成发送的buffer
+            List<byte[]> sendBuffer = _canFDAdapterMain?.CanAdapterDataProcess.GenerateSendMotorData(sendBufferTemp);
+            string str = BitConverter.ToString(sendBuffer[0]).Replace("-", " ");
+            _canFDAdapterMain?.Send(sendBuffer);
+        }
+
+        private void btn_motorUnEnable_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(txt_gprw_motorID.Text))
+            {
+                BaseFrmControl.ShowErrorMessageBox(this, "需输入需要控制的电机id，多个id可以用【,】分割");
+            }
+
+            List<byte> listId = new List<byte>();
+            foreach (var item in txt_gprw_motorID.Text.Replace("\r", "").Replace("\n", "").Replace(" ", "").Split(','))
+            {
+                byte id;
+                if (byte.TryParse(item, out id))
+                {
+                    listId.Add(id);
+                }
+                else
+                {
+                    ShowMessage($"电机id:{item}错误！", true, Enum_Log4Net_RecordLevel.ERROR);
+                }
+
+            }
+            List<byte[]> sendBufferTemp = LZMotor.LZMotoInteropeMain.W_MotorDisEnable(listId, false);//生成发送的buffer
+            List<byte[]> sendBuffer = _canFDAdapterMain?.CanAdapterDataProcess.GenerateSendMotorData(sendBufferTemp);
+            string str = BitConverter.ToString(sendBuffer[0]).Replace("-", " ");
+            _canFDAdapterMain?.Send(sendBuffer);
+        }
+
+        private void btn_motorZero_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(txt_gprw_motorID.Text))
+            {
+                BaseFrmControl.ShowErrorMessageBox(this, "需输入需要控制的电机id，多个id可以用【,】分割");
+                return;
+            }
+
+            List<byte> listId = new List<byte>();
+            foreach (var item in txt_gprw_motorID.Text.Replace("\r", "").Replace("\n", "").Replace(" ", "").Split(','))
+            {
+                byte id;
+                if (byte.TryParse(item, out id))
+                {
+                    listId.Add(id);
+                }
+                else
+                {
+                    ShowMessage($"电机id:{item}错误！", true, Enum_Log4Net_RecordLevel.ERROR);
+                }
+
+            }
+            //更新CSP的期望值
+            SaveMotorParameter(Enum_MotorParameter.loc_ref_电机目标角度, (float)0, 0);
+            //设定零位
+            List<byte[]> sendBufferTemp = LZMotor.LZMotoInteropeMain.W_SetMotorZero(listId);//生成发送的buffer
+            List<byte[]> sendBuffer = _canFDAdapterMain?.CanAdapterDataProcess.GenerateSendMotorData(sendBufferTemp);
+            string str = BitConverter.ToString(sendBuffer[0]).Replace("-", " ");
+            _canFDAdapterMain?.Send(sendBuffer);
+        }
+
+        private void btn_gprw_SetMotorParameter_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(txt_gprw_motorID.Text) || string.IsNullOrEmpty(txt_gprw_SetMotorParameter.Text))
+            {
+                BaseFrmControl.ShowErrorMessageBox(this, "需输入需要改变参数的电机id，多个id可以用【,】分割。需要输入参数值");
+                return;
+            }
+            SaveMotorParameter((Enum_MotorParameter)Enum.Parse(typeof(Enum_MotorParameter), cmb_gprw_SetMotorParameter.Text), float.Parse(txt_gprw_SetMotorParameter.Text), 0);
+            /*
+            List<byte> listId = new List<byte>();
+            foreach (var item in txt_gprw_motorID.Text.Replace("\r", "").Replace("\n", "").Replace(" ", "").Split(','))
+            {
+                byte id;
+                if (byte.TryParse(item, out id))
+                {
+                    listId.Add(id);
+                }
+                else
+                {
+                    ShowMessage($"电机id:{item}错误！", true, Enum_Log4Net_RecordLevel.ERROR);
+                }
+
+            }
+            //修改值
+            List<byte[]> sendBufferTemp = LZMotor.LZMotoInteropeMain.W_SetMotorParameter
+                (listId, (Enum_MotorParameter)Enum.Parse(typeof(Enum_MotorParameter), cmb_gprw_SetMotorParameter.Text), float.Parse(txt_gprw_SetMotorParameter.Text));//生成发送的buffer
+            List<byte[]> sendBuffer = _canFDAdapterMain?.CanAdapterDataProcess.GenerateSendMotorData(sendBufferTemp);
+            string str = BitConverter.ToString(sendBuffer[0]).Replace("-", " ");
+            _canFDAdapterMain?.Send(sendBuffer);
+            //保存值
+            sendBufferTemp = LZMotor.LZMotoInteropeMain.W_SetMotorParameterHoldSave
+    (listId, (Enum_MotorParameter)Enum.Parse(typeof(Enum_MotorParameter), cmb_gprw_SetMotorParameter.Text), float.Parse(txt_gprw_SetMotorParameter.Text), 2);//生成发送的buffer
+            sendBuffer = _canFDAdapterMain?.CanAdapterDataProcess.GenerateSendMotorData(sendBufferTemp);
+            str = BitConverter.ToString(sendBuffer[0]).Replace("-", " ");
+            _canFDAdapterMain?.Send(sendBuffer);
+            */
+        }
+
+        private void SaveMotorParameter<T>(Enum_MotorParameter enum_MotorParameter, T parameter, byte userDefine = 0) where T : struct
+        {
+
+            List<byte> listId = new List<byte>();
+            foreach (var item in txt_gprw_motorID.Text.Replace("\r", "").Replace("\n", "").Replace(" ", "").Split(','))
+            {
+                byte id;
+                if (byte.TryParse(item, out id))
+                {
+                    listId.Add(id);
+                }
+                else
+                {
+                    ShowMessage($"电机id:{item}错误！", true, Enum_Log4Net_RecordLevel.ERROR);
+                }
+
+            }
+            //修改值
+            List<byte[]> sendBufferTemp = LZMotor.LZMotoInteropeMain.W_SetMotorParameter
+                (listId, enum_MotorParameter, parameter);//生成发送的buffer
+            List<byte[]> sendBuffer = _canFDAdapterMain?.CanAdapterDataProcess.GenerateSendMotorData(sendBufferTemp);
+            string str = BitConverter.ToString(sendBuffer[0]).Replace("-", " ");
+            _canFDAdapterMain?.Send(sendBuffer);
+            //保存值
+            sendBufferTemp = LZMotor.LZMotoInteropeMain.W_SetMotorParameterHoldSave
+    (listId, enum_MotorParameter, parameter, userDefine);//生成发送的buffer
+            sendBuffer = _canFDAdapterMain?.CanAdapterDataProcess.GenerateSendMotorData(sendBufferTemp);
+            str = BitConverter.ToString(sendBuffer[0]).Replace("-", " ");
+            _canFDAdapterMain?.Send(sendBuffer);
+
+        }
+
+        private void labelX9_Click(object sender, EventArgs e)
+        {
+            gp_motorRW.Visible = false;
+            _isMotorReadParameterReceivedContiue = gp_motorRW.Visible;
+        }
+
+        private void btn_gprw_getAllMotor_Click(object sender, EventArgs e)
+        {
+            if (cmb_idFilter.Items.Count == 0)
+            {
+                BaseFrmControl.ShowErrorMessageBox(this, "当前无id可获取");
+                return;
+            }
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < cmb_idFilter.Items.Count - 1; i++)
+            {
+                sb.Append($"{cmb_idFilter.Items[i]},");
+            }
+            sb.Append($"{cmb_idFilter.Items[cmb_idFilter.Items.Count - 1]}");
+            txt_gprw_motorID.Text = sb.ToString();
+        }
+
+        private void btn_MotorRunModeChange_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(txt_gprw_motorID.Text))
+            {
+                BaseFrmControl.ShowErrorMessageBox(this, "需输入需要改变参数的电机id，多个id可以用【,】分割。需要输入参数值");
+                return;
+            }
+
+            List<byte> listId = new List<byte>();
+            foreach (var item in txt_gprw_motorID.Text.Replace("\r", "").Replace("\n", "").Replace(" ", "").Split(','))
+            {
+                byte id;
+                if (byte.TryParse(item, out id))
+                {
+                    listId.Add(id);
+                }
+                else
+                {
+                    ShowMessage($"电机id:{item}错误！", true, Enum_Log4Net_RecordLevel.ERROR);
+                }
+
+            }
+            //修改值
+            List<byte[]> sendBufferTemp = LZMotor.LZMotoInteropeMain.W_SetMotorParameter
+                (listId, Enum_MotorParameter.run_mode, (byte)Enum.Parse(typeof(Enum_RunMode), cmb_gprw_motorRunMode.Text));//生成发送的buffer
+            List<byte[]> sendBuffer = _canFDAdapterMain?.CanAdapterDataProcess.GenerateSendMotorData(sendBufferTemp);
+            string str = BitConverter.ToString(sendBuffer[0]).Replace("-", " ");
+            _canFDAdapterMain?.Send(sendBuffer);
+        }
+
+        private void btn_gprw_EnableMotorReport_Click(object sender, EventArgs e)
+        {
+
+            if (string.IsNullOrEmpty(txt_gprw_motorID.Text))
+            {
+                BaseFrmControl.ShowErrorMessageBox(this, "需输入需要控制的电机id，多个id可以用【,】分割");
+                return;
+            }
+
+            List<byte> listId = new List<byte>();
+            foreach (var item in txt_gprw_motorID.Text.Replace("\r", "").Replace("\n", "").Replace(" ", "").Split(','))
+            {
+                byte id;
+                if (byte.TryParse(item, out id))
+                {
+                    listId.Add(id);
+                }
+                else
+                {
+                    ShowMessage($"电机id:{item}错误！", true, Enum_Log4Net_RecordLevel.ERROR);
+                }
+
+            }
+            List<byte[]> sendBufferTemp = LZMotor.LZMotoInteropeMain.W_MotorReport(listId, true);//生成发送的buffer
+            List<byte[]> sendBuffer = _canFDAdapterMain?.CanAdapterDataProcess.GenerateSendMotorData(sendBufferTemp);
+            string str = BitConverter.ToString(sendBuffer[0]).Replace("-", " ");
+            _canFDAdapterMain?.Send(sendBuffer);
+        }
+
+        private void btn_gprw_UnEnableMotorReport_Click(object sender, EventArgs e)
+        {
+
+            if (string.IsNullOrEmpty(txt_gprw_motorID.Text))
+            {
+                BaseFrmControl.ShowErrorMessageBox(this, "需输入需要控制的电机id，多个id可以用【,】分割");
+                return;
+            }
+
+            List<byte> listId = new List<byte>();
+            foreach (var item in txt_gprw_motorID.Text.Replace("\r", "").Replace("\n", "").Replace(" ", "").Split(','))
+            {
+                byte id;
+                if (byte.TryParse(item, out id))
+                {
+                    listId.Add(id);
+                }
+                else
+                {
+                    ShowMessage($"电机id:{item}错误！", true, Enum_Log4Net_RecordLevel.ERROR);
+                }
+
+            }
+            List<byte[]> sendBufferTemp = LZMotor.LZMotoInteropeMain.W_MotorReport(listId, false);//生成发送的buffer
+            List<byte[]> sendBuffer = _canFDAdapterMain?.CanAdapterDataProcess.GenerateSendMotorData(sendBufferTemp);
+            string str = BitConverter.ToString(sendBuffer[0]).Replace("-", " ");
+            _canFDAdapterMain?.Send(sendBuffer);
+        }
+
+        private void btn_gprw_SetMotorReportInterval_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(txt_gprw_motorID.Text) || string.IsNullOrEmpty(txt_gprw_SetMotorParameter.Text))
+            {
+                BaseFrmControl.ShowErrorMessageBox(this, "需输入需要改变参数的电机id，多个id可以用【,】分割。需要输入参数值");
+                return;
+            }
+            SaveMotorParameter(Enum_MotorParameter.EPScan_time, (uint)(uint.Parse(txt_gprw_SetMotorParameter.Text)) / 5, 0);
+        }
+
+        private void btn_clearMotorError_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(txt_gprw_motorID.Text))
+            {
+                BaseFrmControl.ShowErrorMessageBox(this, "需输入需要控制的电机id，多个id可以用【,】分割");
+            }
+
+            List<byte> listId = new List<byte>();
+            foreach (var item in txt_gprw_motorID.Text.Replace("\r", "").Replace("\n", "").Replace(" ", "").Split(','))
+            {
+                byte id;
+                if (byte.TryParse(item, out id))
+                {
+                    listId.Add(id);
+                }
+                else
+                {
+                    ShowMessage($"电机id:{item}错误！", true, Enum_Log4Net_RecordLevel.ERROR);
+                }
+
+            }
+            List<byte[]> sendBufferTemp = LZMotor.LZMotoInteropeMain.W_MotorDisEnable(listId, true);//生成发送的buffer
+            List<byte[]> sendBuffer = _canFDAdapterMain?.CanAdapterDataProcess.GenerateSendMotorData(sendBufferTemp);
+            string str = BitConverter.ToString(sendBuffer[0]).Replace("-", " ");
+            _canFDAdapterMain?.Send(sendBuffer);
+
+        }
+
+        private void btn_gprw_motorParameterRead_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(txt_gprw_motorID.Text))
+            {
+                BaseFrmControl.ShowErrorMessageBox(this, "需输入需要控制的电机id，多个id可以用【,】分割");
+            }
+
+            List<byte> listId = new List<byte>();
+            foreach (var item in txt_gprw_motorID.Text.Replace("\r", "").Replace("\n", "").Replace(" ", "").Split(','))
+            {
+                byte id;
+                if (byte.TryParse(item, out id))
+                {
+                    listId.Add(id);
+                }
+                else
+                {
+                    ShowMessage($"电机id:{item}错误！", true, Enum_Log4Net_RecordLevel.ERROR);
+                }
+
+            }
+            //读取7016 loc_ref 电机目标位置
+            List<byte[]> sendBufferTemp = LZMotor.LZMotoInteropeMain.W_ReadMotorParameter(listId, Enum_MotorParameter.loc_ref_电机目标角度);//生成发送的buffer
+            List<byte[]> sendBuffer = _canFDAdapterMain?.CanAdapterDataProcess.GenerateSendMotorData(sendBufferTemp);
+            string str = BitConverter.ToString(sendBuffer[0]).Replace("-", " ");
+            _canFDAdapterMain?.Send(sendBuffer);
+
+            //读取loc_kp
+            sendBufferTemp = LZMotor.LZMotoInteropeMain.W_ReadMotorParameter(listId, Enum_MotorParameter.loc_kp);//生成发送的buffer
+            sendBuffer = _canFDAdapterMain?.CanAdapterDataProcess.GenerateSendMotorData(sendBufferTemp);
+            str = BitConverter.ToString(sendBuffer[0]).Replace("-", " ");
+            _canFDAdapterMain?.Send(sendBuffer);
+            //读取CSP速度限制
+            sendBufferTemp = LZMotor.LZMotoInteropeMain.W_ReadMotorParameter(listId, Enum_MotorParameter.limit_spd_csp速度限制);//生成发送的buffer
+            sendBuffer = _canFDAdapterMain?.CanAdapterDataProcess.GenerateSendMotorData(sendBufferTemp);
+            str = BitConverter.ToString(sendBuffer[0]).Replace("-", " ");
+            _canFDAdapterMain?.Send(sendBuffer);
+
+            //读取电机模式
+            sendBufferTemp = LZMotor.LZMotoInteropeMain.W_ReadMotorParameter(listId, Enum_MotorParameter.run_mode);//生成发送的buffer
+            sendBuffer = _canFDAdapterMain?.CanAdapterDataProcess.GenerateSendMotorData(sendBufferTemp);
+            str = BitConverter.ToString(sendBuffer[0]).Replace("-", " ");
+            _canFDAdapterMain?.Send(sendBuffer);
+
+            //读取电机模式
+            sendBufferTemp = LZMotor.LZMotoInteropeMain.W_ReadMotorParameter(listId, Enum_MotorParameter.drv_fault);//生成发送的buffer
+            sendBuffer = _canFDAdapterMain?.CanAdapterDataProcess.GenerateSendMotorData(sendBufferTemp);
+            str = BitConverter.ToString(sendBuffer[0]).Replace("-", " ");
+            _canFDAdapterMain?.Send(sendBuffer);
+
+            //读取电机模式
+            sendBufferTemp = LZMotor.LZMotoInteropeMain.W_ReadMotorParameter(listId, Enum_MotorParameter.drv_temp);//生成发送的buffer
+            sendBuffer = _canFDAdapterMain?.CanAdapterDataProcess.GenerateSendMotorData(sendBufferTemp);
+            str = BitConverter.ToString(sendBuffer[0]).Replace("-", " ");
+            _canFDAdapterMain?.Send(sendBuffer);
+
         }
     }
 }

@@ -12,7 +12,7 @@ namespace CanFDAdapter
             : base(entity)
         {
         }
-        public override List<byte[]> AnalysisData(byte[] sourceData)
+        public override List<byte[]> AnalysisMotorRetData(byte[] sourceData)
         {
             List<byte[]> retBytes = new List<byte[]>();
             if (sourceData?.Length < 17 || (sourceData[15] != 0X0d || sourceData[16] != 0X0a) || sourceData.Length % 17 != 0)//异常或者粘包的数据
@@ -53,5 +53,19 @@ namespace CanFDAdapter
             }
             return retBytes;
         }
+
+        public override List<byte[]> GenerateSendMotorData(List<byte[]> sourceData)
+        {
+            return null;
+        }
+
+
+
+
+
+
+
+
+
     }
 }

@@ -44,12 +44,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <Compile Include="Enum_MotorParameter.cs" />
+    <Compile Include="MotorCommunicationDataMain.cs" />
     <Compile Include="DataAnalysisHelper.cs" />
     <Compile Include="Enum_CommunicationType.cs" />
+    <Compile Include="Enum_RunMode.cs" />
     <Compile Include="ExtendData_ID.cs" />
     <Compile Include="Data_Motor.cs" />
     <Compile Include="Log.cs" />
+    <Compile Include="LZMotoInteropeMain.cs" />
     <Compile Include="LZMotorDataMain.cs" />
     <Compile Include="MotorAralmInfo1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

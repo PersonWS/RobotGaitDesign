@@ -19,24 +19,39 @@ namespace CanFDAdapter
         bool _isConnected = false;
 
         public event Action<byte[]> MessageReceiveEvent;
-        string _targetCOMPort;
 
         /// <summary>
         /// 接收处理后的信息   bool  1：稳定  0：不稳定  int:公斤数
         /// </summary>
         public event Action<bool, int> ReceivedMessage_Stand;
 
-        int _baudRate = 115200;
+        CanAdapterEntity _canAdapterEntity;
 
+        public CanAdapterEntity CanAdapterEntity { get => _canAdapterEntity; }
+
+
+        CanAdapterDataProcess _canAdapterDataProcess;
+        public CanAdapterDataProcess CanAdapterDataProcess { get => _canAdapterDataProcess; }
         /// <summary>
         /// 构造 地磅连接
         /// </summary>
         /// <param name="targetCOM">使用哪个COM口连接就填哪个 ，例如：COM1 ，则targetCOM="COM1"</param>
         /// <param name="baudRate">波特率，默认9600，无指定值可不传</param>
-        public CanFDAdapterMain(string targetCOM, Int32 baudRate = 9600)
+        public CanFDAdapterMain(CanAdapterEntity canAdapterEntity)
         {
-            this._targetCOMPort = targetCOM;
-            this._baudRate = baudRate;
+            this._canAdapterEntity = canAdapterEntity;
+            switch (canAdapterEntity.ChipType)
+            {
+                case CanAdapterTypeEnum.CH340:
+                    _canAdapterDataProcess = new CanAdapterDataProcess_RobstrideDynamics(canAdapterEntity);
+                    break;
+                case CanAdapterTypeEnum.ch341:
+
+                    _canAdapterDataProcess = new CanAdapterDataProcess_BaoFengFD(canAdapterEntity);
+                    break;
+                default:
+                    break;
+            }
         }
 
         /// <summary>
@@ -50,25 +65,26 @@ namespace CanFDAdapter
             {
                 log.Error(string.Format("{0},{1}", "提示信息：", "当前设备不存在串行端口！"));
                 return false;
-
-
             }
-            else if (!comList.Contains(_targetCOMPort))                //判断串口列表中是否存在目标串行端口
+            else if (!comList.Contains(_canAdapterEntity.ComPort)) //判断串口列表中是否存在目标串行端口
             {
-               log.Error(string.Format("提示信息：当前设备不存在配置为{0}的串行端口或端口已被占用！", _targetCOMPort));
+                log.Error(string.Format("提示信息：当前设备不存在配置为{0}的串行端口或端口已被占用！", _canAdapterEntity.ComPort));
                 return false;
             }
             else
             {
-                _server = new COM_Server(_targetCOMPort, _baudRate);
+                _server = new COM_Server(_canAdapterEntity.ComPort, _canAdapterEntity.ComBaud);
                 _server.ReceivedMessage += Receive;
-                return _server.StartSerialPortMonitor();
+                bool ret = _server.StartSerialPortMonitor();
+                AfterConnect(ret);
+                return ret;
             }
-
         }
 
+        public virtual void AfterConnect(bool isConnectSuccess) { }
+
         /// <summary>
-        /// 发送信息，本项目用不上
+        /// 发送信息
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
@@ -105,10 +121,26 @@ namespace CanFDAdapter
                 default:
                     log.Error(string.Format("COM Send传入类型错误，传入类型：{0}", obj.GetType().ToString().ToLower()));
                     return false;
-
-
             }
             return _server.SendData(sendArray);
+        }
+
+        public int Send(List<byte[]> sendList)
+        {
+            int sendCount = 0;
+            foreach (byte[] send in sendList)
+            {
+                try
+                {
+                    _server.SendData(send);
+                    sendCount += send.Length;
+                }
+                catch (Exception ex)
+                {
+                    Log.log.Error($"sendError , ex:{ex.ToString()}");
+                }
+            }
+            return sendCount;
         }
 
         private void Receive(byte[] b)
@@ -126,6 +158,7 @@ namespace CanFDAdapter
 
             }
         }
+
 
         /// <summary>
         /// 断开COM连接，不用时必须要断开，否则下次就连接不上了

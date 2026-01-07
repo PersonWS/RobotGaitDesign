@@ -51,6 +51,19 @@ namespace LZMotor
         SetParameterUnhold= 0x12,
 
         /// <summary>
+        /// 单个参数写入（掉电保存，写20开头的参数）
+        /// </summary>
+        SetParameterHold = 0x16,
+        /// <summary>
+        /// 单个参数写入（掉电保存，写20开头的参数）
+        /// </summary>
+        SetParameterHold01 = 0x8,
+        /// <summary>
+        /// 单个参数写入（掉电保存，写20开头的参数）
+        /// </summary>
+        SetParameterHold02 = 0x16,
+
+        /// <summary>
         /// 故障反馈帧
         /// </summary>
         FaultFeedback = 0x15,
@@ -59,7 +72,9 @@ namespace LZMotor
         /// <summary>
         /// 电机主动上报帧（0.3.1.0后为该协议）
         /// </summary>
-        MotorInformationFeedbackOrSet = 0x18,
+        MotorReportSet = 0x18,
+
+
 
 
 

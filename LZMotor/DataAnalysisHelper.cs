@@ -13,6 +13,7 @@ namespace LZMotor
         ExtendData_ID id;
         Data_Motor motorData;
         static DataTable _dt_motorAck = new DataTable();
+        static DataTable _dt_motorReadParameter = new DataTable();
         static DataAnalysisHelper()
         {
             _dt_motorAck.Columns.Add("canIdSend");
@@ -61,7 +62,7 @@ namespace LZMotor
         private static List<LZMotorDataMain> AnalysisBytesArrayToCanidAndCandataSub(CanAdapterDataProcess canAdapterDataProcess, byte[] bytes)
         {
             List<LZMotorDataMain> lZMotorDatas = new List<LZMotorDataMain>();
-            List<byte[]> anaBytes = canAdapterDataProcess.AnalysisData(bytes);
+            List<byte[]> anaBytes = canAdapterDataProcess.AnalysisMotorRetData(bytes);
             foreach (var item in anaBytes)
             {
                 //if (bytes.Length != 17)
@@ -135,12 +136,13 @@ namespace LZMotor
                 case Enum_CommunicationType.SetMotorCanID:
                     break;
                 case Enum_CommunicationType.ReadParameter:
+
                     break;
                 case Enum_CommunicationType.SetParameterUnhold:
                     break;
                 case Enum_CommunicationType.FaultFeedback:
                     break;
-                case Enum_CommunicationType.MotorInformationFeedbackOrSet:
+                case Enum_CommunicationType.MotorReportSet:
                     dataTable = AnalysisDataInternal_AckInformation(id, data.DataBytes);
                     break;
                 default:

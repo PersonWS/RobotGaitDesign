@@ -71,18 +71,7 @@ namespace CanFDAdapter
         {
             try
             {
-                //_serialPort.Write(data, 0, data.Length);
-                //查找截止及开始符号
-               // byte[] readBuffer = new byte[] { 0X02, 0X2B, 0X30, 0X30, 0X30, 0X30, 0X38, 0X30, 0X30, 0X31, 0X33, 0X03 };//+000080013
-               //// byte[] readBuffer = new byte[] { 0X02, 0X2B, 0X30, 0X30, 0X30, 0X30, 0X30, 0X30, 0X30, 0X31, 0X42, 0X03 };//+000080013
-               // int start = 0, end = 0;
-               // if (ReceivedMessage != null)
-               // {
-
-               //     Utils.ErrorLog_custom(string.Format("{0},{1}", "接收到的信息 ，接收到原始数据", "", Encoding.UTF8.GetString(readBuffer)));
-               //     ReceivedMessage(readBuffer);
-               // }
-
+                _serialPort.Write(data, 0, data.Length);
                 return true;
             }
             catch (Exception ex)
