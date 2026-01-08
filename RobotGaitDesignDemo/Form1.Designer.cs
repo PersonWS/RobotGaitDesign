@@ -77,6 +77,7 @@
             this.btn_gprw_SetMotorParameter = new DevComponents.DotNetBar.ButtonX();
             this.dgv_motorParameter = new DevComponents.DotNetBar.Controls.DataGridViewX();
             this.btn_gprw_motorParameterRead = new DevComponents.DotNetBar.ButtonX();
+            this.chk_gprw_isParameterHold = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.groupPanel1.SuspendLayout();
             this.groupPanel2.SuspendLayout();
             this.groupPanel3.SuspendLayout();
@@ -512,6 +513,7 @@
             // 
             this.gp_motorRW.CanvasColor = System.Drawing.SystemColors.Control;
             this.gp_motorRW.ColorSchemeStyle = DevComponents.DotNetBar.eDotNetBarStyle.Office2007;
+            this.gp_motorRW.Controls.Add(this.chk_gprw_isParameterHold);
             this.gp_motorRW.Controls.Add(this.btn_gprw_motorParameterRead);
             this.gp_motorRW.Controls.Add(this.dgv_motorParameter);
             this.gp_motorRW.Controls.Add(this.btn_gprw_SetMotorReportInterval);
@@ -575,7 +577,7 @@
             // 
             this.btn_gprw_SetMotorReportInterval.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
             this.btn_gprw_SetMotorReportInterval.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
-            this.btn_gprw_SetMotorReportInterval.Location = new System.Drawing.Point(67, 356);
+            this.btn_gprw_SetMotorReportInterval.Location = new System.Drawing.Point(64, 404);
             this.btn_gprw_SetMotorReportInterval.Name = "btn_gprw_SetMotorReportInterval";
             this.btn_gprw_SetMotorReportInterval.Size = new System.Drawing.Size(204, 123);
             this.btn_gprw_SetMotorReportInterval.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
@@ -600,7 +602,7 @@
             // 
             this.btn_gprw_UnEnableMotorReport.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
             this.btn_gprw_UnEnableMotorReport.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
-            this.btn_gprw_UnEnableMotorReport.Location = new System.Drawing.Point(289, 356);
+            this.btn_gprw_UnEnableMotorReport.Location = new System.Drawing.Point(286, 404);
             this.btn_gprw_UnEnableMotorReport.Name = "btn_gprw_UnEnableMotorReport";
             this.btn_gprw_UnEnableMotorReport.Size = new System.Drawing.Size(204, 123);
             this.btn_gprw_UnEnableMotorReport.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
@@ -624,7 +626,7 @@
             // 
             this.btn_gprw_EnableMotorReport.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
             this.btn_gprw_EnableMotorReport.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
-            this.btn_gprw_EnableMotorReport.Location = new System.Drawing.Point(513, 356);
+            this.btn_gprw_EnableMotorReport.Location = new System.Drawing.Point(510, 404);
             this.btn_gprw_EnableMotorReport.Name = "btn_gprw_EnableMotorReport";
             this.btn_gprw_EnableMotorReport.Size = new System.Drawing.Size(204, 123);
             this.btn_gprw_EnableMotorReport.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
@@ -677,7 +679,7 @@
             this.cmb_gprw_SetMotorParameter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmb_gprw_SetMotorParameter.FormattingEnabled = true;
             this.cmb_gprw_SetMotorParameter.ItemHeight = 29;
-            this.cmb_gprw_SetMotorParameter.Location = new System.Drawing.Point(240, 214);
+            this.cmb_gprw_SetMotorParameter.Location = new System.Drawing.Point(240, 262);
             this.cmb_gprw_SetMotorParameter.Name = "cmb_gprw_SetMotorParameter";
             this.cmb_gprw_SetMotorParameter.Size = new System.Drawing.Size(255, 35);
             this.cmb_gprw_SetMotorParameter.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
@@ -727,7 +729,7 @@
             // 
             // 
             this.labelX7.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.labelX7.Location = new System.Drawing.Point(64, 214);
+            this.labelX7.Location = new System.Drawing.Point(64, 262);
             this.labelX7.Name = "labelX7";
             this.labelX7.Size = new System.Drawing.Size(180, 49);
             this.labelX7.TabIndex = 21;
@@ -781,7 +783,7 @@
             // 
             this.txt_gprw_SetMotorParameter.Border.Class = "TextBoxBorder";
             this.txt_gprw_SetMotorParameter.Border.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.txt_gprw_SetMotorParameter.Location = new System.Drawing.Point(240, 288);
+            this.txt_gprw_SetMotorParameter.Location = new System.Drawing.Point(240, 336);
             this.txt_gprw_SetMotorParameter.Multiline = true;
             this.txt_gprw_SetMotorParameter.Name = "txt_gprw_SetMotorParameter";
             this.txt_gprw_SetMotorParameter.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
@@ -795,7 +797,7 @@
             // 
             // 
             this.labelX8.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.labelX8.Location = new System.Drawing.Point(64, 288);
+            this.labelX8.Location = new System.Drawing.Point(64, 336);
             this.labelX8.Name = "labelX8";
             this.labelX8.Size = new System.Drawing.Size(180, 49);
             this.labelX8.TabIndex = 24;
@@ -807,7 +809,7 @@
             this.btn_gprw_SetMotorParameter.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
             this.btn_gprw_SetMotorParameter.Location = new System.Drawing.Point(513, 214);
             this.btn_gprw_SetMotorParameter.Name = "btn_gprw_SetMotorParameter";
-            this.btn_gprw_SetMotorParameter.Size = new System.Drawing.Size(204, 123);
+            this.btn_gprw_SetMotorParameter.Size = new System.Drawing.Size(204, 171);
             this.btn_gprw_SetMotorParameter.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.btn_gprw_SetMotorParameter.TabIndex = 23;
             this.btn_gprw_SetMotorParameter.Text = "设定电机参数";
@@ -849,6 +851,20 @@
             this.btn_gprw_motorParameterRead.Text = "参数读取";
             this.btn_gprw_motorParameterRead.Click += new System.EventHandler(this.btn_gprw_motorParameterRead_Click);
             // 
+            // chk_gprw_isParameterHold
+            // 
+            this.chk_gprw_isParameterHold.BackColor = System.Drawing.Color.Transparent;
+            // 
+            // 
+            // 
+            this.chk_gprw_isParameterHold.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.chk_gprw_isParameterHold.Location = new System.Drawing.Point(38, 198);
+            this.chk_gprw_isParameterHold.Name = "chk_gprw_isParameterHold";
+            this.chk_gprw_isParameterHold.Size = new System.Drawing.Size(457, 42);
+            this.chk_gprw_isParameterHold.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this.chk_gprw_isParameterHold.TabIndex = 36;
+            this.chk_gprw_isParameterHold.Text = "写入到Hold区域(会导致电机丢失使能)";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(192F, 192F);
@@ -875,6 +891,7 @@
             this.DoubleBuffered = true;
             this.Name = "Form1";
             this.Text = "Form1";
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.Form1_Load);
             this.groupPanel1.ResumeLayout(false);
             this.groupPanel2.ResumeLayout(false);
@@ -935,6 +952,7 @@
         private DevComponents.DotNetBar.ButtonX btn_gprw_SetMotorParameter;
         private DevComponents.DotNetBar.ButtonX btn_gprw_motorParameterRead;
         private DevComponents.DotNetBar.Controls.DataGridViewX dgv_motorParameter;
+        private DevComponents.DotNetBar.Controls.CheckBoxX chk_gprw_isParameterHold;
     }
 }
 

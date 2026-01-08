@@ -6,6 +6,7 @@ using Microsoft.Win32;
 using LogHelper;
 using System.IO.Ports;
 using CanFDAdapter;
+using System.Threading;
 
 namespace CanFDAdapter
 {
@@ -132,7 +133,9 @@ namespace CanFDAdapter
             {
                 try
                 {
-                    _server.SendData(send);
+                  bool ret=  _server.SendData(send);
+                    Thread.Sleep(1);
+                    log.Debug($"COM 发送结果：{ret},发送数据：{BitConverter.ToString(send)}");
                     sendCount += send.Length;
                 }
                 catch (Exception ex)

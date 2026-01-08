@@ -43,7 +43,7 @@ namespace RobotGaitDesign
         Thread _motorReadParameterReceivedThread;
         DataTable _dt_motorReadParameterReceived = new DataTable();
         bool _isMotorReadParameterReceivedContiue = false;
-        int[] _dgv_motorParameterPosition = new int[2]; 
+        int[] _dgv_motorParameterPosition = new int[2];
 
         bool _isFilterByMotorId = false;
         /// <summary>
@@ -445,15 +445,15 @@ namespace RobotGaitDesign
             {
                 foreach (var rec in recMsg)
                 {
-                    string functionName = BitConverter.ToString(new byte[] { rec.Data_Motor.DataBytes[1], rec.Data_Motor.DataBytes[0] } ).Replace("-","");
-                    DataRow[] drs = _dt_motorReadParameterReceived.Select($"电机id={rec.ExtendData_ID.MotorIDSend} and 功能码='{functionName}'");
+                    string functionName = BitConverter.ToString(new byte[] { rec.Data_Motor.DataBytes[1], rec.Data_Motor.DataBytes[0] }).Replace("-", "");
+                    DataRow[] drs = _dt_motorReadParameterReceived.Select($"电机id='{rec.ExtendData_ID.MotorIDSend}' and 功能码='{functionName}'");
                     Enum_MotorParameter enum_MotorParameter = (Enum_MotorParameter)BitConverter.ToInt16(rec.Data_Motor.DataBytes, 0);
-                    object value = null ;
+                    object value = null;
                     string scription = GetDescription(enum_MotorParameter);
                     switch (scription)
                     {
                         case "uint8":
-                            value= rec.Data_Motor.DataBytes[4];
+                            value = rec.Data_Motor.DataBytes[4];
                             break;
                         case "int8":
                             value = rec.Data_Motor.DataBytes[4];
@@ -499,7 +499,7 @@ namespace RobotGaitDesign
         }
 
         // 简单方法：使用反射获取Description
-        public string GetDescription( Enum value)
+        public string GetDescription(Enum value)
         {
             FieldInfo field = value.GetType().GetField(value.ToString());
 
@@ -717,6 +717,7 @@ namespace RobotGaitDesign
             if (string.IsNullOrEmpty(txt_gprw_motorID.Text))
             {
                 BaseFrmControl.ShowErrorMessageBox(this, "需输入需要控制的电机id，多个id可以用【,】分割");
+                return;
             }
 
             List<byte> listId = new List<byte>();
@@ -744,6 +745,7 @@ namespace RobotGaitDesign
             if (string.IsNullOrEmpty(txt_gprw_motorID.Text))
             {
                 BaseFrmControl.ShowErrorMessageBox(this, "需输入需要控制的电机id，多个id可以用【,】分割");
+                return;
             }
 
             List<byte> listId = new List<byte>();
@@ -789,7 +791,7 @@ namespace RobotGaitDesign
 
             }
             //更新CSP的期望值
-            SaveMotorParameter(Enum_MotorParameter.loc_ref_电机目标角度, (float)0, 0);
+            SaveMotorParameter(Enum_MotorParameter.loc_ref_电机目标角度, (float)0, 0, false);
             //设定零位
             List<byte[]> sendBufferTemp = LZMotor.LZMotoInteropeMain.W_SetMotorZero(listId);//生成发送的buffer
             List<byte[]> sendBuffer = _canFDAdapterMain?.CanAdapterDataProcess.GenerateSendMotorData(sendBufferTemp);
@@ -804,7 +806,7 @@ namespace RobotGaitDesign
                 BaseFrmControl.ShowErrorMessageBox(this, "需输入需要改变参数的电机id，多个id可以用【,】分割。需要输入参数值");
                 return;
             }
-            SaveMotorParameter((Enum_MotorParameter)Enum.Parse(typeof(Enum_MotorParameter), cmb_gprw_SetMotorParameter.Text), float.Parse(txt_gprw_SetMotorParameter.Text), 0);
+            SaveMotorParameter((Enum_MotorParameter)Enum.Parse(typeof(Enum_MotorParameter), cmb_gprw_SetMotorParameter.Text), float.Parse(txt_gprw_SetMotorParameter.Text), 0,chk_gprw_isParameterHold.Checked);
             /*
             List<byte> listId = new List<byte>();
             foreach (var item in txt_gprw_motorID.Text.Replace("\r", "").Replace("\n", "").Replace(" ", "").Split(','))
@@ -835,7 +837,7 @@ namespace RobotGaitDesign
             */
         }
 
-        private void SaveMotorParameter<T>(Enum_MotorParameter enum_MotorParameter, T parameter, byte userDefine = 0) where T : struct
+        private void SaveMotorParameter<T>(Enum_MotorParameter enum_MotorParameter, T parameter, byte userDefine = 0, bool isNeedHod = true) where T : struct
         {
 
             List<byte> listId = new List<byte>();
@@ -858,12 +860,16 @@ namespace RobotGaitDesign
             List<byte[]> sendBuffer = _canFDAdapterMain?.CanAdapterDataProcess.GenerateSendMotorData(sendBufferTemp);
             string str = BitConverter.ToString(sendBuffer[0]).Replace("-", " ");
             _canFDAdapterMain?.Send(sendBuffer);
-            //保存值
-            sendBufferTemp = LZMotor.LZMotoInteropeMain.W_SetMotorParameterHoldSave
-    (listId, enum_MotorParameter, parameter, userDefine);//生成发送的buffer
-            sendBuffer = _canFDAdapterMain?.CanAdapterDataProcess.GenerateSendMotorData(sendBufferTemp);
-            str = BitConverter.ToString(sendBuffer[0]).Replace("-", " ");
-            _canFDAdapterMain?.Send(sendBuffer);
+            if (isNeedHod)
+            {
+                //保存值
+                sendBufferTemp = LZMotor.LZMotoInteropeMain.W_SetMotorParameterHoldSave
+        (listId, enum_MotorParameter, parameter, userDefine);//生成发送的buffer
+                sendBuffer = _canFDAdapterMain?.CanAdapterDataProcess.GenerateSendMotorData(sendBufferTemp);
+                str = BitConverter.ToString(sendBuffer[0]).Replace("-", " ");
+                _canFDAdapterMain?.Send(sendBuffer);
+            }
+
 
         }
 
@@ -984,7 +990,7 @@ namespace RobotGaitDesign
                 BaseFrmControl.ShowErrorMessageBox(this, "需输入需要改变参数的电机id，多个id可以用【,】分割。需要输入参数值");
                 return;
             }
-            SaveMotorParameter(Enum_MotorParameter.EPScan_time, (uint)(uint.Parse(txt_gprw_SetMotorParameter.Text)) / 5, 0);
+            SaveMotorParameter(Enum_MotorParameter.EPScan_time, (uint)(uint.Parse(txt_gprw_SetMotorParameter.Text)) / 5, 0, false);
         }
 
         private void btn_clearMotorError_Click(object sender, EventArgs e)
@@ -992,6 +998,7 @@ namespace RobotGaitDesign
             if (string.IsNullOrEmpty(txt_gprw_motorID.Text))
             {
                 BaseFrmControl.ShowErrorMessageBox(this, "需输入需要控制的电机id，多个id可以用【,】分割");
+                return ;
             }
 
             List<byte> listId = new List<byte>();

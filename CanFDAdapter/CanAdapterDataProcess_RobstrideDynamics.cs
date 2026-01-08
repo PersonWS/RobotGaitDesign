@@ -56,6 +56,28 @@ namespace CanFDAdapter
 
         public override List<byte[]> GenerateSendMotorData(List<byte[]> sourceData)
         {
+            List<byte[]> bytes = new List<byte[]>();
+            foreach (byte[] item in sourceData)
+            {
+                string str = BitConverter.ToString(item);
+                byte[] temp = new byte[17];
+                temp[0] = 0x41;
+                temp[1] = 0x54;
+                //转换前4个
+                UInt32 id1 =( BitConverter.ToUInt32(new byte[] { item[3], item[2], item[1], item[0] }, 0) << 3 )+ 4;
+                byte[] tempid = BitConverter.GetBytes(id1);
+                temp[2] = tempid[3];
+                temp[3] = tempid[2];
+                temp[4] = tempid[1];
+                temp[5] = tempid[0];
+                //Array.Copy(item, 0, temp, 1, 4);//拷贝拓展信息
+                Array.Copy(item, 4, temp, 6, 9);//拷贝data信息
+                temp[15] = 0x0d;
+                temp[16] = 0x0a;
+                bytes.Add(temp);
+                string str2=BitConverter.ToString(temp);
+            }
+            return bytes;
             return null;
         }
 
