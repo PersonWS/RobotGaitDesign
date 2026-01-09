@@ -26,6 +26,7 @@ namespace CanFDAdapter
 
         int _baudRate = 9600;
 
+        private static readonly object _lock = new object();
 
         public COM_Server(string targetCOMPort, Int32 baudRate = 115200)
         {
@@ -91,22 +92,26 @@ namespace CanFDAdapter
         {
             try
             {
-                System.Threading.Thread.Sleep(100);
+
                 //Comm.BytesToRead中为要读入的字节长度
-                int len = _serialPort.BytesToRead;
-                Byte[] readBuffer = new Byte[len];
-
-                _serialPort.Read(readBuffer, 0, len); //将数据读入缓存
-                log.Debug($"原始数据：{BitConverter.ToString(readBuffer)}");
-                if (ReceivedMessage != null)
+                lock (_lock)
                 {
+                    int len = _serialPort.BytesToRead;
+                    Byte[] readBuffer = new Byte[len];
 
-                    //log.Debug(string.Format("{0},{1}", "接收到的信息 ，处理后的信息：", "", Encoding.UTF8.GetString(readBuffer)));
-                    ReceivedMessage(readBuffer);
+                    _serialPort.Read(readBuffer, 0, len); //将数据读入缓存
+                    log.Debug($"原始数据：{BitConverter.ToString(readBuffer)}");
+                    if (ReceivedMessage != null)
+                    {
+
+                        //log.Debug(string.Format("{0},{1}", "接收到的信息 ，处理后的信息：", "", Encoding.UTF8.GetString(readBuffer)));
+                        ReceivedMessage(readBuffer);
+                    }
+                    ////处理readBuffer中的数据，自定义处理过程
+                    //string msg = Encoding.UTF8.GetString(readBuffer, 0, len); //获取出入库产品编号
+                    //log.Debug(string.Format("{0},{1}", "接收到的原始信息", msg));
                 }
-                ////处理readBuffer中的数据，自定义处理过程
-                //string msg = Encoding.UTF8.GetString(readBuffer, 0, len); //获取出入库产品编号
-                //log.Debug(string.Format("{0},{1}", "接收到的原始信息", msg));
+                System.Threading.Thread.Sleep(10);
             }
             catch (Exception ex)
             {
@@ -176,9 +181,9 @@ namespace CanFDAdapter
             return list;
         }
 
-        public static Dictionary<string , string > GetComPortsWithNames()
+        public static Dictionary<string, string> GetComPortsWithNames()
         {
-            var comPorts = new Dictionary<string , string >();
+            var comPorts = new Dictionary<string, string>();
 
             try
             {
@@ -189,10 +194,10 @@ namespace CanFDAdapter
                 foreach (ManagementObject queryObj in searcher.Get())
                 {
                     string portName = queryObj["Caption"]?.ToString();
-                    portName = portName.Substring(portName.IndexOf('(')+1, portName.LastIndexOf(')')- portName.IndexOf('(')-1);
+                    portName = portName.Substring(portName.IndexOf('(') + 1, portName.LastIndexOf(')') - portName.IndexOf('(') - 1);
                     string description = queryObj["Caption"]?.ToString() ??
                                        queryObj["DeviceID"]?.ToString() ??
-                                       "Serial Device"; 
+                                       "Serial Device";
 
                     if (!string.IsNullOrEmpty(description))
                     {

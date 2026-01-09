@@ -13,6 +13,7 @@ namespace CanFDAdapter
     public class CanFDAdapterMain
     {
         public static readonly ILogEntity log = LogHelper.EasyLogger.GetLoggerInstance_log4Net("CanFDAdapterMain");
+        protected static readonly object _lock = new object();
         /// <summary>
         /// 服务器
         /// </summary>
@@ -20,12 +21,6 @@ namespace CanFDAdapter
         bool _isConnected = false;
 
         public event Action<byte[]> MessageReceiveEvent;
-
-        /// <summary>
-        /// 接收处理后的信息   bool  1：稳定  0：不稳定  int:公斤数
-        /// </summary>
-        public event Action<bool, int> ReceivedMessage_Stand;
-
         CanAdapterEntity _canAdapterEntity;
 
         public CanAdapterEntity CanAdapterEntity { get => _canAdapterEntity; }
@@ -33,6 +28,10 @@ namespace CanFDAdapter
 
         CanAdapterDataProcess _canAdapterDataProcess;
         public CanAdapterDataProcess CanAdapterDataProcess { get => _canAdapterDataProcess; }
+        /// <summary>
+        /// 用于缓存没读完的数据
+        /// </summary>
+        protected List<byte> _buffer= new List<byte>();
         /// <summary>
         /// 构造 地磅连接
         /// </summary>
@@ -146,20 +145,15 @@ namespace CanFDAdapter
             return sendCount;
         }
 
+        protected virtual byte[] BeforeMessageReceiveEventInvoke(byte[] b)
+        {
+            return b;
+        }
+
+
         private void Receive(byte[] b)
         {
-            if (MessageReceiveEvent != null)
-            {
-                MessageReceiveEvent(b);
-            }
-            if (ReceivedMessage_Stand != null)
-            {
-                bool isStable = false;
-                int weight = 0;
-                //ReceiveMessageProcess(b, out isStable, out weight);
-                //ReceivedMessage_Stand(isStable, weight);
-
-            }
+                MessageReceiveEvent?.Invoke(BeforeMessageReceiveEventInvoke(b));
         }
 
 

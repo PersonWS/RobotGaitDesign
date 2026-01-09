@@ -50,6 +50,7 @@
     <Compile Include="CanAdapterEntity.cs" />
     <Compile Include="CanAdapterTypeEnum.cs" />
     <Compile Include="CanFDAdapterMain_BaoFeng.cs" />
+    <Compile Include="CanFDAdapterMain_RobstrideDynamics.cs" />
     <Compile Include="Class1.cs" />
     <Compile Include="CanAdapterDataProcess_BaoFengFD.cs" />
     <Compile Include="COM_Server.cs" />

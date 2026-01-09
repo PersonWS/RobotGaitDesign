@@ -15,7 +15,7 @@ namespace FormSet
         public static Color _color_OFF = Color.DimGray;
         public static Color _color_ERROR = Color.Red;
         public static Color _color_Warn = Color.Yellow;
-        public static int TextBoxMaxLength = 1048576;
+        public static int TextBoxMaxLength = 512000;// 1048576;
         static BaseFrmControl()
         {
             MessageBoxEx.EnableGlass = false;
@@ -72,10 +72,14 @@ namespace FormSet
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        public static void KeyPressWithDigital(Form f, object sender, KeyPressEventArgs e)
+        public static void KeyPressWithDigital(Form f, object sender, KeyPressEventArgs e, List<char> exceptionChar = null)
         {
             if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
             {
+                if (exceptionChar != null && exceptionChar.Contains(e.KeyChar))
+                {
+                    return;
+                }
                 e.Handled = true;
                 ShowDefalutMessageBox(f, "只能输入数字");
             }

@@ -45,7 +45,7 @@ namespace LZMotor
         {
             if (motorIds == null || motorIds.Count == 0)
             {
-                Log.log.Error($"MC_MotorEnable,motorIds is null or empty");
+                Log.log.Error($"W_MotorDisEnable,motorIds is null or empty");
                 return null;
             }
             List<ExtendData_ID> id = W_GenerateSendBytesByCommunicationType(motorIds, (byte)Enum_CommunicationType.MotorDisable);
@@ -77,7 +77,7 @@ namespace LZMotor
         {
             if (motorIds == null || motorIds.Count == 0)
             {
-                Log.log.Error($"MC_MotorEnable,motorIds is null or empty");
+                Log.log.Error($"W_SetMotorZero,motorIds is null or empty");
                 return null;
             }
             List<ExtendData_ID> id = W_GenerateSendBytesByCommunicationType(motorIds, (byte)Enum_CommunicationType.SetMotorZero);
@@ -90,6 +90,25 @@ namespace LZMotor
 
             }
             return W_GenerateSendBytes(mc);
+        }
+        /// <summary>
+        /// 设置电机id
+        /// </summary>
+        /// <param name="motorIds"></param>
+        /// <returns></returns>
+        public static List<byte[]> W_MotorEnable(List<byte> motorIds,byte destinationID)
+        {
+            if (motorIds == null || motorIds.Count == 0)
+            {
+                Log.log.Error($"W_MotorEnable,motorIds is null or empty");
+                return null;
+            }
+            List<ExtendData_ID> id = W_GenerateSendBytesByCommunicationType(motorIds, (byte)Enum_CommunicationType.SetMotorCanID);
+            foreach (var item in id)
+            {
+                item.UserDefineByte = destinationID;
+            }
+            return W_GenerateSendBytes(id);
         }
 
         /// <summary>
@@ -123,7 +142,7 @@ namespace LZMotor
         /// <param name="parameter"></param>
         /// <param name="userDefine">用户自定义字段</param>
         /// <returns></returns>
-        public static List<byte[]> W_SetMotorParameter<T>(List<byte> motorIds, Enum_MotorParameter enum_MotorParameter, T parameter, byte userDefine = 0) where T : struct
+        public static List<byte[]> W_SetMotorParameter<T>(List<byte> motorIds, Enum_MotorParameter enum_MotorParameter, T parameter, byte userDefine = 0)
         {
             if (motorIds == null || motorIds.Count == 0)
             {
@@ -151,7 +170,7 @@ namespace LZMotor
         /// <param name="parameter"></param>
         /// <param name="userDefine"></param>
         /// <returns></returns>
-        public static List<byte[]> W_SetMotorParameterHoldSave<T>(List<byte> motorIds, Enum_MotorParameter enum_MotorParameter, T parameter, byte userDefine = 0) where T : struct
+        public static List<byte[]> W_SetMotorParameterHoldSave<T>(List<byte> motorIds, Enum_MotorParameter enum_MotorParameter, T parameter, byte userDefine = 0) 
         {
             if (motorIds == null || motorIds.Count == 0)
             {
@@ -171,7 +190,7 @@ namespace LZMotor
             }
             return W_GenerateSendBytes(mc);
         }
-        private static byte[] ConvertToBytes<T>(T value) where T : struct
+        private static byte[] ConvertToBytes<T>(T value)
         {
             // 根据类型大小创建字节数组
             //int size = System.Runtime.InteropServices.Marshal.SizeOf(typeof(T));
