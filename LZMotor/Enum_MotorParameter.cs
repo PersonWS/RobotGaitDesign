@@ -76,7 +76,10 @@ namespace LZMotor
         /// 零点标志位，0 代表0-2π,1 代表-π-π
         /// </summary>
         [Description("uint8")]
-        zero_sta零位状态 = 0x7029
+        zero_sta零位状态 = 0x7029,
+
+        [Description("float")]
+        add_offset零位偏置 = 0x702B
 
     }
     public class MotorParameterValueProcess
@@ -117,7 +120,7 @@ namespace LZMotor
 
         public static T GetRealMotorParameterTypeByEnumDescription<T>(Enum_MotorParameter enum_MotorParameter, string inputValue)
         {
-            T value=default(T) ;
+            T value = default(T);
             string description = GetDescription(enum_MotorParameter);
             inputValue = inputValue.Trim().Replace("\r", "").Replace("\n", "").Replace(" ", "");
             switch (description)

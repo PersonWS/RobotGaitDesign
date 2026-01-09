@@ -1001,12 +1001,17 @@ namespace RobotGaitDesign
                 BaseFrmControl.ShowErrorMessageBox(this, "调试器未连接");
                 return;
             }
-            if (string.IsNullOrEmpty(txt_gprw_motorID.Text) || string.IsNullOrEmpty(txt_gprw_SetMotorParameter.Text))
+            if (string.IsNullOrEmpty(txt_gprw_motorID.Text))
             {
-                BaseFrmControl.ShowErrorMessageBox(this, "需输入需要改变参数的电机id，多个id可以用【,】分割。需要输入参数值");
+                BaseFrmControl.ShowErrorMessageBox(this, "需输入需要改变参数的电机id，多个id可以用【,】分割。");
                 return;
             }
-            SaveMotorParameter(Enum_MotorParameter.EPScan_time, (uint)(uint.Parse(txt_gprw_SetMotorParameter.Text)) / 5, 0, false);
+            if (string.IsNullOrEmpty(txt_gprw_motorReprotInterval.Text))
+            {
+                BaseFrmControl.ShowErrorMessageBox(this, "需要输入上报间隔的值");
+                return;
+            }
+            SaveMotorParameter(Enum_MotorParameter.EPScan_time, (uint)(uint.Parse(txt_gprw_motorReprotInterval.Text)) / 5, 0, false);
         }
 
         private void btn_clearMotorError_Click(object sender, EventArgs e)
@@ -1127,6 +1132,12 @@ namespace RobotGaitDesign
             str = BitConverter.ToString(sendBuffer?[0]).Replace("-", " ");
             _canFDAdapterMain?.Send(sendBuffer);
 
+            //读取零位偏置
+            sendBufferTemp = LZMotor.LZMotoInteropeMain.W_ReadMotorParameter(listId, Enum_MotorParameter.add_offset零位偏置);//生成发送的buffer
+            sendBuffer = _canFDAdapterMain?.CanAdapterDataProcess.GenerateSendMotorData(sendBufferTemp);
+            str = BitConverter.ToString(sendBuffer?[0]).Replace("-", " ");
+            _canFDAdapterMain?.Send(sendBuffer);
+
         }
 
         private void dgv_motorParameter_Scroll(object sender, ScrollEventArgs e)
@@ -1196,6 +1207,7 @@ namespace RobotGaitDesign
                 BaseFrmControl.ShowErrorMessageBox(this, "正在搜索电机中，请稍后");
                 return;
             }
+            ShowMessage("开始搜索1-127号电机是否存在..");
             _isScanner = true;
             Task.Run(() =>
             {
@@ -1211,8 +1223,9 @@ namespace RobotGaitDesign
                         List<byte[]> sendBuffer = _canFDAdapterMain?.CanAdapterDataProcess.GenerateSendMotorData(sendByte);
                         string str = BitConverter.ToString(sendBuffer[0]).Replace("-", " ");
                         _canFDAdapterMain?.Send(sendBuffer);
-                        Thread.Sleep(2);
+                        Thread.Sleep(5);
                     }
+                    ShowMessage("电机轮询完成！");
                 }
                 catch (Exception ex)
                 {
@@ -1224,6 +1237,40 @@ namespace RobotGaitDesign
             });
         }
 
+        private void btn_gprw_motorZeroOffset_Click(object sender, EventArgs e)
+        {
+            if (_canFDAdapterMain == null)
+            {
+                BaseFrmControl.ShowErrorMessageBox(this, "调试器未连接");
+                return;
+            }
+            if (string.IsNullOrEmpty(txt_gprw_motorID.Text))
+            {
+                BaseFrmControl.ShowErrorMessageBox(this, "需输入需要改变参数的电机id。");
+                return;
+            }
+            if (string.IsNullOrEmpty(txt_gprw_motorZeroOffset.Text))
+            {
+                BaseFrmControl.ShowErrorMessageBox(this, "需要输入参数值");
+                return;
+            }
+            if (txt_gprw_motorID.Text.Split(',').Length > 1)
+            {
+                BaseFrmControl.ShowErrorMessageBox(this, "只允许同时修改1台设备");
+                return;
+            }
+            object value = MotorParameterValueProcess.GetRealMotorParameterTypeByEnumDescription<object>(Enum_MotorParameter.add_offset零位偏置, txt_gprw_motorZeroOffset.Text);
+            if (!chk_gprw_motorZeroOffsetProfessional.Checked&&( (float)value<-5|| (float)value >5))
+            {
+                BaseFrmControl.ShowErrorMessageBox(this, "允许修改的角度范围为-5到5度");
+                return;
+            }
+            SaveMotorParameter(Enum_MotorParameter.add_offset零位偏置, (float)((float)value / 114.5916), 0, chk_gprw_isParameterHold.Checked);
+        }
 
+        private void txt_gprw_motorZeroOffset_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            BaseFrmControl.KeyPressWithDigital(this, sender, e, new List<char>() { '.' });
+        }
     }
 }

@@ -34,7 +34,7 @@ namespace CanFDAdapter
                 {
                     if (_buffer[i] == 65 && _buffer[i+1] == 84)//检查报文头部
                     {
-                        if (_buffer.Count - i > 17)
+                        if (_buffer.Count - i > 16)
                         {
                             send = _buffer.Skip(i).Take(((_buffer.Count - i ) /17) * 17).ToArray();//切割出整段报文
                             _buffer= _buffer.Skip(i+send.Length).Take(_buffer.Count-send.Length-i).ToList();

@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
             this.btn_analysis = new DevComponents.DotNetBar.ButtonX();
             this.labelX1 = new DevComponents.DotNetBar.LabelX();
             this.labelX2 = new DevComponents.DotNetBar.LabelX();
@@ -87,6 +87,10 @@
             this.dgv_motorParameter = new DevComponents.DotNetBar.Controls.DataGridViewX();
             this.labelX12 = new DevComponents.DotNetBar.LabelX();
             this.txt_gprw_motorReprotInterval = new DevComponents.DotNetBar.Controls.TextBoxX();
+            this.labelX13 = new DevComponents.DotNetBar.LabelX();
+            this.txt_gprw_motorZeroOffset = new DevComponents.DotNetBar.Controls.TextBoxX();
+            this.btn_gprw_motorZeroOffset = new DevComponents.DotNetBar.ButtonX();
+            this.chk_gprw_motorZeroOffsetProfessional = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.groupPanel1.SuspendLayout();
             this.groupPanel2.SuspendLayout();
             this.groupPanel3.SuspendLayout();
@@ -549,6 +553,10 @@
             this.gp_motorRW.AutoScroll = true;
             this.gp_motorRW.CanvasColor = System.Drawing.SystemColors.Control;
             this.gp_motorRW.ColorSchemeStyle = DevComponents.DotNetBar.eDotNetBarStyle.Office2007;
+            this.gp_motorRW.Controls.Add(this.labelX13);
+            this.gp_motorRW.Controls.Add(this.chk_gprw_motorZeroOffsetProfessional);
+            this.gp_motorRW.Controls.Add(this.btn_gprw_motorZeroOffset);
+            this.gp_motorRW.Controls.Add(this.txt_gprw_motorZeroOffset);
             this.gp_motorRW.Controls.Add(this.txt_gprw_motorReprotInterval);
             this.gp_motorRW.Controls.Add(this.labelX12);
             this.gp_motorRW.Controls.Add(this.dgv_motorParameter);
@@ -579,7 +587,7 @@
             this.gp_motorRW.Controls.Add(this.txt_gprw_SetMotorParameter);
             this.gp_motorRW.Controls.Add(this.labelX8);
             this.gp_motorRW.Controls.Add(this.btn_gprw_SetMotorParameter);
-            this.gp_motorRW.Location = new System.Drawing.Point(200, 176);
+            this.gp_motorRW.Location = new System.Drawing.Point(200, 200);
             this.gp_motorRW.Margin = new System.Windows.Forms.Padding(4);
             this.gp_motorRW.Name = "gp_motorRW";
             this.gp_motorRW.Size = new System.Drawing.Size(1760, 816);
@@ -612,7 +620,7 @@
             // 
             this.gp_motorRW.StyleMouseOver.CornerType = DevComponents.DotNetBar.eCornerType.Square;
             this.gp_motorRW.TabIndex = 34;
-            this.gp_motorRW.Text = "groupPanel4";
+            this.gp_motorRW.Text = "电机批量控制面板";
             this.gp_motorRW.Visible = false;
             this.gp_motorRW.MouseDown += new System.Windows.Forms.MouseEventHandler(this.gp_motorRW_MouseDown);
             this.gp_motorRW.MouseMove += new System.Windows.Forms.MouseEventHandler(this.gp_motorRW_MouseMove);
@@ -1013,14 +1021,14 @@
             this.dgv_motorParameter.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCellsExceptHeaders;
             this.dgv_motorParameter.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.dgv_motorParameter.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgv_motorParameter.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle6.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgv_motorParameter.DefaultCellStyle = dataGridViewCellStyle6;
             this.dgv_motorParameter.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(208)))), ((int)(((byte)(215)))), ((int)(((byte)(229)))));
             this.dgv_motorParameter.Location = new System.Drawing.Point(754, 134);
             this.dgv_motorParameter.Name = "dgv_motorParameter";
@@ -1057,14 +1065,73 @@
             this.txt_gprw_motorReprotInterval.Name = "txt_gprw_motorReprotInterval";
             this.txt_gprw_motorReprotInterval.Size = new System.Drawing.Size(186, 48);
             this.txt_gprw_motorReprotInterval.TabIndex = 46;
+            this.txt_gprw_motorReprotInterval.Text = "200";
             this.txt_gprw_motorReprotInterval.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxX1_KeyPress);
+            // 
+            // labelX13
+            // 
+            this.labelX13.BackColor = System.Drawing.Color.Transparent;
+            // 
+            // 
+            // 
+            this.labelX13.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.labelX13.ForeColor = System.Drawing.Color.Red;
+            this.labelX13.Location = new System.Drawing.Point(137, 642);
+            this.labelX13.Margin = new System.Windows.Forms.Padding(4);
+            this.labelX13.Name = "labelX13";
+            this.labelX13.Size = new System.Drawing.Size(199, 48);
+            this.labelX13.TabIndex = 47;
+            this.labelX13.Text = "零位偏置[谨慎]:";
+            // 
+            // txt_gprw_motorZeroOffset
+            // 
+            // 
+            // 
+            // 
+            this.txt_gprw_motorZeroOffset.Border.Class = "TextBoxBorder";
+            this.txt_gprw_motorZeroOffset.Border.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.txt_gprw_motorZeroOffset.Location = new System.Drawing.Point(332, 642);
+            this.txt_gprw_motorZeroOffset.Margin = new System.Windows.Forms.Padding(4);
+            this.txt_gprw_motorZeroOffset.Multiline = true;
+            this.txt_gprw_motorZeroOffset.Name = "txt_gprw_motorZeroOffset";
+            this.txt_gprw_motorZeroOffset.Size = new System.Drawing.Size(162, 48);
+            this.txt_gprw_motorZeroOffset.TabIndex = 48;
+            this.txt_gprw_motorZeroOffset.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txt_gprw_motorZeroOffset_KeyPress);
+            // 
+            // btn_gprw_motorZeroOffset
+            // 
+            this.btn_gprw_motorZeroOffset.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
+            this.btn_gprw_motorZeroOffset.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
+            this.btn_gprw_motorZeroOffset.Location = new System.Drawing.Point(512, 630);
+            this.btn_gprw_motorZeroOffset.Margin = new System.Windows.Forms.Padding(4);
+            this.btn_gprw_motorZeroOffset.Name = "btn_gprw_motorZeroOffset";
+            this.btn_gprw_motorZeroOffset.Size = new System.Drawing.Size(204, 60);
+            this.btn_gprw_motorZeroOffset.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this.btn_gprw_motorZeroOffset.TabIndex = 49;
+            this.btn_gprw_motorZeroOffset.Text = "零位偏置[专家功能][谨慎使用]";
+            this.btn_gprw_motorZeroOffset.TextColor = System.Drawing.Color.Red;
+            this.btn_gprw_motorZeroOffset.Click += new System.EventHandler(this.btn_gprw_motorZeroOffset_Click);
+            // 
+            // chk_gprw_motorZeroOffsetProfessional
+            // 
+            this.chk_gprw_motorZeroOffsetProfessional.BackColor = System.Drawing.Color.Transparent;
+            // 
+            // 
+            // 
+            this.chk_gprw_motorZeroOffsetProfessional.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.chk_gprw_motorZeroOffsetProfessional.Location = new System.Drawing.Point(46, 636);
+            this.chk_gprw_motorZeroOffsetProfessional.Margin = new System.Windows.Forms.Padding(4);
+            this.chk_gprw_motorZeroOffsetProfessional.Name = "chk_gprw_motorZeroOffsetProfessional";
+            this.chk_gprw_motorZeroOffsetProfessional.Size = new System.Drawing.Size(100, 58);
+            this.chk_gprw_motorZeroOffsetProfessional.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this.chk_gprw_motorZeroOffsetProfessional.TabIndex = 50;
+            this.chk_gprw_motorZeroOffsetProfessional.Text = "专家";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(192F, 192F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(2180, 1064);
-            this.Controls.Add(this.btn_motorScanner);
             this.Controls.Add(this.gp_motorRW);
             this.Controls.Add(this.btn_motorRW);
             this.Controls.Add(this.groupPanel3);
@@ -1083,6 +1150,7 @@
             this.Controls.Add(this.labelX3);
             this.Controls.Add(this.btn_log_ext);
             this.Controls.Add(this.txt_showMessage);
+            this.Controls.Add(this.btn_motorScanner);
             this.DoubleBuffered = true;
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "Form1";
@@ -1158,6 +1226,10 @@
         private DevComponents.DotNetBar.Controls.DataGridViewX dgv_motorParameter;
         private DevComponents.DotNetBar.Controls.TextBoxX txt_gprw_motorReprotInterval;
         private DevComponents.DotNetBar.LabelX labelX12;
+        private DevComponents.DotNetBar.ButtonX btn_gprw_motorZeroOffset;
+        private DevComponents.DotNetBar.Controls.TextBoxX txt_gprw_motorZeroOffset;
+        private DevComponents.DotNetBar.LabelX labelX13;
+        private DevComponents.DotNetBar.Controls.CheckBoxX chk_gprw_motorZeroOffsetProfessional;
     }
 }
 
