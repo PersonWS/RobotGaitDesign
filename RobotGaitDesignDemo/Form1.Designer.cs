@@ -85,6 +85,8 @@
             this.btn_motorScanner = new DevComponents.DotNetBar.ButtonX();
             this.btn_gprw_clearDgv_motorParameter = new DevComponents.DotNetBar.ButtonX();
             this.dgv_motorParameter = new DevComponents.DotNetBar.Controls.DataGridViewX();
+            this.labelX12 = new DevComponents.DotNetBar.LabelX();
+            this.txt_gprw_motorReprotInterval = new DevComponents.DotNetBar.Controls.TextBoxX();
             this.groupPanel1.SuspendLayout();
             this.groupPanel2.SuspendLayout();
             this.groupPanel3.SuspendLayout();
@@ -547,6 +549,8 @@
             this.gp_motorRW.AutoScroll = true;
             this.gp_motorRW.CanvasColor = System.Drawing.SystemColors.Control;
             this.gp_motorRW.ColorSchemeStyle = DevComponents.DotNetBar.eDotNetBarStyle.Office2007;
+            this.gp_motorRW.Controls.Add(this.txt_gprw_motorReprotInterval);
+            this.gp_motorRW.Controls.Add(this.labelX12);
             this.gp_motorRW.Controls.Add(this.dgv_motorParameter);
             this.gp_motorRW.Controls.Add(this.btn_gprw_clearDgv_motorParameter);
             this.gp_motorRW.Controls.Add(this.btn_gprw_modifyMotorID);
@@ -717,10 +721,10 @@
             // 
             this.btn_gprw_SetMotorReportInterval.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
             this.btn_gprw_SetMotorReportInterval.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
-            this.btn_gprw_SetMotorReportInterval.Location = new System.Drawing.Point(64, 404);
+            this.btn_gprw_SetMotorReportInterval.Location = new System.Drawing.Point(293, 404);
             this.btn_gprw_SetMotorReportInterval.Margin = new System.Windows.Forms.Padding(4);
             this.btn_gprw_SetMotorReportInterval.Name = "btn_gprw_SetMotorReportInterval";
-            this.btn_gprw_SetMotorReportInterval.Size = new System.Drawing.Size(204, 124);
+            this.btn_gprw_SetMotorReportInterval.Size = new System.Drawing.Size(126, 124);
             this.btn_gprw_SetMotorReportInterval.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.btn_gprw_SetMotorReportInterval.TabIndex = 33;
             this.btn_gprw_SetMotorReportInterval.Text = "设定上报频率";
@@ -744,10 +748,10 @@
             // 
             this.btn_gprw_UnEnableMotorReport.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
             this.btn_gprw_UnEnableMotorReport.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
-            this.btn_gprw_UnEnableMotorReport.Location = new System.Drawing.Point(286, 404);
+            this.btn_gprw_UnEnableMotorReport.Location = new System.Drawing.Point(443, 404);
             this.btn_gprw_UnEnableMotorReport.Margin = new System.Windows.Forms.Padding(4);
             this.btn_gprw_UnEnableMotorReport.Name = "btn_gprw_UnEnableMotorReport";
-            this.btn_gprw_UnEnableMotorReport.Size = new System.Drawing.Size(204, 124);
+            this.btn_gprw_UnEnableMotorReport.Size = new System.Drawing.Size(126, 124);
             this.btn_gprw_UnEnableMotorReport.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.btn_gprw_UnEnableMotorReport.TabIndex = 32;
             this.btn_gprw_UnEnableMotorReport.Text = "关闭电机上报";
@@ -770,10 +774,10 @@
             // 
             this.btn_gprw_EnableMotorReport.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
             this.btn_gprw_EnableMotorReport.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
-            this.btn_gprw_EnableMotorReport.Location = new System.Drawing.Point(510, 404);
+            this.btn_gprw_EnableMotorReport.Location = new System.Drawing.Point(588, 404);
             this.btn_gprw_EnableMotorReport.Margin = new System.Windows.Forms.Padding(4);
             this.btn_gprw_EnableMotorReport.Name = "btn_gprw_EnableMotorReport";
-            this.btn_gprw_EnableMotorReport.Size = new System.Drawing.Size(204, 124);
+            this.btn_gprw_EnableMotorReport.Size = new System.Drawing.Size(126, 124);
             this.btn_gprw_EnableMotorReport.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.btn_gprw_EnableMotorReport.TabIndex = 31;
             this.btn_gprw_EnableMotorReport.Text = "开启电机上报";
@@ -960,7 +964,7 @@
             this.labelX8.Name = "labelX8";
             this.labelX8.Size = new System.Drawing.Size(180, 48);
             this.labelX8.TabIndex = 24;
-            this.labelX8.Text = "设定值:";
+            this.labelX8.Text = "电机设定值:";
             // 
             // btn_gprw_SetMotorParameter
             // 
@@ -1025,6 +1029,35 @@
             this.dgv_motorParameter.RowTemplate.Height = 37;
             this.dgv_motorParameter.Size = new System.Drawing.Size(854, 472);
             this.dgv_motorParameter.TabIndex = 44;
+            // 
+            // labelX12
+            // 
+            this.labelX12.BackColor = System.Drawing.Color.Transparent;
+            // 
+            // 
+            // 
+            this.labelX12.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.labelX12.Location = new System.Drawing.Point(64, 415);
+            this.labelX12.Margin = new System.Windows.Forms.Padding(4);
+            this.labelX12.Name = "labelX12";
+            this.labelX12.Size = new System.Drawing.Size(180, 48);
+            this.labelX12.TabIndex = 45;
+            this.labelX12.Text = "上报频率设定值:";
+            // 
+            // txt_gprw_motorReprotInterval
+            // 
+            // 
+            // 
+            // 
+            this.txt_gprw_motorReprotInterval.Border.Class = "TextBoxBorder";
+            this.txt_gprw_motorReprotInterval.Border.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.txt_gprw_motorReprotInterval.Location = new System.Drawing.Point(58, 480);
+            this.txt_gprw_motorReprotInterval.Margin = new System.Windows.Forms.Padding(4);
+            this.txt_gprw_motorReprotInterval.Multiline = true;
+            this.txt_gprw_motorReprotInterval.Name = "txt_gprw_motorReprotInterval";
+            this.txt_gprw_motorReprotInterval.Size = new System.Drawing.Size(186, 48);
+            this.txt_gprw_motorReprotInterval.TabIndex = 46;
+            this.txt_gprw_motorReprotInterval.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxX1_KeyPress);
             // 
             // Form1
             // 
@@ -1123,6 +1156,8 @@
         private DevComponents.DotNetBar.ButtonX btn_motorScanner;
         private DevComponents.DotNetBar.ButtonX btn_gprw_clearDgv_motorParameter;
         private DevComponents.DotNetBar.Controls.DataGridViewX dgv_motorParameter;
+        private DevComponents.DotNetBar.Controls.TextBoxX txt_gprw_motorReprotInterval;
+        private DevComponents.DotNetBar.LabelX labelX12;
     }
 }
 

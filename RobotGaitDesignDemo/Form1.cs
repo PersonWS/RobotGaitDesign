@@ -78,13 +78,21 @@ namespace RobotGaitDesign
             foreach (var item in Enum.GetNames(typeof(LZMotor.Enum_RunMode)))
             {
                 cmb_gprw_motorRunMode.Items.Add(item);
-                cmb_gprw_motorRunMode.SelectedIndex = 0;
             }
-            foreach (var item in Enum.GetNames(typeof(LZMotor.Enum_MotorParameter)))
+
+            cmb_gprw_motorRunMode.SelectedIndex = 0;
+            // 同时获取名称和值
+            foreach (Enum_MotorParameter value in Enum.GetValues(typeof(Enum_MotorParameter)))
             {
-                cmb_gprw_SetMotorParameter.Items.Add(item);
-                cmb_gprw_SetMotorParameter.SelectedIndex = 0;
+                if ((int)value < 0x7000)
+                {
+                    continue;
+                }
+                cmb_gprw_SetMotorParameter.Items.Add(value.ToString());
             }
+
+            cmb_gprw_SetMotorParameter.SelectedIndex = 0;
+
             _dt_motorReadParameterReceived.Columns.Add("电机id");
             _dt_motorReadParameterReceived.Columns.Add("功能码");
             _dt_motorReadParameterReceived.Columns.Add("名称");
@@ -914,7 +922,7 @@ namespace RobotGaitDesign
             }
             //修改值
             List<byte[]> sendBufferTemp = LZMotor.LZMotoInteropeMain.W_SetMotorParameter
-                (listId, Enum_MotorParameter.run_mode, (byte)Enum.Parse(typeof(Enum_RunMode), cmb_gprw_motorRunMode.Text));//生成发送的buffer
+                (listId, Enum_MotorParameter.run_mode运行模式, (byte)Enum.Parse(typeof(Enum_RunMode), cmb_gprw_motorRunMode.Text));//生成发送的buffer
             List<byte[]> sendBuffer = _canFDAdapterMain?.CanAdapterDataProcess.GenerateSendMotorData(sendBufferTemp);
             string str = BitConverter.ToString(sendBuffer[0]).Replace("-", " ");
             _canFDAdapterMain?.Send(sendBuffer);
@@ -1073,7 +1081,7 @@ namespace RobotGaitDesign
             _canFDAdapterMain?.Send(sendBuffer);
 
             //读取loc_kp
-            sendBufferTemp = LZMotor.LZMotoInteropeMain.W_ReadMotorParameter(listId, Enum_MotorParameter.loc_kp);//生成发送的buffer
+            sendBufferTemp = LZMotor.LZMotoInteropeMain.W_ReadMotorParameter(listId, Enum_MotorParameter.loc_kp位置);//生成发送的buffer
             sendBuffer = _canFDAdapterMain?.CanAdapterDataProcess.GenerateSendMotorData(sendBufferTemp);
             str = BitConverter.ToString(sendBuffer?[0]).Replace("-", " ");
             _canFDAdapterMain?.Send(sendBuffer);
@@ -1084,7 +1092,7 @@ namespace RobotGaitDesign
             _canFDAdapterMain?.Send(sendBuffer);
 
             //读取电机模式
-            sendBufferTemp = LZMotor.LZMotoInteropeMain.W_ReadMotorParameter(listId, Enum_MotorParameter.run_mode);//生成发送的buffer
+            sendBufferTemp = LZMotor.LZMotoInteropeMain.W_ReadMotorParameter(listId, Enum_MotorParameter.run_mode运行模式);//生成发送的buffer
             sendBuffer = _canFDAdapterMain?.CanAdapterDataProcess.GenerateSendMotorData(sendBufferTemp);
             str = BitConverter.ToString(sendBuffer?[0]).Replace("-", " ");
             _canFDAdapterMain?.Send(sendBuffer);
@@ -1102,7 +1110,19 @@ namespace RobotGaitDesign
             _canFDAdapterMain?.Send(sendBuffer);
 
             //读0位设置状态
-            sendBufferTemp = LZMotor.LZMotoInteropeMain.W_ReadMotorParameter(listId, Enum_MotorParameter.zero_sta);//生成发送的buffer
+            sendBufferTemp = LZMotor.LZMotoInteropeMain.W_ReadMotorParameter(listId, Enum_MotorParameter.zero_sta零位状态);//生成发送的buffer
+            sendBuffer = _canFDAdapterMain?.CanAdapterDataProcess.GenerateSendMotorData(sendBufferTemp);
+            str = BitConverter.ToString(sendBuffer?[0]).Replace("-", " ");
+            _canFDAdapterMain?.Send(sendBuffer);
+
+            //读取电流kp
+            sendBufferTemp = LZMotor.LZMotoInteropeMain.W_ReadMotorParameter(listId, Enum_MotorParameter.cur_kp电流);//生成发送的buffer
+            sendBuffer = _canFDAdapterMain?.CanAdapterDataProcess.GenerateSendMotorData(sendBufferTemp);
+            str = BitConverter.ToString(sendBuffer?[0]).Replace("-", " ");
+            _canFDAdapterMain?.Send(sendBuffer);
+
+            //读取电流ki
+            sendBufferTemp = LZMotor.LZMotoInteropeMain.W_ReadMotorParameter(listId, Enum_MotorParameter.cur_ki电流);//生成发送的buffer
             sendBuffer = _canFDAdapterMain?.CanAdapterDataProcess.GenerateSendMotorData(sendBufferTemp);
             str = BitConverter.ToString(sendBuffer?[0]).Replace("-", " ");
             _canFDAdapterMain?.Send(sendBuffer);

@@ -16,12 +16,12 @@ namespace LZMotor
         /// 电流kp RW
         /// </summary>
         [Description("float")]
-        cur_kp = 0x2012,
+        cur_kp电流 = 0x2012,
         /// <summary>
         /// 电流ki RW
         /// </summary>
         [Description("float")]
-        cur_ki = 0x2013,
+        cur_ki电流 = 0x2013,
         /// <summary>
         /// 速度kp
         /// </summary>
@@ -51,13 +51,13 @@ namespace LZMotor
         /// 5：位置模式（CSP）
         /// </summary>
         [Description("uint8")]
-        run_mode = 0X7005,
+        run_mode运行模式 = 0X7005,
 
         /// <summary>
         /// 位置kp
         /// </summary>
         [Description("float")]
-        loc_kp = 0x701E,
+        loc_kp位置 = 0x701E,
         /// <summary>
         /// 位置模式电机目标角度指令  float
         /// </summary>
@@ -76,7 +76,7 @@ namespace LZMotor
         /// 零点标志位，0 代表0-2π,1 代表-π-π
         /// </summary>
         [Description("uint8")]
-        zero_sta = 0x7029
+        zero_sta零位状态 = 0x7029
 
     }
     public class MotorParameterValueProcess
