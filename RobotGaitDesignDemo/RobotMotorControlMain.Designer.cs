@@ -1,6 +1,6 @@
 ﻿namespace RobotGaitDesign
 {
-    partial class Form1
+    partial class RobotMotorControlMain
     {
         /// <summary>
         /// 必需的设计器变量。
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle16 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle19 = new System.Windows.Forms.DataGridViewCellStyle();
             this.btn_analysis = new DevComponents.DotNetBar.ButtonX();
             this.labelX1 = new DevComponents.DotNetBar.LabelX();
             this.labelX2 = new DevComponents.DotNetBar.LabelX();
@@ -595,7 +595,7 @@
             this.gp_motorRW.Controls.Add(this.txt_gprw_SetMotorParameter);
             this.gp_motorRW.Controls.Add(this.labelX8);
             this.gp_motorRW.Controls.Add(this.btn_gprw_SetMotorParameter);
-            this.gp_motorRW.Location = new System.Drawing.Point(72, 200);
+            this.gp_motorRW.Location = new System.Drawing.Point(393, 198);
             this.gp_motorRW.Margin = new System.Windows.Forms.Padding(4);
             this.gp_motorRW.Name = "gp_motorRW";
             this.gp_motorRW.Size = new System.Drawing.Size(1760, 816);
@@ -1027,14 +1027,14 @@
             this.dgv_motorParameter.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCellsExceptHeaders;
             this.dgv_motorParameter.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.dgv_motorParameter.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle16.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle16.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle16.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            dataGridViewCellStyle16.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle16.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle16.SelectionForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle16.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgv_motorParameter.DefaultCellStyle = dataGridViewCellStyle16;
+            dataGridViewCellStyle19.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle19.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle19.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            dataGridViewCellStyle19.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle19.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle19.SelectionForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle19.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgv_motorParameter.DefaultCellStyle = dataGridViewCellStyle19;
             this.dgv_motorParameter.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(208)))), ((int)(((byte)(215)))), ((int)(((byte)(229)))));
             this.dgv_motorParameter.Location = new System.Drawing.Point(754, 198);
             this.dgv_motorParameter.Name = "dgv_motorParameter";
@@ -1201,24 +1201,22 @@
             this.chk_GetMotorAckData.Checked = true;
             this.chk_GetMotorAckData.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chk_GetMotorAckData.CheckValue = "Y";
-            this.chk_GetMotorAckData.Location = new System.Drawing.Point(-6, -17);
+            this.chk_GetMotorAckData.Location = new System.Drawing.Point(-1, 18);
             this.chk_GetMotorAckData.Margin = new System.Windows.Forms.Padding(4);
             this.chk_GetMotorAckData.Name = "chk_GetMotorAckData";
-            this.chk_GetMotorAckData.Size = new System.Drawing.Size(108, 179);
+            this.chk_GetMotorAckData.Size = new System.Drawing.Size(108, 125);
             this.chk_GetMotorAckData.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.chk_GetMotorAckData.TabIndex = 40;
-            this.chk_GetMotorAckData.Text = "Get Motor Ack Data";
+            this.chk_GetMotorAckData.Text = "Get Ack Data";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(192F, 192F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(2180, 1064);
-            this.Controls.Add(this.chk_findMotorID);
-            this.Controls.Add(this.chk_analysisFailedShowSocketData);
+            this.Controls.Add(this.gp_motorRW);
             this.Controls.Add(this.chk_readMotorVersion);
             this.Controls.Add(this.btn_ReadMotorVersion);
-            this.Controls.Add(this.gp_motorRW);
             this.Controls.Add(this.btn_motorRW);
             this.Controls.Add(this.groupPanel3);
             this.Controls.Add(this.btn_saveShowMessage);
@@ -1237,6 +1235,8 @@
             this.Controls.Add(this.btn_log_ext);
             this.Controls.Add(this.txt_showMessage);
             this.Controls.Add(this.btn_motorScanner);
+            this.Controls.Add(this.chk_analysisFailedShowSocketData);
+            this.Controls.Add(this.chk_findMotorID);
             this.DoubleBuffered = true;
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "Form1";
@@ -1268,7 +1268,7 @@
         private DevComponents.DotNetBar.Controls.ComboBoxEx cmb_comList;
         private DevComponents.DotNetBar.Controls.TextBoxX txt_batchCan;
         private DevComponents.DotNetBar.LabelX labelX4;
-        private DevComponents.DotNetBar.Controls.ComboBoxEx cmb_idFilter;
+        public DevComponents.DotNetBar.Controls.ComboBoxEx cmb_idFilter;
         private DevComponents.DotNetBar.Controls.CheckBoxX chk_filterByMotorID;
         private DevComponents.DotNetBar.Controls.CheckBoxX chk_OnlyFeedBackData;
         private DevComponents.DotNetBar.ButtonX btn_batchCanAnalysis;

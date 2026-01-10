@@ -18,12 +18,13 @@ using LZMotor;
 using System.Diagnostics.SymbolStore;
 using CanFDAdapter;
 using System.Reflection;
+using RobotGaitDesignDemo;
 namespace RobotGaitDesign
 {
-    public partial class Form1 : Office2007Form
+    public partial class RobotMotorControlMain : Office2007Form
     {
         public static readonly ILogEntity log = LogHelper.EasyLogger.GetLoggerInstance_log4Net("demo");
-        CanFDAdapter.CanFDAdapterMain _canFDAdapterMain;
+        public  CanFDAdapter.CanFDAdapterMain _canFDAdapterMain;
         /// <summary>
         /// 读取电机主动上报数据的队列
         /// </summary>
@@ -38,13 +39,13 @@ namespace RobotGaitDesign
         /// <summary>
         /// 读取电机主动上报数据的队列
         /// </summary>
-        private Queue<LZMotorDataMain> _motorReadParameterReceivedQueue = new Queue<LZMotorDataMain>();
-        private readonly object _motorReadParameterReceivedQueueLock = new object();
+        public Queue<LZMotorDataMain> _motorReadParameterReceivedQueue = new Queue<LZMotorDataMain>();
+        public readonly object _motorReadParameterReceivedQueueLock = new object();
         Thread _motorReadParameterReceivedThread;
         DataTable _dt_motorReadParameterReceived = new DataTable();
         bool _isMotorReadParameterReceivedContiue = false;
         int[] _dgv_motorParameterPosition = new int[2];
-
+        Frm_MotorInterope _frm_MotorInterope;
         bool _isFilterByMotorId = false;
         /// <summary>
         /// 只显示电机返回数据
@@ -64,7 +65,7 @@ namespace RobotGaitDesign
         StringBuilder _sb_txt_showMessage = new StringBuilder();
         StringBuilder _sb_txt_MotorAckData = new StringBuilder();
 
-        public Form1()
+        public RobotMotorControlMain()
         {
             InitializeComponent();
             this.EnableGlass = false;
@@ -164,7 +165,7 @@ namespace RobotGaitDesign
 
 
 
-        private void ShowMessage(string msg, bool isAppendTimeStamp = true, Enum_Log4Net_RecordLevel level = Enum_Log4Net_RecordLevel.DEBUG)
+        public void ShowMessage(string msg, bool isAppendTimeStamp = true, Enum_Log4Net_RecordLevel level = Enum_Log4Net_RecordLevel.DEBUG)
         {
             if (_sb_txt_showMessage.Length > BaseFrmControl.TextBoxMaxLength * 100)
             {
@@ -702,7 +703,10 @@ namespace RobotGaitDesign
             _motorReadParameterReceivedThread.Start();
             gp_motorRW.Visible = true;
             _isMotorReadParameterReceivedContiue = gp_motorRW.Visible;
-            //  gp_motorRW.Location = new Point(10, 160);
+              gp_motorRW.Location = new Point(50, 100);
+
+            _frm_MotorInterope = new Frm_MotorInterope(this);
+            _frm_MotorInterope.Show();
         }
 
         private void btn_motorEnable_Click(object sender, EventArgs e)
