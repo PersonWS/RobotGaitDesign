@@ -74,9 +74,9 @@ namespace FormSet
         /// <param name="e"></param>
         public static void KeyPressWithDigital(Form f, object sender, KeyPressEventArgs e, List<char> exceptionChar = null)
         {
-            if (!char.IsDigit(e.KeyChar))
+            if (!char.IsControl(e.KeyChar)&& !char.IsDigit(e.KeyChar))
             {
-                if (exceptionChar != null && exceptionChar.Contains(e.KeyChar))
+                if ((exceptionChar != null && exceptionChar.Contains(e.KeyChar))||(e.KeyChar=='\r'||e.KeyChar=='\n'))
                 {
                     return;
                 }

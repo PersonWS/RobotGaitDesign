@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle18 = new System.Windows.Forms.DataGridViewCellStyle();
             this.labelX13 = new DevComponents.DotNetBar.LabelX();
             this.chk_gprw_motorZeroOffsetProfessional = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.btn_gprw_motorZeroOffset = new DevComponents.DotNetBar.ButtonX();
@@ -108,6 +108,7 @@
             this.btn_gprw_motorZeroOffset.TabIndex = 83;
             this.btn_gprw_motorZeroOffset.Text = "零位偏置[专家功能][谨慎使用]";
             this.btn_gprw_motorZeroOffset.TextColor = System.Drawing.Color.Red;
+            this.btn_gprw_motorZeroOffset.Click += new System.EventHandler(this.btn_gprw_motorZeroOffset_Click);
             // 
             // txt_gprw_motorZeroOffset
             // 
@@ -122,6 +123,7 @@
             this.txt_gprw_motorZeroOffset.Name = "txt_gprw_motorZeroOffset";
             this.txt_gprw_motorZeroOffset.Size = new System.Drawing.Size(162, 48);
             this.txt_gprw_motorZeroOffset.TabIndex = 82;
+            this.txt_gprw_motorZeroOffset.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txt_gprw_SetMotorParameter_KeyPress);
             // 
             // txt_gprw_motorReprotInterval
             // 
@@ -137,6 +139,7 @@
             this.txt_gprw_motorReprotInterval.Size = new System.Drawing.Size(186, 48);
             this.txt_gprw_motorReprotInterval.TabIndex = 80;
             this.txt_gprw_motorReprotInterval.Text = "200";
+            this.txt_gprw_motorReprotInterval.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txt_gprw_motorReprotInterval_KeyPress);
             // 
             // labelX12
             // 
@@ -160,14 +163,14 @@
             this.dgv_motorParameter.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCellsExceptHeaders;
             this.dgv_motorParameter.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.dgv_motorParameter.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgv_motorParameter.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle18.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle18.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle18.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            dataGridViewCellStyle18.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle18.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle18.SelectionForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle18.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgv_motorParameter.DefaultCellStyle = dataGridViewCellStyle18;
             this.dgv_motorParameter.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(208)))), ((int)(((byte)(215)))), ((int)(((byte)(229)))));
             this.dgv_motorParameter.Location = new System.Drawing.Point(733, 224);
             this.dgv_motorParameter.Name = "dgv_motorParameter";
@@ -188,6 +191,7 @@
             this.btn_gprw_clearDgv_motorParameter.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.btn_gprw_clearDgv_motorParameter.TabIndex = 77;
             this.btn_gprw_clearDgv_motorParameter.Text = "电机参数清除";
+            this.btn_gprw_clearDgv_motorParameter.Click += new System.EventHandler(this.btn_gprw_clearDgv_motorParameter_Click);
             // 
             // btn_gprw_modifyMotorID
             // 
@@ -200,6 +204,7 @@
             this.btn_gprw_modifyMotorID.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.btn_gprw_modifyMotorID.TabIndex = 76;
             this.btn_gprw_modifyMotorID.Text = "执行修改电机ID";
+            this.btn_gprw_modifyMotorID.Click += new System.EventHandler(this.btn_gprw_modifyMotorID_Click);
             // 
             // txt_gprw_destinationMotorID
             // 
@@ -214,6 +219,7 @@
             this.txt_gprw_destinationMotorID.Name = "txt_gprw_destinationMotorID";
             this.txt_gprw_destinationMotorID.Size = new System.Drawing.Size(108, 48);
             this.txt_gprw_destinationMotorID.TabIndex = 75;
+            this.txt_gprw_destinationMotorID.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txt_gprw_motorReprotInterval_KeyPress);
             // 
             // labelX11
             // 
@@ -242,6 +248,7 @@
             this.txt_gprw_soureMotorID.Name = "txt_gprw_soureMotorID";
             this.txt_gprw_soureMotorID.Size = new System.Drawing.Size(108, 48);
             this.txt_gprw_soureMotorID.TabIndex = 73;
+            this.txt_gprw_soureMotorID.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txt_gprw_motorReprotInterval_KeyPress);
             // 
             // labelX10
             // 
@@ -283,6 +290,7 @@
             this.btn_gprw_motorParameterRead.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.btn_gprw_motorParameterRead.TabIndex = 70;
             this.btn_gprw_motorParameterRead.Text = "参数读取";
+            this.btn_gprw_motorParameterRead.Click += new System.EventHandler(this.btn_gprw_motorParameterRead_Click);
             // 
             // btn_gprw_SetMotorReportInterval
             // 
@@ -295,6 +303,7 @@
             this.btn_gprw_SetMotorReportInterval.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.btn_gprw_SetMotorReportInterval.TabIndex = 69;
             this.btn_gprw_SetMotorReportInterval.Text = "设定上报频率";
+            this.btn_gprw_SetMotorReportInterval.Click += new System.EventHandler(this.btn_gprw_SetMotorReportInterval_Click);
             // 
             // labelX5
             // 
@@ -321,6 +330,7 @@
             this.btn_gprw_UnEnableMotorReport.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.btn_gprw_UnEnableMotorReport.TabIndex = 68;
             this.btn_gprw_UnEnableMotorReport.Text = "关闭电机上报";
+            this.btn_gprw_UnEnableMotorReport.Click += new System.EventHandler(this.btn_gprw_UnEnableMotorReport_Click);
             // 
             // btn_gprw_motorEnable
             // 
@@ -346,6 +356,7 @@
             this.btn_gprw_EnableMotorReport.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.btn_gprw_EnableMotorReport.TabIndex = 67;
             this.btn_gprw_EnableMotorReport.Text = "开启电机上报";
+            this.btn_gprw_EnableMotorReport.Click += new System.EventHandler(this.btn_gprw_EnableMotorReport_Click);
             // 
             // txt_gprw_motorID
             // 
@@ -373,6 +384,7 @@
             this.btn_clearMotorError.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.btn_clearMotorError.TabIndex = 66;
             this.btn_clearMotorError.Text = "故障清除";
+            this.btn_clearMotorError.Click += new System.EventHandler(this.btn_clearMotorError_Click);
             // 
             // btn_gprw_motorUnEnable
             // 
@@ -385,6 +397,7 @@
             this.btn_gprw_motorUnEnable.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.btn_gprw_motorUnEnable.TabIndex = 54;
             this.btn_gprw_motorUnEnable.Text = "下使能";
+            this.btn_gprw_motorUnEnable.Click += new System.EventHandler(this.btn_gprw_motorUnEnable_Click);
             // 
             // cmb_gprw_SetMotorParameter
             // 
@@ -410,6 +423,7 @@
             this.btn_gprw_motorZero.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.btn_gprw_motorZero.TabIndex = 55;
             this.btn_gprw_motorZero.Text = "置0位";
+            this.btn_gprw_motorZero.Click += new System.EventHandler(this.btn_gprw_motorZero_Click);
             // 
             // btn_gprw_getAllMotor
             // 
@@ -422,6 +436,7 @@
             this.btn_gprw_getAllMotor.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.btn_gprw_getAllMotor.TabIndex = 65;
             this.btn_gprw_getAllMotor.Text = "ALL";
+            this.btn_gprw_getAllMotor.Click += new System.EventHandler(this.btn_gprw_getAllMotor_Click);
             // 
             // labelX6
             // 
@@ -475,6 +490,7 @@
             this.btn_MotorRunModeChange.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.btn_MotorRunModeChange.TabIndex = 64;
             this.btn_MotorRunModeChange.Text = "设定运行模式";
+            this.btn_MotorRunModeChange.Click += new System.EventHandler(this.btn_MotorRunModeChange_Click);
             // 
             // labelX9
             // 
@@ -506,6 +522,7 @@
             this.txt_gprw_SetMotorParameter.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.txt_gprw_SetMotorParameter.Size = new System.Drawing.Size(256, 48);
             this.txt_gprw_SetMotorParameter.TabIndex = 62;
+            this.txt_gprw_SetMotorParameter.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txt_gprw_SetMotorParameter_KeyPress);
             // 
             // labelX8
             // 
@@ -532,6 +549,7 @@
             this.btn_gprw_SetMotorParameter.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.btn_gprw_SetMotorParameter.TabIndex = 60;
             this.btn_gprw_SetMotorParameter.Text = "设定电机参数";
+            this.btn_gprw_SetMotorParameter.Click += new System.EventHandler(this.btn_gprw_SetMotorParameter_Click);
             // 
             // Frm_MotorInterope
             // 
@@ -575,6 +593,7 @@
             this.DoubleBuffered = true;
             this.Name = "Frm_MotorInterope";
             this.Text = "MotorInterope";
+            this.Load += new System.EventHandler(this.Frm_MotorInterope_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dgv_motorParameter)).EndInit();
             this.ResumeLayout(false);
 
