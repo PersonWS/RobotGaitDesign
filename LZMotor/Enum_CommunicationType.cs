@@ -8,6 +8,9 @@ namespace LZMotor
 {
     public enum Enum_CommunicationType : byte
     {
+        /// <summary>
+        /// 获取电机ID号
+        /// </summary>
         GetMotorID=0x0,
         /// <summary>
         /// 运控模式电机控制指令
@@ -68,14 +71,25 @@ namespace LZMotor
         /// </summary>
         FaultFeedback = 0x15,
 
+        /// <summary>
+        /// 电机波特率修改帧
+        /// </summary>
+        MotorBaudSet = 0x17,
 
         /// <summary>
         /// 电机主动上报帧（0.3.1.0后为该协议）
         /// </summary>
         MotorReportSet = 0x18,
 
+        /// <summary>
+        /// 电机协议修改帧
+        /// </summary>
+        MotorProtocolSet = 0x17,
 
-
+        /// <summary>
+        /// 电机主动上报帧（0.3.1.0后为该协议）
+        /// </summary>
+        MotorVersionRead = 0x4,
 
 
 

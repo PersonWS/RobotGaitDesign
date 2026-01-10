@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle16 = new System.Windows.Forms.DataGridViewCellStyle();
             this.btn_analysis = new DevComponents.DotNetBar.ButtonX();
             this.labelX1 = new DevComponents.DotNetBar.LabelX();
             this.labelX2 = new DevComponents.DotNetBar.LabelX();
@@ -91,6 +91,11 @@
             this.txt_gprw_motorZeroOffset = new DevComponents.DotNetBar.Controls.TextBoxX();
             this.btn_gprw_motorZeroOffset = new DevComponents.DotNetBar.ButtonX();
             this.chk_gprw_motorZeroOffsetProfessional = new DevComponents.DotNetBar.Controls.CheckBoxX();
+            this.btn_ReadMotorVersion = new DevComponents.DotNetBar.ButtonX();
+            this.chk_readMotorVersion = new DevComponents.DotNetBar.Controls.CheckBoxX();
+            this.chk_analysisFailedShowSocketData = new DevComponents.DotNetBar.Controls.CheckBoxX();
+            this.chk_findMotorID = new DevComponents.DotNetBar.Controls.CheckBoxX();
+            this.chk_GetMotorAckData = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.groupPanel1.SuspendLayout();
             this.groupPanel2.SuspendLayout();
             this.groupPanel3.SuspendLayout();
@@ -193,7 +198,7 @@
             // 
             this.btn_log_ext.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
             this.btn_log_ext.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
-            this.btn_log_ext.Location = new System.Drawing.Point(1182, 6);
+            this.btn_log_ext.Location = new System.Drawing.Point(1251, 13);
             this.btn_log_ext.Margin = new System.Windows.Forms.Padding(4);
             this.btn_log_ext.Name = "btn_log_ext";
             this.btn_log_ext.Size = new System.Drawing.Size(200, 60);
@@ -245,7 +250,7 @@
             // 
             this.btn_refresh_ext.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
             this.btn_refresh_ext.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
-            this.btn_refresh_ext.Location = new System.Drawing.Point(988, 6);
+            this.btn_refresh_ext.Location = new System.Drawing.Point(1057, 13);
             this.btn_refresh_ext.Margin = new System.Windows.Forms.Padding(4);
             this.btn_refresh_ext.Name = "btn_refresh_ext";
             this.btn_refresh_ext.Size = new System.Drawing.Size(174, 60);
@@ -257,14 +262,15 @@
             // cmb_comList
             // 
             this.cmb_comList.DisplayMember = "Text";
-            this.cmb_comList.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmb_comList.DropDownHeight = 200;
             this.cmb_comList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmb_comList.FormattingEnabled = true;
-            this.cmb_comList.ItemHeight = 29;
+            this.cmb_comList.IntegralHeight = false;
+            this.cmb_comList.ItemHeight = 24;
             this.cmb_comList.Location = new System.Drawing.Point(128, 12);
             this.cmb_comList.Margin = new System.Windows.Forms.Padding(4);
             this.cmb_comList.Name = "cmb_comList";
-            this.cmb_comList.Size = new System.Drawing.Size(398, 35);
+            this.cmb_comList.Size = new System.Drawing.Size(398, 32);
             this.cmb_comList.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.cmb_comList.TabIndex = 12;
             // 
@@ -299,13 +305,14 @@
             // cmb_idFilter
             // 
             this.cmb_idFilter.DisplayMember = "Text";
-            this.cmb_idFilter.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmb_idFilter.DropDownHeight = 200;
             this.cmb_idFilter.FormattingEnabled = true;
-            this.cmb_idFilter.ItemHeight = 29;
+            this.cmb_idFilter.IntegralHeight = false;
+            this.cmb_idFilter.ItemHeight = 24;
             this.cmb_idFilter.Location = new System.Drawing.Point(128, 80);
             this.cmb_idFilter.Margin = new System.Windows.Forms.Padding(4);
             this.cmb_idFilter.Name = "cmb_idFilter";
-            this.cmb_idFilter.Size = new System.Drawing.Size(398, 35);
+            this.cmb_idFilter.Size = new System.Drawing.Size(398, 32);
             this.cmb_idFilter.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.cmb_idFilter.TabIndex = 15;
             this.cmb_idFilter.SelectedIndexChanged += new System.EventHandler(this.cmb_idFilter_SelectedIndexChanged);
@@ -349,7 +356,7 @@
             this.btn_batchCanAnalysis.Location = new System.Drawing.Point(604, 4);
             this.btn_batchCanAnalysis.Margin = new System.Windows.Forms.Padding(4);
             this.btn_batchCanAnalysis.Name = "btn_batchCanAnalysis";
-            this.btn_batchCanAnalysis.Size = new System.Drawing.Size(120, 164);
+            this.btn_batchCanAnalysis.Size = new System.Drawing.Size(120, 158);
             this.btn_batchCanAnalysis.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.btn_batchCanAnalysis.TabIndex = 18;
             this.btn_batchCanAnalysis.Text = "解析";
@@ -405,10 +412,10 @@
             this.groupPanel2.ColorSchemeStyle = DevComponents.DotNetBar.eDotNetBarStyle.Office2007;
             this.groupPanel2.Controls.Add(this.txt_batchCan);
             this.groupPanel2.Controls.Add(this.btn_batchCanAnalysis);
-            this.groupPanel2.Location = new System.Drawing.Point(0, 176);
+            this.groupPanel2.Location = new System.Drawing.Point(0, 210);
             this.groupPanel2.Margin = new System.Windows.Forms.Padding(4);
             this.groupPanel2.Name = "groupPanel2";
-            this.groupPanel2.Size = new System.Drawing.Size(752, 220);
+            this.groupPanel2.Size = new System.Drawing.Size(752, 202);
             // 
             // 
             // 
@@ -444,7 +451,7 @@
             // 
             this.btn_clearShowMessage.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
             this.btn_clearShowMessage.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
-            this.btn_clearShowMessage.Location = new System.Drawing.Point(1182, 80);
+            this.btn_clearShowMessage.Location = new System.Drawing.Point(1967, 356);
             this.btn_clearShowMessage.Margin = new System.Windows.Forms.Padding(4);
             this.btn_clearShowMessage.Name = "btn_clearShowMessage";
             this.btn_clearShowMessage.Size = new System.Drawing.Size(200, 60);
@@ -473,24 +480,25 @@
             // 
             this.txt_MotorAckData.Border.Class = "TextBoxBorder";
             this.txt_MotorAckData.Border.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.txt_MotorAckData.Location = new System.Drawing.Point(16, 12);
+            this.txt_MotorAckData.Location = new System.Drawing.Point(112, 12);
             this.txt_MotorAckData.Margin = new System.Windows.Forms.Padding(4);
             this.txt_MotorAckData.Multiline = true;
             this.txt_MotorAckData.Name = "txt_MotorAckData";
             this.txt_MotorAckData.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txt_MotorAckData.Size = new System.Drawing.Size(518, 154);
+            this.txt_MotorAckData.Size = new System.Drawing.Size(422, 154);
             this.txt_MotorAckData.TabIndex = 25;
             // 
             // groupPanel3
             // 
             this.groupPanel3.CanvasColor = System.Drawing.SystemColors.Control;
             this.groupPanel3.ColorSchemeStyle = DevComponents.DotNetBar.eDotNetBarStyle.Office2007;
+            this.groupPanel3.Controls.Add(this.chk_GetMotorAckData);
             this.groupPanel3.Controls.Add(this.btn_saveMotorAckData);
             this.groupPanel3.Controls.Add(this.txt_MotorAckData);
-            this.groupPanel3.Location = new System.Drawing.Point(758, 176);
+            this.groupPanel3.Location = new System.Drawing.Point(758, 210);
             this.groupPanel3.Margin = new System.Windows.Forms.Padding(4);
             this.groupPanel3.Name = "groupPanel3";
-            this.groupPanel3.Size = new System.Drawing.Size(684, 220);
+            this.groupPanel3.Size = new System.Drawing.Size(684, 205);
             // 
             // 
             // 
@@ -526,7 +534,7 @@
             // 
             this.btn_saveMotorAckData.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
             this.btn_saveMotorAckData.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
-            this.btn_saveMotorAckData.Location = new System.Drawing.Point(552, 12);
+            this.btn_saveMotorAckData.Location = new System.Drawing.Point(552, 8);
             this.btn_saveMotorAckData.Margin = new System.Windows.Forms.Padding(4);
             this.btn_saveMotorAckData.Name = "btn_saveMotorAckData";
             this.btn_saveMotorAckData.Size = new System.Drawing.Size(112, 154);
@@ -539,13 +547,13 @@
             // 
             this.btn_motorRW.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
             this.btn_motorRW.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
-            this.btn_motorRW.Location = new System.Drawing.Point(792, 134);
+            this.btn_motorRW.Location = new System.Drawing.Point(1247, 135);
             this.btn_motorRW.Margin = new System.Windows.Forms.Padding(4);
             this.btn_motorRW.Name = "btn_motorRW";
             this.btn_motorRW.Size = new System.Drawing.Size(204, 60);
             this.btn_motorRW.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.btn_motorRW.TabIndex = 27;
-            this.btn_motorRW.Text = "MotorRW";
+            this.btn_motorRW.Text = "MotorRW电机交互";
             this.btn_motorRW.Click += new System.EventHandler(this.btn_motorRW_Click);
             // 
             // gp_motorRW
@@ -587,7 +595,7 @@
             this.gp_motorRW.Controls.Add(this.txt_gprw_SetMotorParameter);
             this.gp_motorRW.Controls.Add(this.labelX8);
             this.gp_motorRW.Controls.Add(this.btn_gprw_SetMotorParameter);
-            this.gp_motorRW.Location = new System.Drawing.Point(200, 200);
+            this.gp_motorRW.Location = new System.Drawing.Point(72, 200);
             this.gp_motorRW.Margin = new System.Windows.Forms.Padding(4);
             this.gp_motorRW.Name = "gp_motorRW";
             this.gp_motorRW.Size = new System.Drawing.Size(1760, 816);
@@ -716,7 +724,7 @@
             // 
             this.btn_gprw_motorParameterRead.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
             this.btn_gprw_motorParameterRead.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
-            this.btn_gprw_motorParameterRead.Location = new System.Drawing.Point(1404, 20);
+            this.btn_gprw_motorParameterRead.Location = new System.Drawing.Point(1416, 96);
             this.btn_gprw_motorParameterRead.Margin = new System.Windows.Forms.Padding(4);
             this.btn_gprw_motorParameterRead.Name = "btn_gprw_motorParameterRead";
             this.btn_gprw_motorParameterRead.Size = new System.Drawing.Size(204, 60);
@@ -810,7 +818,7 @@
             // 
             this.btn_clearMotorError.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
             this.btn_clearMotorError.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
-            this.btn_clearMotorError.Location = new System.Drawing.Point(1184, 20);
+            this.btn_clearMotorError.Location = new System.Drawing.Point(975, 96);
             this.btn_clearMotorError.Margin = new System.Windows.Forms.Padding(4);
             this.btn_clearMotorError.Name = "btn_clearMotorError";
             this.btn_clearMotorError.Size = new System.Drawing.Size(204, 60);
@@ -823,7 +831,7 @@
             // 
             this.btn_gprw_motorUnEnable.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
             this.btn_gprw_motorUnEnable.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
-            this.btn_gprw_motorUnEnable.Location = new System.Drawing.Point(736, 20);
+            this.btn_gprw_motorUnEnable.Location = new System.Drawing.Point(975, 20);
             this.btn_gprw_motorUnEnable.Margin = new System.Windows.Forms.Padding(4);
             this.btn_gprw_motorUnEnable.Name = "btn_gprw_motorUnEnable";
             this.btn_gprw_motorUnEnable.Size = new System.Drawing.Size(204, 60);
@@ -835,14 +843,13 @@
             // cmb_gprw_SetMotorParameter
             // 
             this.cmb_gprw_SetMotorParameter.DisplayMember = "Text";
-            this.cmb_gprw_SetMotorParameter.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmb_gprw_SetMotorParameter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmb_gprw_SetMotorParameter.FormattingEnabled = true;
-            this.cmb_gprw_SetMotorParameter.ItemHeight = 29;
+            this.cmb_gprw_SetMotorParameter.ItemHeight = 24;
             this.cmb_gprw_SetMotorParameter.Location = new System.Drawing.Point(240, 262);
             this.cmb_gprw_SetMotorParameter.Margin = new System.Windows.Forms.Padding(4);
             this.cmb_gprw_SetMotorParameter.Name = "cmb_gprw_SetMotorParameter";
-            this.cmb_gprw_SetMotorParameter.Size = new System.Drawing.Size(256, 35);
+            this.cmb_gprw_SetMotorParameter.Size = new System.Drawing.Size(256, 32);
             this.cmb_gprw_SetMotorParameter.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.cmb_gprw_SetMotorParameter.TabIndex = 22;
             // 
@@ -850,7 +857,7 @@
             // 
             this.btn_gprw_motorZero.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
             this.btn_gprw_motorZero.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
-            this.btn_gprw_motorZero.Location = new System.Drawing.Point(960, 20);
+            this.btn_gprw_motorZero.Location = new System.Drawing.Point(1202, 20);
             this.btn_gprw_motorZero.Margin = new System.Windows.Forms.Padding(4);
             this.btn_gprw_motorZero.Name = "btn_gprw_motorZero";
             this.btn_gprw_motorZero.Size = new System.Drawing.Size(204, 60);
@@ -863,10 +870,10 @@
             // 
             this.btn_gprw_getAllMotor.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
             this.btn_gprw_getAllMotor.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
-            this.btn_gprw_getAllMotor.Location = new System.Drawing.Point(68, 68);
+            this.btn_gprw_getAllMotor.Location = new System.Drawing.Point(750, 20);
             this.btn_gprw_getAllMotor.Margin = new System.Windows.Forms.Padding(4);
             this.btn_gprw_getAllMotor.Name = "btn_gprw_getAllMotor";
-            this.btn_gprw_getAllMotor.Size = new System.Drawing.Size(102, 40);
+            this.btn_gprw_getAllMotor.Size = new System.Drawing.Size(209, 60);
             this.btn_gprw_getAllMotor.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.btn_gprw_getAllMotor.TabIndex = 29;
             this.btn_gprw_getAllMotor.Text = "ALL";
@@ -903,14 +910,13 @@
             // cmb_gprw_motorRunMode
             // 
             this.cmb_gprw_motorRunMode.DisplayMember = "Text";
-            this.cmb_gprw_motorRunMode.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmb_gprw_motorRunMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmb_gprw_motorRunMode.FormattingEnabled = true;
-            this.cmb_gprw_motorRunMode.ItemHeight = 29;
+            this.cmb_gprw_motorRunMode.ItemHeight = 24;
             this.cmb_gprw_motorRunMode.Location = new System.Drawing.Point(244, 134);
             this.cmb_gprw_motorRunMode.Margin = new System.Windows.Forms.Padding(4);
             this.cmb_gprw_motorRunMode.Name = "cmb_gprw_motorRunMode";
-            this.cmb_gprw_motorRunMode.Size = new System.Drawing.Size(256, 35);
+            this.cmb_gprw_motorRunMode.Size = new System.Drawing.Size(256, 32);
             this.cmb_gprw_motorRunMode.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.cmb_gprw_motorRunMode.TabIndex = 20;
             // 
@@ -991,10 +997,10 @@
             // 
             this.btn_motorScanner.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
             this.btn_motorScanner.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
-            this.btn_motorScanner.Location = new System.Drawing.Point(546, 134);
+            this.btn_motorScanner.Location = new System.Drawing.Point(1057, 134);
             this.btn_motorScanner.Margin = new System.Windows.Forms.Padding(4);
             this.btn_motorScanner.Name = "btn_motorScanner";
-            this.btn_motorScanner.Size = new System.Drawing.Size(204, 60);
+            this.btn_motorScanner.Size = new System.Drawing.Size(174, 60);
             this.btn_motorScanner.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.btn_motorScanner.TabIndex = 35;
             this.btn_motorScanner.Text = "MotorScanner";
@@ -1004,7 +1010,7 @@
             // 
             this.btn_gprw_clearDgv_motorParameter.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
             this.btn_gprw_clearDgv_motorParameter.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
-            this.btn_gprw_clearDgv_motorParameter.Location = new System.Drawing.Point(1404, 630);
+            this.btn_gprw_clearDgv_motorParameter.Location = new System.Drawing.Point(1404, 681);
             this.btn_gprw_clearDgv_motorParameter.Margin = new System.Windows.Forms.Padding(4);
             this.btn_gprw_clearDgv_motorParameter.Name = "btn_gprw_clearDgv_motorParameter";
             this.btn_gprw_clearDgv_motorParameter.Size = new System.Drawing.Size(204, 60);
@@ -1021,21 +1027,21 @@
             this.dgv_motorParameter.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCellsExceptHeaders;
             this.dgv_motorParameter.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.dgv_motorParameter.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle6.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgv_motorParameter.DefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle16.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle16.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle16.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            dataGridViewCellStyle16.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle16.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle16.SelectionForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle16.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgv_motorParameter.DefaultCellStyle = dataGridViewCellStyle16;
             this.dgv_motorParameter.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(208)))), ((int)(((byte)(215)))), ((int)(((byte)(229)))));
-            this.dgv_motorParameter.Location = new System.Drawing.Point(754, 134);
+            this.dgv_motorParameter.Location = new System.Drawing.Point(754, 198);
             this.dgv_motorParameter.Name = "dgv_motorParameter";
             this.dgv_motorParameter.RowHeadersVisible = false;
             this.dgv_motorParameter.RowHeadersWidth = 82;
             this.dgv_motorParameter.RowTemplate.Height = 37;
-            this.dgv_motorParameter.Size = new System.Drawing.Size(854, 472);
+            this.dgv_motorParameter.Size = new System.Drawing.Size(866, 476);
             this.dgv_motorParameter.TabIndex = 44;
             // 
             // labelX12
@@ -1127,11 +1133,91 @@
             this.chk_gprw_motorZeroOffsetProfessional.TabIndex = 50;
             this.chk_gprw_motorZeroOffsetProfessional.Text = "专家";
             // 
+            // btn_ReadMotorVersion
+            // 
+            this.btn_ReadMotorVersion.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
+            this.btn_ReadMotorVersion.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
+            this.btn_ReadMotorVersion.Location = new System.Drawing.Point(322, 137);
+            this.btn_ReadMotorVersion.Margin = new System.Windows.Forms.Padding(4);
+            this.btn_ReadMotorVersion.Name = "btn_ReadMotorVersion";
+            this.btn_ReadMotorVersion.Size = new System.Drawing.Size(204, 60);
+            this.btn_ReadMotorVersion.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this.btn_ReadMotorVersion.TabIndex = 36;
+            this.btn_ReadMotorVersion.Text = "ReadMotorVersion";
+            this.btn_ReadMotorVersion.Click += new System.EventHandler(this.btn_ReadMotorVersion_Click);
+            // 
+            // chk_readMotorVersion
+            // 
+            // 
+            // 
+            // 
+            this.chk_readMotorVersion.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.chk_readMotorVersion.Location = new System.Drawing.Point(34, 141);
+            this.chk_readMotorVersion.Margin = new System.Windows.Forms.Padding(4);
+            this.chk_readMotorVersion.Name = "chk_readMotorVersion";
+            this.chk_readMotorVersion.Size = new System.Drawing.Size(224, 58);
+            this.chk_readMotorVersion.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this.chk_readMotorVersion.TabIndex = 37;
+            this.chk_readMotorVersion.Text = "ReadMotorVersion";
+            // 
+            // chk_analysisFailedShowSocketData
+            // 
+            // 
+            // 
+            // 
+            this.chk_analysisFailedShowSocketData.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.chk_analysisFailedShowSocketData.Location = new System.Drawing.Point(551, 142);
+            this.chk_analysisFailedShowSocketData.Margin = new System.Windows.Forms.Padding(4);
+            this.chk_analysisFailedShowSocketData.Name = "chk_analysisFailedShowSocketData";
+            this.chk_analysisFailedShowSocketData.Size = new System.Drawing.Size(243, 58);
+            this.chk_analysisFailedShowSocketData.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this.chk_analysisFailedShowSocketData.TabIndex = 38;
+            this.chk_analysisFailedShowSocketData.Text = "解析失败显示报文";
+            // 
+            // chk_findMotorID
+            // 
+            // 
+            // 
+            // 
+            this.chk_findMotorID.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.chk_findMotorID.Checked = true;
+            this.chk_findMotorID.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chk_findMotorID.CheckValue = "Y";
+            this.chk_findMotorID.Location = new System.Drawing.Point(792, 137);
+            this.chk_findMotorID.Margin = new System.Windows.Forms.Padding(4);
+            this.chk_findMotorID.Name = "chk_findMotorID";
+            this.chk_findMotorID.Size = new System.Drawing.Size(248, 58);
+            this.chk_findMotorID.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this.chk_findMotorID.TabIndex = 39;
+            this.chk_findMotorID.Text = "FindMotorID";
+            // 
+            // chk_GetMotorAckData
+            // 
+            this.chk_GetMotorAckData.BackColor = System.Drawing.Color.Transparent;
+            // 
+            // 
+            // 
+            this.chk_GetMotorAckData.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.chk_GetMotorAckData.Checked = true;
+            this.chk_GetMotorAckData.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chk_GetMotorAckData.CheckValue = "Y";
+            this.chk_GetMotorAckData.Location = new System.Drawing.Point(-6, -17);
+            this.chk_GetMotorAckData.Margin = new System.Windows.Forms.Padding(4);
+            this.chk_GetMotorAckData.Name = "chk_GetMotorAckData";
+            this.chk_GetMotorAckData.Size = new System.Drawing.Size(108, 179);
+            this.chk_GetMotorAckData.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this.chk_GetMotorAckData.TabIndex = 40;
+            this.chk_GetMotorAckData.Text = "Get Motor Ack Data";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(192F, 192F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(2180, 1064);
+            this.Controls.Add(this.chk_findMotorID);
+            this.Controls.Add(this.chk_analysisFailedShowSocketData);
+            this.Controls.Add(this.chk_readMotorVersion);
+            this.Controls.Add(this.btn_ReadMotorVersion);
             this.Controls.Add(this.gp_motorRW);
             this.Controls.Add(this.btn_motorRW);
             this.Controls.Add(this.groupPanel3);
@@ -1230,6 +1316,11 @@
         private DevComponents.DotNetBar.Controls.TextBoxX txt_gprw_motorZeroOffset;
         private DevComponents.DotNetBar.LabelX labelX13;
         private DevComponents.DotNetBar.Controls.CheckBoxX chk_gprw_motorZeroOffsetProfessional;
+        private DevComponents.DotNetBar.ButtonX btn_ReadMotorVersion;
+        private DevComponents.DotNetBar.Controls.CheckBoxX chk_readMotorVersion;
+        private DevComponents.DotNetBar.Controls.CheckBoxX chk_analysisFailedShowSocketData;
+        private DevComponents.DotNetBar.Controls.CheckBoxX chk_findMotorID;
+        private DevComponents.DotNetBar.Controls.CheckBoxX chk_GetMotorAckData;
     }
 }
 

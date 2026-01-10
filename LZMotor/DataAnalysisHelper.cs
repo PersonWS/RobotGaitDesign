@@ -35,7 +35,7 @@ namespace LZMotor
         public string AnalysisData_ReturnString()
         {
             DataTable dt = new DataTable();
-            return AnalysisData_ReturnString(id, motorData, out dt);
+            return AnalysisAckData_ReturnString(id, motorData, out dt);
         }
         #region 通过适配器的原始报文来解析出can的信息
         public static List<LZMotorDataMain> AnalysisBytesArrayToCanidAndCandata(CanFDAdapter.CanAdapterEntity canAdapterEntity, byte[] bytes)
@@ -83,9 +83,9 @@ namespace LZMotor
 
         #endregion
 
-        public static string AnalysisData_ReturnString(ExtendData_ID id, Data_Motor data, out DataTable dt)
+        public static string AnalysisAckData_ReturnString(ExtendData_ID id, Data_Motor data, out DataTable dt)
         {
-            dt = AnalysisDataInternal(id, data);
+            dt = AnalysisAckDataInternal(id, data);
             if (dt != null && dt.Rows.Count > 0)
             {
                 StringBuilder sb = new StringBuilder();
@@ -102,7 +102,31 @@ namespace LZMotor
             return "";
         }
 
-        private static DataTable AnalysisDataInternal(ExtendData_ID id, Data_Motor data)
+        public static string AnalysisMotorVersionAckData_ReturnString(ExtendData_ID id, Data_Motor data, out DataTable dt)
+        {
+            dt = new DataTable();
+
+            dt.Columns.Add("canIdSend");
+            //_dt_motorAck.Columns.Add("canIdRec");
+            dt.Columns.Add("MotorVersion");
+            DataRow dr = dt.NewRow();
+            dr["canIdSend"] = id.MotorIDSend;
+            dr["MotorVersion"] = $"{data.DataBytes[3]}.{data.DataBytes[4]}.{data.DataBytes[5]}.{data.DataBytes[6]}";
+            dt.Rows.Add(dr);
+            StringBuilder sb = new StringBuilder();
+            foreach (DataRow item in dt.Rows)
+            {
+                for (int i = 0; i < item.ItemArray.Length; i++)
+                {
+                    sb.Append($"  {dt.Columns[i].ColumnName}: {item.ItemArray[i]}");
+                }
+
+            }
+            return sb.ToString();
+
+        }
+
+        private static DataTable AnalysisAckDataInternal(ExtendData_ID id, Data_Motor data)
         {
             if (data == null || data.DataBytes == null || id == null)
             {
