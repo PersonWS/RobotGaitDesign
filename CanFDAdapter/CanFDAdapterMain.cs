@@ -20,7 +20,7 @@ namespace CanFDAdapter
         COM_Server _server;
         bool _isConnected = false;
 
-        public event Action<byte[]> MessageReceiveEvent;
+        public event Action<List<byte[]>> MessageReceiveEvent;
         CanAdapterEntity _canAdapterEntity;
 
         public CanAdapterEntity CanAdapterEntity { get => _canAdapterEntity; }
@@ -31,7 +31,7 @@ namespace CanFDAdapter
         /// <summary>
         /// 用于缓存没读完的数据
         /// </summary>
-        protected List<byte> _buffer= new List<byte>();
+        protected List<byte> _buffer = new List<byte>();
         /// <summary>
         /// 构造 地磅连接
         /// </summary>
@@ -132,9 +132,10 @@ namespace CanFDAdapter
             {
                 try
                 {
-                  bool ret=  _server.SendData(send);
+                    log.Debug($"COM ,发送数据：{BitConverter.ToString(send)}");
+                    bool ret = _server.SendData(send);
                     Thread.Sleep(1);
-                    log.Debug($"COM 发送结果：{ret},发送数据：{BitConverter.ToString(send)}");
+
                     sendCount += send.Length;
                 }
                 catch (Exception ex)
@@ -145,15 +146,15 @@ namespace CanFDAdapter
             return sendCount;
         }
 
-        protected virtual byte[] BeforeMessageReceiveEventInvoke(byte[] b)
+        protected virtual List< byte[] >BeforeMessageReceiveEventInvoke( byte[] b)
         {
-            return b;
+            return new List<byte[]>() { b };
         }
 
 
         private void Receive(byte[] b)
         {
-                MessageReceiveEvent?.Invoke(BeforeMessageReceiveEventInvoke(b));
+            MessageReceiveEvent?.Invoke(BeforeMessageReceiveEventInvoke(b));
         }
 
 

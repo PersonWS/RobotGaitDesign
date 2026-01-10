@@ -499,10 +499,7 @@
             // 
             // 
             this.chk_GetMotorAckData.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.chk_GetMotorAckData.Checked = true;
-            this.chk_GetMotorAckData.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chk_GetMotorAckData.CheckValue = "Y";
-            this.chk_GetMotorAckData.Location = new System.Drawing.Point(-1, 18);
+            this.chk_GetMotorAckData.Location = new System.Drawing.Point(-1, -20);
             this.chk_GetMotorAckData.Margin = new System.Windows.Forms.Padding(4);
             this.chk_GetMotorAckData.Name = "chk_GetMotorAckData";
             this.chk_GetMotorAckData.Size = new System.Drawing.Size(108, 125);

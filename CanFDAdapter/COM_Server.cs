@@ -100,7 +100,9 @@ namespace CanFDAdapter
                     Byte[] readBuffer = new Byte[len];
 
                     _serialPort.Read(readBuffer, 0, len); //将数据读入缓存
-                    log.Debug($"原始数据：{BitConverter.ToString(readBuffer)}");
+#if DEBUG
+                    log.Debug($"COM收到原始数据长度{len} ，COM收到数据内容：{BitConverter.ToString(readBuffer)}");
+#endif
                     if (ReceivedMessage != null)
                     {
 
@@ -115,7 +117,7 @@ namespace CanFDAdapter
             }
             catch (Exception ex)
             {
-                log.Error(string.Format("{0},{1}", "提示信息", "接收返回消息异常！具体原因：" + ex.Message));
+                log.Error(string.Format("{0},{1}", "提示信息", "接收返回消息异常！具体原因：" + ex.ToString()));
             }
         }
 

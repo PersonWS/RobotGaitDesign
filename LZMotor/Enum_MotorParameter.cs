@@ -69,7 +69,7 @@ namespace LZMotor
         /// <summary>
         /// 上报时间设置，1 代表10ms，加1 递增5ms
         /// </summary>
-        [Description("unit16")]
+        [Description("uint16")]
         EPScan_time = 0x7026,
 
         /// <summary>

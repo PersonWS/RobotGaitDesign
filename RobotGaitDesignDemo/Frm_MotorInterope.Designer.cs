@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle18 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.labelX13 = new DevComponents.DotNetBar.LabelX();
             this.chk_gprw_motorZeroOffsetProfessional = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.btn_gprw_motorZeroOffset = new DevComponents.DotNetBar.ButtonX();
@@ -59,7 +59,6 @@
             this.labelX7 = new DevComponents.DotNetBar.LabelX();
             this.cmb_gprw_motorRunMode = new DevComponents.DotNetBar.Controls.ComboBoxEx();
             this.btn_MotorRunModeChange = new DevComponents.DotNetBar.ButtonX();
-            this.labelX9 = new DevComponents.DotNetBar.LabelX();
             this.txt_gprw_SetMotorParameter = new DevComponents.DotNetBar.Controls.TextBoxX();
             this.labelX8 = new DevComponents.DotNetBar.LabelX();
             this.btn_gprw_SetMotorParameter = new DevComponents.DotNetBar.ButtonX();
@@ -163,14 +162,14 @@
             this.dgv_motorParameter.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCellsExceptHeaders;
             this.dgv_motorParameter.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.dgv_motorParameter.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle18.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle18.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle18.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            dataGridViewCellStyle18.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle18.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle18.SelectionForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle18.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgv_motorParameter.DefaultCellStyle = dataGridViewCellStyle18;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgv_motorParameter.DefaultCellStyle = dataGridViewCellStyle3;
             this.dgv_motorParameter.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(208)))), ((int)(((byte)(215)))), ((int)(((byte)(229)))));
             this.dgv_motorParameter.Location = new System.Drawing.Point(733, 224);
             this.dgv_motorParameter.Name = "dgv_motorParameter";
@@ -336,7 +335,7 @@
             // 
             this.btn_gprw_motorEnable.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
             this.btn_gprw_motorEnable.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
-            this.btn_gprw_motorEnable.Location = new System.Drawing.Point(491, 46);
+            this.btn_gprw_motorEnable.Location = new System.Drawing.Point(721, 50);
             this.btn_gprw_motorEnable.Margin = new System.Windows.Forms.Padding(4);
             this.btn_gprw_motorEnable.Name = "btn_gprw_motorEnable";
             this.btn_gprw_motorEnable.Size = new System.Drawing.Size(204, 60);
@@ -377,7 +376,7 @@
             // 
             this.btn_clearMotorError.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
             this.btn_clearMotorError.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
-            this.btn_clearMotorError.Location = new System.Drawing.Point(954, 122);
+            this.btn_clearMotorError.Location = new System.Drawing.Point(954, 132);
             this.btn_clearMotorError.Margin = new System.Windows.Forms.Padding(4);
             this.btn_clearMotorError.Name = "btn_clearMotorError";
             this.btn_clearMotorError.Size = new System.Drawing.Size(204, 60);
@@ -390,7 +389,7 @@
             // 
             this.btn_gprw_motorUnEnable.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
             this.btn_gprw_motorUnEnable.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
-            this.btn_gprw_motorUnEnable.Location = new System.Drawing.Point(954, 46);
+            this.btn_gprw_motorUnEnable.Location = new System.Drawing.Point(954, 50);
             this.btn_gprw_motorUnEnable.Margin = new System.Windows.Forms.Padding(4);
             this.btn_gprw_motorUnEnable.Name = "btn_gprw_motorUnEnable";
             this.btn_gprw_motorUnEnable.Size = new System.Drawing.Size(204, 60);
@@ -429,7 +428,7 @@
             // 
             this.btn_gprw_getAllMotor.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
             this.btn_gprw_getAllMotor.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
-            this.btn_gprw_getAllMotor.Location = new System.Drawing.Point(729, 46);
+            this.btn_gprw_getAllMotor.Location = new System.Drawing.Point(491, 50);
             this.btn_gprw_getAllMotor.Margin = new System.Windows.Forms.Padding(4);
             this.btn_gprw_getAllMotor.Name = "btn_gprw_getAllMotor";
             this.btn_gprw_getAllMotor.Size = new System.Drawing.Size(209, 60);
@@ -492,22 +491,6 @@
             this.btn_MotorRunModeChange.Text = "设定运行模式";
             this.btn_MotorRunModeChange.Click += new System.EventHandler(this.btn_MotorRunModeChange_Click);
             // 
-            // labelX9
-            // 
-            this.labelX9.BackColor = System.Drawing.Color.Transparent;
-            // 
-            // 
-            // 
-            this.labelX9.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.labelX9.Font = new System.Drawing.Font("宋体", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.labelX9.ForeColor = System.Drawing.Color.Red;
-            this.labelX9.Location = new System.Drawing.Point(1675, 30);
-            this.labelX9.Margin = new System.Windows.Forms.Padding(4);
-            this.labelX9.Name = "labelX9";
-            this.labelX9.Size = new System.Drawing.Size(52, 48);
-            this.labelX9.TabIndex = 63;
-            this.labelX9.Text = "×";
-            // 
             // txt_gprw_SetMotorParameter
             // 
             // 
@@ -555,7 +538,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1803, 985);
+            this.ClientSize = new System.Drawing.Size(1996, 785);
             this.Controls.Add(this.labelX13);
             this.Controls.Add(this.chk_gprw_motorZeroOffsetProfessional);
             this.Controls.Add(this.btn_gprw_motorZeroOffset);
@@ -586,7 +569,6 @@
             this.Controls.Add(this.labelX7);
             this.Controls.Add(this.cmb_gprw_motorRunMode);
             this.Controls.Add(this.btn_MotorRunModeChange);
-            this.Controls.Add(this.labelX9);
             this.Controls.Add(this.txt_gprw_SetMotorParameter);
             this.Controls.Add(this.labelX8);
             this.Controls.Add(this.btn_gprw_SetMotorParameter);
@@ -631,7 +613,6 @@
         private DevComponents.DotNetBar.LabelX labelX7;
         private DevComponents.DotNetBar.Controls.ComboBoxEx cmb_gprw_motorRunMode;
         private DevComponents.DotNetBar.ButtonX btn_MotorRunModeChange;
-        private DevComponents.DotNetBar.LabelX labelX9;
         private DevComponents.DotNetBar.Controls.TextBoxX txt_gprw_SetMotorParameter;
         private DevComponents.DotNetBar.LabelX labelX8;
         private DevComponents.DotNetBar.ButtonX btn_gprw_SetMotorParameter;

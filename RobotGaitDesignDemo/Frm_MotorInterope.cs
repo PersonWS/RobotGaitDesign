@@ -23,11 +23,6 @@ namespace RobotGaitDesignDemo
         RobotMotorControlMain _baseForm;
         DataTable _dt_motorReadParameterReceived = new DataTable();
 
-        ///// <summary>
-        ///// 读取电机主动上报数据的队列
-        ///// </summary>
-        //public Queue<LZMotorDataMain> _motorReadParameterReceivedQueue = new Queue<LZMotorDataMain>();
-        public readonly object _motorReadParameterReceivedQueueLock = new object();
         Thread _motorReadParameterReceivedThread;
 
         public Frm_MotorInterope(RobotMotorControlMain baseForm)
@@ -83,7 +78,7 @@ namespace RobotGaitDesignDemo
         private void ProcessReadParameterMessageSub()
         {
             List<LZMotorDataMain> recMsg = null;
-            lock (_motorReadParameterReceivedQueueLock)
+            lock (_baseForm. _motorReadParameterReceivedQueueLock)
             {
                 if (_baseForm. _motorReadParameterReceivedQueue.Count > 0)
                 {
@@ -436,59 +431,66 @@ namespace RobotGaitDesignDemo
                 sendBuffer = _baseForm._canFDAdapterMain?.CanAdapterDataProcess.GenerateSendMotorData(sendBufferTemp);
                 str = BitConverter.ToString(sendBuffer?[0]).Replace("-", " ");
                 _baseForm. _canFDAdapterMain?.Send(sendBuffer);
-
+                Thread.Sleep(50);
                 //读取loc_kp
                 sendBufferTemp = LZMotor.LZMotoInteropeMain.R_ReadMotorParameter(listId, Enum_MotorParameter.loc_kp位置);//生成发送的buffer
                 sendBuffer = _baseForm. _canFDAdapterMain?.CanAdapterDataProcess.GenerateSendMotorData(sendBufferTemp);
                 str = BitConverter.ToString(sendBuffer?[0]).Replace("-", " ");
                 _baseForm._canFDAdapterMain?.Send(sendBuffer);
+                Thread.Sleep(50);
                 //读取CSP速度限制
                 sendBufferTemp = LZMotor.LZMotoInteropeMain.R_ReadMotorParameter(listId, Enum_MotorParameter.limit_spd_csp速度限制);//生成发送的buffer
                 sendBuffer = _baseForm. _canFDAdapterMain?.CanAdapterDataProcess.GenerateSendMotorData(sendBufferTemp);
                 str = BitConverter.ToString(sendBuffer?[0]).Replace("-", " ");
                 _baseForm._canFDAdapterMain?.Send(sendBuffer);
-
+                Thread.Sleep(50);
                 //读取电机模式
                 sendBufferTemp = LZMotor.LZMotoInteropeMain.R_ReadMotorParameter(listId, Enum_MotorParameter.run_mode运行模式);//生成发送的buffer
                 sendBuffer = _baseForm._canFDAdapterMain?.CanAdapterDataProcess.GenerateSendMotorData(sendBufferTemp);
                 str = BitConverter.ToString(sendBuffer?[0]).Replace("-", " ");
                 _baseForm._canFDAdapterMain?.Send(sendBuffer);
-
+                Thread.Sleep(50);
                 //读取电机错误1
                 sendBufferTemp = LZMotor.LZMotoInteropeMain.R_ReadMotorParameter(listId, Enum_MotorParameter.drv_fault);//生成发送的buffer
                 sendBuffer = _baseForm. _canFDAdapterMain?.CanAdapterDataProcess.GenerateSendMotorData(sendBufferTemp);
                 str = BitConverter.ToString(sendBuffer?[0]).Replace("-", " ");
                 _baseForm. _canFDAdapterMain?.Send(sendBuffer);
-
+                Thread.Sleep(50);
                 //读取电机错误2
                 sendBufferTemp = LZMotor.LZMotoInteropeMain.R_ReadMotorParameter(listId, Enum_MotorParameter.drv_temp);//生成发送的buffer
                 sendBuffer = _baseForm._canFDAdapterMain?.CanAdapterDataProcess.GenerateSendMotorData(sendBufferTemp);
                 str = BitConverter.ToString(sendBuffer?[0]).Replace("-", " ");
                 _baseForm._canFDAdapterMain?.Send(sendBuffer);
-
+                Thread.Sleep(50);
                 //读0位设置状态
                 sendBufferTemp = LZMotor.LZMotoInteropeMain.R_ReadMotorParameter(listId, Enum_MotorParameter.zero_sta零位状态);//生成发送的buffer
                 sendBuffer = _baseForm._canFDAdapterMain?.CanAdapterDataProcess.GenerateSendMotorData(sendBufferTemp);
                 str = BitConverter.ToString(sendBuffer?[0]).Replace("-", " ");
                 _baseForm._canFDAdapterMain?.Send(sendBuffer);
-
+                Thread.Sleep(50);
                 //读取电流kp
                 sendBufferTemp = LZMotor.LZMotoInteropeMain.R_ReadMotorParameter(listId, Enum_MotorParameter.cur_kp电流);//生成发送的buffer
                 sendBuffer = _baseForm._canFDAdapterMain?.CanAdapterDataProcess.GenerateSendMotorData(sendBufferTemp);
                 str = BitConverter.ToString(sendBuffer?[0]).Replace("-", " ");
                 _baseForm. _canFDAdapterMain?.Send(sendBuffer);
-
+                Thread.Sleep(50);
                 //读取电流ki
                 sendBufferTemp = LZMotor.LZMotoInteropeMain.R_ReadMotorParameter(listId, Enum_MotorParameter.cur_ki电流);//生成发送的buffer
                 sendBuffer = _baseForm._canFDAdapterMain?.CanAdapterDataProcess.GenerateSendMotorData(sendBufferTemp);
                 str = BitConverter.ToString(sendBuffer?[0]).Replace("-", " ");
                 _baseForm. _canFDAdapterMain?.Send(sendBuffer);
-
+                Thread.Sleep(50);
                 //读取零位偏置
                 sendBufferTemp = LZMotor.LZMotoInteropeMain.R_ReadMotorParameter(listId, Enum_MotorParameter.add_offset零位偏置);//生成发送的buffer
                 sendBuffer = _baseForm._canFDAdapterMain?.CanAdapterDataProcess.GenerateSendMotorData(sendBufferTemp);
                 str = BitConverter.ToString(sendBuffer?[0]).Replace("-", " ");
                 _baseForm. _canFDAdapterMain?.Send(sendBuffer);
+                Thread.Sleep(50);
+                //读取上报间隔
+                sendBufferTemp = LZMotor.LZMotoInteropeMain.R_ReadMotorParameter(listId, Enum_MotorParameter.EPScan_time);//生成发送的buffer
+                sendBuffer = _baseForm._canFDAdapterMain?.CanAdapterDataProcess.GenerateSendMotorData(sendBufferTemp);
+                str = BitConverter.ToString(sendBuffer?[0]).Replace("-", " ");
+                _baseForm._canFDAdapterMain?.Send(sendBuffer);
             }
             catch (Exception ex)
             {
