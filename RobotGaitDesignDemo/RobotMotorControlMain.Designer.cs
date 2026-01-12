@@ -40,14 +40,11 @@
             this.btn_disConnect = new DevComponents.DotNetBar.ButtonX();
             this.btn_refresh_ext = new DevComponents.DotNetBar.ButtonX();
             this.cmb_comList = new DevComponents.DotNetBar.Controls.ComboBoxEx();
-            this.txt_batchCan = new DevComponents.DotNetBar.Controls.TextBoxX();
             this.labelX4 = new DevComponents.DotNetBar.LabelX();
             this.cmb_idFilter = new DevComponents.DotNetBar.Controls.ComboBoxEx();
             this.chk_filterByMotorID = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.chk_OnlyFeedBackData = new DevComponents.DotNetBar.Controls.CheckBoxX();
-            this.btn_batchCanAnalysis = new DevComponents.DotNetBar.ButtonX();
             this.groupPanel1 = new DevComponents.DotNetBar.Controls.GroupPanel();
-            this.groupPanel2 = new DevComponents.DotNetBar.Controls.GroupPanel();
             this.btn_clearShowMessage = new DevComponents.DotNetBar.ButtonX();
             this.btn_saveShowMessage = new DevComponents.DotNetBar.ButtonX();
             this.txt_MotorAckData = new DevComponents.DotNetBar.Controls.TextBoxX();
@@ -60,8 +57,9 @@
             this.chk_readMotorVersion = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.chk_analysisFailedShowSocketData = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.chk_findMotorID = new DevComponents.DotNetBar.Controls.CheckBoxX();
+            this.labelX5 = new DevComponents.DotNetBar.LabelX();
+            this.lab_busUsedRate = new DevComponents.DotNetBar.LabelX();
             this.groupPanel1.SuspendLayout();
-            this.groupPanel2.SuspendLayout();
             this.groupPanel3.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -69,10 +67,10 @@
             // 
             this.btn_analysis.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
             this.btn_analysis.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
-            this.btn_analysis.Location = new System.Drawing.Point(426, 16);
+            this.btn_analysis.Location = new System.Drawing.Point(428, 12);
             this.btn_analysis.Margin = new System.Windows.Forms.Padding(4);
             this.btn_analysis.Name = "btn_analysis";
-            this.btn_analysis.Size = new System.Drawing.Size(196, 276);
+            this.btn_analysis.Size = new System.Drawing.Size(127, 278);
             this.btn_analysis.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.btn_analysis.TabIndex = 0;
             this.btn_analysis.Text = "analysis";
@@ -153,7 +151,7 @@
             this.txt_showMessage.Multiline = true;
             this.txt_showMessage.Name = "txt_showMessage";
             this.txt_showMessage.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txt_showMessage.Size = new System.Drawing.Size(2180, 692);
+            this.txt_showMessage.Size = new System.Drawing.Size(2221, 697);
             this.txt_showMessage.TabIndex = 5;
             // 
             // btn_log_ext
@@ -212,10 +210,10 @@
             // 
             this.btn_refresh_ext.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
             this.btn_refresh_ext.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
-            this.btn_refresh_ext.Location = new System.Drawing.Point(1057, 13);
+            this.btn_refresh_ext.Location = new System.Drawing.Point(1048, 13);
             this.btn_refresh_ext.Margin = new System.Windows.Forms.Padding(4);
             this.btn_refresh_ext.Name = "btn_refresh_ext";
-            this.btn_refresh_ext.Size = new System.Drawing.Size(174, 60);
+            this.btn_refresh_ext.Size = new System.Drawing.Size(183, 60);
             this.btn_refresh_ext.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.btn_refresh_ext.TabIndex = 11;
             this.btn_refresh_ext.Text = "刷新";
@@ -235,21 +233,6 @@
             this.cmb_comList.Size = new System.Drawing.Size(398, 32);
             this.cmb_comList.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.cmb_comList.TabIndex = 12;
-            // 
-            // txt_batchCan
-            // 
-            // 
-            // 
-            // 
-            this.txt_batchCan.Border.Class = "TextBoxBorder";
-            this.txt_batchCan.Border.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.txt_batchCan.Location = new System.Drawing.Point(4, 4);
-            this.txt_batchCan.Margin = new System.Windows.Forms.Padding(4);
-            this.txt_batchCan.Multiline = true;
-            this.txt_batchCan.Name = "txt_batchCan";
-            this.txt_batchCan.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txt_batchCan.Size = new System.Drawing.Size(596, 164);
-            this.txt_batchCan.TabIndex = 13;
             // 
             // labelX4
             // 
@@ -298,11 +281,12 @@
             // 
             // chk_OnlyFeedBackData
             // 
+            this.chk_OnlyFeedBackData.BackColor = System.Drawing.Color.Transparent;
             // 
             // 
             // 
             this.chk_OnlyFeedBackData.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.chk_OnlyFeedBackData.Location = new System.Drawing.Point(792, 80);
+            this.chk_OnlyFeedBackData.Location = new System.Drawing.Point(548, 137);
             this.chk_OnlyFeedBackData.Margin = new System.Windows.Forms.Padding(4);
             this.chk_OnlyFeedBackData.Name = "chk_OnlyFeedBackData";
             this.chk_OnlyFeedBackData.Size = new System.Drawing.Size(248, 58);
@@ -310,19 +294,6 @@
             this.chk_OnlyFeedBackData.TabIndex = 17;
             this.chk_OnlyFeedBackData.Text = "OnlyFeedBackData";
             this.chk_OnlyFeedBackData.CheckedChanged += new System.EventHandler(this.chk_OnlyFeedBackData_CheckedChanged);
-            // 
-            // btn_batchCanAnalysis
-            // 
-            this.btn_batchCanAnalysis.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
-            this.btn_batchCanAnalysis.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
-            this.btn_batchCanAnalysis.Location = new System.Drawing.Point(604, 4);
-            this.btn_batchCanAnalysis.Margin = new System.Windows.Forms.Padding(4);
-            this.btn_batchCanAnalysis.Name = "btn_batchCanAnalysis";
-            this.btn_batchCanAnalysis.Size = new System.Drawing.Size(120, 158);
-            this.btn_batchCanAnalysis.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this.btn_batchCanAnalysis.TabIndex = 18;
-            this.btn_batchCanAnalysis.Text = "解析";
-            this.btn_batchCanAnalysis.Click += new System.EventHandler(this.btn_batchCanAnalysis_Click);
             // 
             // groupPanel1
             // 
@@ -333,10 +304,10 @@
             this.groupPanel1.Controls.Add(this.labelX1);
             this.groupPanel1.Controls.Add(this.labelX2);
             this.groupPanel1.Controls.Add(this.btn_analysis);
-            this.groupPanel1.Location = new System.Drawing.Point(1528, 12);
+            this.groupPanel1.Location = new System.Drawing.Point(1619, 12);
             this.groupPanel1.Margin = new System.Windows.Forms.Padding(4);
             this.groupPanel1.Name = "groupPanel1";
-            this.groupPanel1.Size = new System.Drawing.Size(640, 336);
+            this.groupPanel1.Size = new System.Drawing.Size(576, 336);
             // 
             // 
             // 
@@ -368,47 +339,6 @@
             this.groupPanel1.TabIndex = 19;
             this.groupPanel1.Text = "CAN报文解析(监听软件)";
             // 
-            // groupPanel2
-            // 
-            this.groupPanel2.CanvasColor = System.Drawing.SystemColors.Control;
-            this.groupPanel2.ColorSchemeStyle = DevComponents.DotNetBar.eDotNetBarStyle.Office2007;
-            this.groupPanel2.Controls.Add(this.txt_batchCan);
-            this.groupPanel2.Controls.Add(this.btn_batchCanAnalysis);
-            this.groupPanel2.Location = new System.Drawing.Point(0, 210);
-            this.groupPanel2.Margin = new System.Windows.Forms.Padding(4);
-            this.groupPanel2.Name = "groupPanel2";
-            this.groupPanel2.Size = new System.Drawing.Size(752, 202);
-            // 
-            // 
-            // 
-            this.groupPanel2.Style.BackColor2SchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBackground2;
-            this.groupPanel2.Style.BackColorGradientAngle = 90;
-            this.groupPanel2.Style.BackColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBackground;
-            this.groupPanel2.Style.BorderBottom = DevComponents.DotNetBar.eStyleBorderType.Solid;
-            this.groupPanel2.Style.BorderBottomWidth = 1;
-            this.groupPanel2.Style.BorderColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBorder;
-            this.groupPanel2.Style.BorderLeft = DevComponents.DotNetBar.eStyleBorderType.Solid;
-            this.groupPanel2.Style.BorderLeftWidth = 1;
-            this.groupPanel2.Style.BorderRight = DevComponents.DotNetBar.eStyleBorderType.Solid;
-            this.groupPanel2.Style.BorderRightWidth = 1;
-            this.groupPanel2.Style.BorderTop = DevComponents.DotNetBar.eStyleBorderType.Solid;
-            this.groupPanel2.Style.BorderTopWidth = 1;
-            this.groupPanel2.Style.CornerDiameter = 4;
-            this.groupPanel2.Style.CornerType = DevComponents.DotNetBar.eCornerType.Rounded;
-            this.groupPanel2.Style.TextAlignment = DevComponents.DotNetBar.eStyleTextAlignment.Center;
-            this.groupPanel2.Style.TextColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelText;
-            this.groupPanel2.Style.TextLineAlignment = DevComponents.DotNetBar.eStyleTextAlignment.Near;
-            // 
-            // 
-            // 
-            this.groupPanel2.StyleMouseDown.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            // 
-            // 
-            // 
-            this.groupPanel2.StyleMouseOver.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.groupPanel2.TabIndex = 20;
-            this.groupPanel2.Text = "CAN报文解析(批量报文)";
-            // 
             // btn_clearShowMessage
             // 
             this.btn_clearShowMessage.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
@@ -426,7 +356,7 @@
             // 
             this.btn_saveShowMessage.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
             this.btn_saveShowMessage.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
-            this.btn_saveShowMessage.Location = new System.Drawing.Point(1648, 356);
+            this.btn_saveShowMessage.Location = new System.Drawing.Point(1619, 356);
             this.btn_saveShowMessage.Margin = new System.Windows.Forms.Padding(4);
             this.btn_saveShowMessage.Name = "btn_saveShowMessage";
             this.btn_saveShowMessage.Size = new System.Drawing.Size(174, 60);
@@ -457,7 +387,7 @@
             this.groupPanel3.Controls.Add(this.chk_GetMotorAckData);
             this.groupPanel3.Controls.Add(this.btn_saveMotorAckData);
             this.groupPanel3.Controls.Add(this.txt_MotorAckData);
-            this.groupPanel3.Location = new System.Drawing.Point(758, 210);
+            this.groupPanel3.Location = new System.Drawing.Point(264, 207);
             this.groupPanel3.Margin = new System.Windows.Forms.Padding(4);
             this.groupPanel3.Name = "groupPanel3";
             this.groupPanel3.Size = new System.Drawing.Size(684, 205);
@@ -524,10 +454,10 @@
             // 
             this.btn_motorRW.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
             this.btn_motorRW.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
-            this.btn_motorRW.Location = new System.Drawing.Point(1247, 135);
+            this.btn_motorRW.Location = new System.Drawing.Point(1481, 13);
             this.btn_motorRW.Margin = new System.Windows.Forms.Padding(4);
             this.btn_motorRW.Name = "btn_motorRW";
-            this.btn_motorRW.Size = new System.Drawing.Size(204, 60);
+            this.btn_motorRW.Size = new System.Drawing.Size(130, 231);
             this.btn_motorRW.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.btn_motorRW.TabIndex = 27;
             this.btn_motorRW.Text = "MotorRW电机交互";
@@ -537,10 +467,10 @@
             // 
             this.btn_motorScanner.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
             this.btn_motorScanner.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
-            this.btn_motorScanner.Location = new System.Drawing.Point(1057, 134);
+            this.btn_motorScanner.Location = new System.Drawing.Point(792, 80);
             this.btn_motorScanner.Margin = new System.Windows.Forms.Padding(4);
             this.btn_motorScanner.Name = "btn_motorScanner";
-            this.btn_motorScanner.Size = new System.Drawing.Size(174, 60);
+            this.btn_motorScanner.Size = new System.Drawing.Size(174, 105);
             this.btn_motorScanner.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.btn_motorScanner.TabIndex = 35;
             this.btn_motorScanner.Text = "MotorScanner";
@@ -550,10 +480,10 @@
             // 
             this.btn_ReadMotorVersion.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
             this.btn_ReadMotorVersion.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
-            this.btn_ReadMotorVersion.Location = new System.Drawing.Point(322, 137);
+            this.btn_ReadMotorVersion.Location = new System.Drawing.Point(1251, 125);
             this.btn_ReadMotorVersion.Margin = new System.Windows.Forms.Padding(4);
             this.btn_ReadMotorVersion.Name = "btn_ReadMotorVersion";
-            this.btn_ReadMotorVersion.Size = new System.Drawing.Size(204, 60);
+            this.btn_ReadMotorVersion.Size = new System.Drawing.Size(200, 60);
             this.btn_ReadMotorVersion.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.btn_ReadMotorVersion.TabIndex = 36;
             this.btn_ReadMotorVersion.Text = "ReadMotorVersion";
@@ -565,13 +495,13 @@
             // 
             // 
             this.chk_readMotorVersion.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.chk_readMotorVersion.Location = new System.Drawing.Point(34, 141);
+            this.chk_readMotorVersion.Location = new System.Drawing.Point(1048, 137);
             this.chk_readMotorVersion.Margin = new System.Windows.Forms.Padding(4);
             this.chk_readMotorVersion.Name = "chk_readMotorVersion";
-            this.chk_readMotorVersion.Size = new System.Drawing.Size(224, 58);
+            this.chk_readMotorVersion.Size = new System.Drawing.Size(197, 58);
             this.chk_readMotorVersion.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.chk_readMotorVersion.TabIndex = 37;
-            this.chk_readMotorVersion.Text = "ReadMotorVersion";
+            this.chk_readMotorVersion.Text = "VerAnaysisON";
             // 
             // chk_analysisFailedShowSocketData
             // 
@@ -579,7 +509,7 @@
             // 
             // 
             this.chk_analysisFailedShowSocketData.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.chk_analysisFailedShowSocketData.Location = new System.Drawing.Point(551, 142);
+            this.chk_analysisFailedShowSocketData.Location = new System.Drawing.Point(13, 137);
             this.chk_analysisFailedShowSocketData.Margin = new System.Windows.Forms.Padding(4);
             this.chk_analysisFailedShowSocketData.Name = "chk_analysisFailedShowSocketData";
             this.chk_analysisFailedShowSocketData.Size = new System.Drawing.Size(243, 58);
@@ -596,26 +526,55 @@
             this.chk_findMotorID.Checked = true;
             this.chk_findMotorID.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chk_findMotorID.CheckValue = "Y";
-            this.chk_findMotorID.Location = new System.Drawing.Point(792, 137);
+            this.chk_findMotorID.Location = new System.Drawing.Point(264, 137);
             this.chk_findMotorID.Margin = new System.Windows.Forms.Padding(4);
             this.chk_findMotorID.Name = "chk_findMotorID";
             this.chk_findMotorID.Size = new System.Drawing.Size(248, 58);
             this.chk_findMotorID.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.chk_findMotorID.TabIndex = 39;
-            this.chk_findMotorID.Text = "FindMotorID";
+            this.chk_findMotorID.Text = "AutoFindMotorID";
+            // 
+            // labelX5
+            // 
+            // 
+            // 
+            // 
+            this.labelX5.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.labelX5.Location = new System.Drawing.Point(26, 227);
+            this.labelX5.Margin = new System.Windows.Forms.Padding(4);
+            this.labelX5.Name = "labelX5";
+            this.labelX5.Size = new System.Drawing.Size(180, 52);
+            this.labelX5.TabIndex = 40;
+            this.labelX5.Text = "总线使用率：";
+            // 
+            // lab_busUsedRate
+            // 
+            // 
+            // 
+            // 
+            this.lab_busUsedRate.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.lab_busUsedRate.Font = new System.Drawing.Font("宋体", 16.125F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.lab_busUsedRate.Location = new System.Drawing.Point(26, 296);
+            this.lab_busUsedRate.Margin = new System.Windows.Forms.Padding(4);
+            this.lab_busUsedRate.Name = "lab_busUsedRate";
+            this.lab_busUsedRate.Size = new System.Drawing.Size(180, 52);
+            this.lab_busUsedRate.TabIndex = 41;
+            this.lab_busUsedRate.Text = "0.00%";
             // 
             // RobotMotorControlMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(192F, 192F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.ClientSize = new System.Drawing.Size(2180, 1064);
+            this.ClientSize = new System.Drawing.Size(2221, 1069);
+            this.Controls.Add(this.lab_busUsedRate);
+            this.Controls.Add(this.labelX5);
+            this.Controls.Add(this.btn_motorScanner);
             this.Controls.Add(this.chk_readMotorVersion);
             this.Controls.Add(this.btn_ReadMotorVersion);
             this.Controls.Add(this.btn_motorRW);
             this.Controls.Add(this.groupPanel3);
             this.Controls.Add(this.btn_saveShowMessage);
             this.Controls.Add(this.btn_clearShowMessage);
-            this.Controls.Add(this.groupPanel2);
             this.Controls.Add(this.groupPanel1);
             this.Controls.Add(this.chk_OnlyFeedBackData);
             this.Controls.Add(this.chk_filterByMotorID);
@@ -628,7 +587,6 @@
             this.Controls.Add(this.labelX3);
             this.Controls.Add(this.btn_log_ext);
             this.Controls.Add(this.txt_showMessage);
-            this.Controls.Add(this.btn_motorScanner);
             this.Controls.Add(this.chk_analysisFailedShowSocketData);
             this.Controls.Add(this.chk_findMotorID);
             this.DoubleBuffered = true;
@@ -638,7 +596,6 @@
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.Form1_Load);
             this.groupPanel1.ResumeLayout(false);
-            this.groupPanel2.ResumeLayout(false);
             this.groupPanel3.ResumeLayout(false);
             this.ResumeLayout(false);
 
@@ -658,14 +615,11 @@
         private DevComponents.DotNetBar.ButtonX btn_disConnect;
         private DevComponents.DotNetBar.ButtonX btn_refresh_ext;
         private DevComponents.DotNetBar.Controls.ComboBoxEx cmb_comList;
-        private DevComponents.DotNetBar.Controls.TextBoxX txt_batchCan;
         private DevComponents.DotNetBar.LabelX labelX4;
         public DevComponents.DotNetBar.Controls.ComboBoxEx cmb_idFilter;
         private DevComponents.DotNetBar.Controls.CheckBoxX chk_filterByMotorID;
         private DevComponents.DotNetBar.Controls.CheckBoxX chk_OnlyFeedBackData;
-        private DevComponents.DotNetBar.ButtonX btn_batchCanAnalysis;
         private DevComponents.DotNetBar.Controls.GroupPanel groupPanel1;
-        private DevComponents.DotNetBar.Controls.GroupPanel groupPanel2;
         private DevComponents.DotNetBar.ButtonX btn_clearShowMessage;
         private DevComponents.DotNetBar.ButtonX btn_saveShowMessage;
         private DevComponents.DotNetBar.Controls.TextBoxX txt_MotorAckData;
@@ -678,6 +632,8 @@
         private DevComponents.DotNetBar.Controls.CheckBoxX chk_analysisFailedShowSocketData;
         private DevComponents.DotNetBar.Controls.CheckBoxX chk_findMotorID;
         private DevComponents.DotNetBar.Controls.CheckBoxX chk_GetMotorAckData;
+        private DevComponents.DotNetBar.LabelX labelX5;
+        private DevComponents.DotNetBar.LabelX lab_busUsedRate;
     }
 }
 

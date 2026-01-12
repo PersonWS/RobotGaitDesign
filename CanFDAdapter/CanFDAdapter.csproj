@@ -54,6 +54,7 @@
     <Compile Include="Class1.cs" />
     <Compile Include="CanAdapterDataProcess_BaoFengFD.cs" />
     <Compile Include="COM_Server.cs" />
+    <Compile Include="SpinWaitTimer .cs" />
     <Compile Include="Log.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CanFDAdapterMain.cs" />

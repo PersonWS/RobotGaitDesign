@@ -12,26 +12,26 @@ namespace LZMotor
     public enum Enum_MotorParameter : Int16
     {
 
-        /// <summary>
-        /// 电流kp RW
-        /// </summary>
-        [Description("float")]
-        cur_kp电流 = 0x2012,
-        /// <summary>
-        /// 电流ki RW
-        /// </summary>
-        [Description("float")]
-        cur_ki电流 = 0x2013,
-        /// <summary>
-        /// 速度kp
-        /// </summary>
-        [Description("float")]
-        spd_kp = 0x2014,
-        /// <summary>
-        /// 速度kI
-        /// </summary>
-        [Description("float")]
-        spd_ki = 0x2015,
+        ///// <summary>
+        ///// 电流kp RW
+        ///// </summary>
+        //[Description("float")]
+        //cur_kp电流 = 0x2012,
+        ///// <summary>
+        ///// 电流ki RW
+        ///// </summary>
+        //[Description("float")]
+        //cur_ki电流 = 0x2013,
+        ///// <summary>
+        ///// 速度kp
+        ///// </summary>
+        //[Description("float")]
+        //spd_kp = 0x2014,
+        ///// <summary>
+        ///// 速度kI
+        ///// </summary>
+        //[Description("float")]
+        //spd_ki = 0x2015,
         /// <summary>
         /// 电机故障码1
         /// </summary>
@@ -53,16 +53,59 @@ namespace LZMotor
         [Description("uint8")]
         run_mode运行模式 = 0X7005,
 
+
         /// <summary>
-        /// 位置kp
+        /// 转矩限制
         /// </summary>
         [Description("float")]
-        loc_kp位置 = 0x701E,
+        limit_torque = 0x700B,
+
+        /// <summary>
+        /// 负载端计圈机械角度
+        /// </summary>
+        [Description("float")]
+        mechPos负载端机械角度 = 0x7019,    
+
+
+        /// <summary>
+        /// 电流环增益
+        /// </summary>
+        [Description("float")]
+        cur_kp电流环增益 = 0x7010,
+        /// <summary>
+        /// 电流环增益
+        /// </summary>
+        [Description("float")]
+        cur_ki电流环积分 = 0x7011,
+
+
+
+        /// <summary>
+        /// loc_kp位置环增益
+        /// </summary>
+        [Description("float")]
+        loc_kp位置环增益 = 0x701E,
+
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [Description("float")]
+        spd_kp速度环增益 = 0x701F,
+
+        [Description("float")]
+        spd_kI速度环积分 = 0x7020,
+
+
         /// <summary>
         /// 位置模式电机目标角度指令  float
         /// </summary>
         [Description("float")]
         loc_ref_电机目标角度 = 0X7016,
+
+
+
 
         [Description("float")]
         limit_spd_csp速度限制 = 0X7017,

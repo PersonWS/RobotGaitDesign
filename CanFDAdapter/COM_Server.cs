@@ -6,6 +6,8 @@ using System.IO.Ports;
 using LogHelper;
 using Microsoft.Win32;
 using System.Management;
+using System.Timers;
+using System.Threading.Tasks;
 
 namespace CanFDAdapter
 {
@@ -18,20 +20,40 @@ namespace CanFDAdapter
         /// <summary>
         /// 接收到信息时回调
         /// </summary>
-        internal event Action<byte[]> ReceivedMessage;
-
-
+        internal event Action<byte[]> ReceivedMessageEvent;
+        /// <summary>
+        /// 总线使用率
+        /// </summary>
+        internal event Action<double> BusUseageRateEvent;
 
         string _targetCOMPort;
 
         int _baudRate = 9600;
 
         private static readonly object _lock = new object();
+        /// <summary>
+        /// 计算1秒内传输了多少字节
+        /// </summary>
+        double _receivedBufferCount = 0;
+        /// <summary>
+        /// 上一秒的字节数
+        /// </summary>
+        double _receivedBufferLast = 0;
+
+
+        SpinWaitTimer _timer_BusUseageRate = null;
 
         public COM_Server(string targetCOMPort, Int32 baudRate = 115200)
         {
             this._targetCOMPort = targetCOMPort;
             this._baudRate = baudRate;
+            _timer_BusUseageRate = new SpinWaitTimer(200);
+            _timer_BusUseageRate.OnElapsed += ElapsedEventHandler;
+            _timer_BusUseageRate.Start();
+        }
+        ~COM_Server()
+        {
+            _timer_BusUseageRate.Dispose();
         }
         /// <summary>
         /// 开启串口监听
@@ -98,17 +120,13 @@ namespace CanFDAdapter
                 {
                     int len = _serialPort.BytesToRead;
                     Byte[] readBuffer = new Byte[len];
-
                     _serialPort.Read(readBuffer, 0, len); //将数据读入缓存
+                    _receivedBufferCount += len;
 #if DEBUG
-                    log.Debug($"COM收到原始数据长度{len} ，COM收到数据内容：{BitConverter.ToString(readBuffer)}");
+                    log.Debug($"COM收到原始数据长度{len} ,1s累计长度:{_receivedBufferCount}，COM收到数据内容：{BitConverter.ToString(readBuffer)}");
 #endif
-                    if (ReceivedMessage != null)
-                    {
-
-                        //log.Debug(string.Format("{0},{1}", "接收到的信息 ，处理后的信息：", "", Encoding.UTF8.GetString(readBuffer)));
-                        ReceivedMessage(readBuffer);
-                    }
+                    //log.Debug(string.Format("{0},{1}", "接收到的信息 ，处理后的信息：", "", Encoding.UTF8.GetString(readBuffer)));
+                    Task.Run(() => { ReceivedMessageEvent?.Invoke(readBuffer); });
                     ////处理readBuffer中的数据，自定义处理过程
                     //string msg = Encoding.UTF8.GetString(readBuffer, 0, len); //获取出入库产品编号
                     //log.Debug(string.Format("{0},{1}", "接收到的原始信息", msg));
@@ -278,6 +296,28 @@ namespace CanFDAdapter
 
             return "Unknown Serial Device";
         }
+
+
+        public void ElapsedEventHandler(object sender, EventArgs e)
+        {
+            if (BusUseageRateEvent != null)
+            {
+                double rate = 0;
+                double temp;
+                lock (_lock)
+                {
+                    temp = _receivedBufferLast;
+                    _receivedBufferLast = _receivedBufferCount;
+                }
+                log.Debug("com 定时器触发");
+                rate = (_receivedBufferCount - temp) * 50 / _baudRate;//40=2*8,，再乘以1.25的填充位
+
+                Task.Run(() => { BusUseageRateEvent(rate); });
+            }
+
+
+        }
+
 
 
 

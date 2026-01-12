@@ -227,13 +227,14 @@ namespace RobotGaitDesign
             {
                 _canFDAdapterMain.DisConnect();
                 _canFDAdapterMain.MessageReceiveEvent -= ComMessageReceived;
+                _canFDAdapterMain.BusUseageRateEvent -= BusUseageRate;
             }
             if (cmb_comList.Text.Contains("CH340"))
             {
                 baudRate = 921600;
                 _canFDAdapterEntity = new CanFDAdapter.CanAdapterEntity(_comDic[cmb_comList.Text], baudRate);
                 _canFDAdapterEntity.ChipType = CanFDAdapter.CanAdapterTypeEnum.CH340;
-                _canFDAdapterEntity.Description = txt_batchCan.Text;
+                //_canFDAdapterEntity.Description = txt_batchCan.Text;
                 _canFDAdapterEntity.ComPort = _comDic[cmb_comList.Text];
                 _canFDAdapterMain = new CanFDAdapter.CanFDAdapterMain_RobstrideDynamics(_canFDAdapterEntity);
             }
@@ -243,7 +244,7 @@ namespace RobotGaitDesign
                 baudRate = 921600;
                 _canFDAdapterEntity = new CanFDAdapter.CanAdapterEntity(_comDic[cmb_comList.Text], baudRate);
                 _canFDAdapterEntity.ChipType = CanFDAdapter.CanAdapterTypeEnum.ch341;
-                _canFDAdapterEntity.Description = txt_batchCan.Text;
+                //_canFDAdapterEntity.Description = txt_batchCan.Text;
                 _canFDAdapterEntity.ComPort = _comDic[cmb_comList.Text];
                 _canFDAdapterMain = new CanFDAdapter.CanFDAdapterMain_BaoFeng(_canFDAdapterEntity);
             }
@@ -257,6 +258,7 @@ namespace RobotGaitDesign
             {
                 _isProcessQueueThreadContiue = true;
                 _canFDAdapterMain.MessageReceiveEvent += ComMessageReceived;
+                _canFDAdapterMain.BusUseageRateEvent += BusUseageRate;
                 _processQueueThread = new Thread(ProcessComMessage);
                 _processQueueThread.Name = "processMotorData";
                 _processQueueThread.IsBackground = true;
@@ -522,52 +524,6 @@ namespace RobotGaitDesign
             this._isOnlyFeedBackData = chk_OnlyFeedBackData.Checked;
         }
 
-        private void btn_batchCanAnalysis_Click(object sender, EventArgs e)
-        {
-            if (_IsProcessing)
-            {
-                FormSet.BaseFrmControl.ShowDefalutMessageBox(this, "其他任务正在处理中");
-                return;
-            }
-            string content = txt_batchCan.Text.Replace(" ", "").Replace("-", "").Replace("\r", "").Replace("\n", "");
-            List<string> listIDStr = new List<string>();
-            List<string> listIData = new List<string>();
-            for (int i = 0; i < content.Length / 36; i++)
-            {
-                string str = content.Substring(i * 36, 36);
-                if (!str.StartsWith("02") && str.EndsWith("AA"))
-                {
-                    ShowMessage($"发现异常报文:{str}");
-                }
-                else
-                {
-                    listIDStr.Add(str.Substring(2, 8));
-                    listIData.Add(str.Substring(18, 16));
-                }
-            }
-            if (listIDStr.Count == 0 || listIData.Count == 0)
-            {
-                FormSet.BaseFrmControl.ShowErrorMessageBox(this, "id或data为空");
-                return;
-            }
-            else if (listIDStr.Count != listIData.Count)
-            {
-                FormSet.BaseFrmControl.ShowErrorMessageBox(this, $"id和data数据长度不一致,listIDStr.Count :{listIDStr.Count}, listIData.Count:{listIData.Count}");
-                return;
-            }
-
-            try
-            {
-                _IsProcessing = true;
-                AnalysisMotorData(listIDStr, listIData);
-            }
-            catch (Exception ex)
-            {
-                BaseFrmControl.ShowErrorMessageBox(this, $"{ex.ToString()}");
-                _IsProcessing = false;
-            }
-        }
-
         private void btn_clearShowMessage_Click(object sender, EventArgs e)
         {
             this.txt_showMessage.Text = "";
@@ -620,7 +576,7 @@ namespace RobotGaitDesign
             }
             _frm_MotorInterope = new Frm_MotorInterope(this);
             _frm_MotorInterope.FormClosed += Frm_MotorInteropeClosedEventHandler;
-            _frm_MotorInterope.Size = new Size(850, 550);
+            _frm_MotorInterope.Size = new Size(865, 550);
             _frm_MotorInterope.StartPosition = FormStartPosition.CenterParent;
             _frm_MotorInterope.Show();
 
@@ -717,12 +673,18 @@ namespace RobotGaitDesign
             string str;
             try
             {
+                chk_readMotorVersion.Checked = true;
                 //读取7016 loc_ref 电机目标位置
                 sendBufferTemp = LZMotor.LZMotoInteropeMain.R_ReadMotorVersion(listId);//生成发送的buffer
                 sendBuffer = _canFDAdapterMain?.CanAdapterDataProcess.GenerateSendMotorData(sendBufferTemp);
                 str = BitConverter.ToString(sendBuffer?[0]).Replace("-", " ");
                 _canFDAdapterMain?.Send(sendBuffer);
                 Thread.Sleep(50);
+                Task.Run(() =>
+                {
+                    Thread.Sleep(1000);
+                    this.Invoke(new Action(() => { chk_readMotorVersion.Checked = false; }));
+                });
             }
             catch (Exception ex)
             {
@@ -732,5 +694,20 @@ namespace RobotGaitDesign
             { _isReadMotorVersion = false; }
 
         }
+
+        private void BusUseageRate(double rate)
+        {
+            if (this.IsHandleCreated)
+            {
+                this.Invoke(new Action(() =>
+                {
+                    lab_busUsedRate.Text = $"{(rate * 100).ToString("0.00")}%";
+                }));
+            }
+
+        }
+
+
+
     }
 }

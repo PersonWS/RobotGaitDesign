@@ -183,7 +183,7 @@ namespace LZMotor
             DataRow dr = dataTable.NewRow();
             dr["canIdSend"] = id.MotorIDSend;
             //dr["canIdRec"] = id.MotorIDReceive;
-            dr["Angle"] = (MapUInt16ToFloat(new byte[] { data[1], data[0] }) * 114.59156F).ToString("0.0000");
+            dr["Angle"] = (MapUInt16ToFloat(new byte[] { data[1], data[0] }) * 57.29578F).ToString("0.0000");
 
             if (id.MotorIDSend < 100)
             {

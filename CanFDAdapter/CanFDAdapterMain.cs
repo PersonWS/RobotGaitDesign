@@ -17,8 +17,12 @@ namespace CanFDAdapter
         /// <summary>
         /// 服务器
         /// </summary>
-        COM_Server _server;
+        COM_Server _comServer;
         bool _isConnected = false;
+        /// <summary>
+        /// 输出总线使用率，通过COM速率计算得到的
+        /// </summary>
+        public event Action<double> BusUseageRateEvent;
 
         public event Action<List<byte[]>> MessageReceiveEvent;
         CanAdapterEntity _canAdapterEntity;
@@ -73,13 +77,15 @@ namespace CanFDAdapter
             }
             else
             {
-                _server = new COM_Server(_canAdapterEntity.ComPort, _canAdapterEntity.ComBaud);
-                _server.ReceivedMessage += Receive;
-                bool ret = _server.StartSerialPortMonitor();
+                _comServer = new COM_Server(_canAdapterEntity.ComPort, _canAdapterEntity.ComBaud);
+                _comServer.ReceivedMessageEvent += Receive;
+                _comServer.BusUseageRateEvent += COMBusUseageRate;
+                bool ret = _comServer.StartSerialPortMonitor();
                 AfterConnect(ret);
                 return ret;
             }
         }
+
 
         public virtual void AfterConnect(bool isConnectSuccess) { }
 
@@ -122,7 +128,7 @@ namespace CanFDAdapter
                     log.Error(string.Format("COM Send传入类型错误，传入类型：{0}", obj.GetType().ToString().ToLower()));
                     return false;
             }
-            return _server.SendData(sendArray);
+            return _comServer.SendData(sendArray);
         }
 
         public int Send(List<byte[]> sendList)
@@ -133,7 +139,7 @@ namespace CanFDAdapter
                 try
                 {
                     log.Debug($"COM ,发送数据：{BitConverter.ToString(send)}");
-                    bool ret = _server.SendData(send);
+                    bool ret = _comServer.SendData(send);
                     Thread.Sleep(1);
 
                     sendCount += send.Length;
@@ -163,13 +169,18 @@ namespace CanFDAdapter
         /// </summary>
         public void DisConnect()
         {
-            if (_server != null)
+            if (_comServer != null)
             {
-                _server.ReceivedMessage -= Receive;
-                _server.Stop();
-                _server = null;
+                _comServer.ReceivedMessageEvent -= Receive;
+                _comServer.Stop();
+                _comServer = null;
 
             }
+        }
+
+        private void COMBusUseageRate(double rate)
+        { 
+            BusUseageRateEvent?.Invoke(rate);
         }
 
 
