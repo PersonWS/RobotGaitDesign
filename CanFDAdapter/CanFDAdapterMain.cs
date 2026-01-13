@@ -62,7 +62,7 @@ namespace CanFDAdapter
         /// 建立连接
         /// </summary>
         /// <returns>true：连接成功   false ：连接失败，查看日志确定错误信息</returns>
-        public bool Connect()
+        public bool Connect(int baudUsedRefreshRate = 500)
         {
             List<string> comList = COM_Server.GetComlist(false); //首先获取本机关联的串行端口列表            
             if (comList.Count == 0)
@@ -77,7 +77,7 @@ namespace CanFDAdapter
             }
             else
             {
-                _comServer = new COM_Server(_canAdapterEntity.ComPort, _canAdapterEntity.ComBaud);
+                _comServer = new COM_Server(_canAdapterEntity.ComPort, _canAdapterEntity.ComBaud, baudUsedRefreshRate);
                 _comServer.ReceivedMessageEvent += Receive;
                 _comServer.BusUseageRateEvent += COMBusUseageRate;
                 bool ret = _comServer.StartSerialPortMonitor();
@@ -152,7 +152,7 @@ namespace CanFDAdapter
             return sendCount;
         }
 
-        protected virtual List< byte[] >BeforeMessageReceiveEventInvoke( byte[] b)
+        protected virtual List<byte[]> BeforeMessageReceiveEventInvoke(byte[] b)
         {
             return new List<byte[]>() { b };
         }
@@ -179,7 +179,7 @@ namespace CanFDAdapter
         }
 
         private void COMBusUseageRate(double rate)
-        { 
+        {
             BusUseageRateEvent?.Invoke(rate);
         }
 

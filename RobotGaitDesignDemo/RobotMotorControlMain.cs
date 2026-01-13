@@ -225,9 +225,11 @@ namespace RobotGaitDesign
             int baudRate = 921600;
             if (_canFDAdapterMain != null)
             {
-                _canFDAdapterMain.DisConnect();
-                _canFDAdapterMain.MessageReceiveEvent -= ComMessageReceived;
                 _canFDAdapterMain.BusUseageRateEvent -= BusUseageRate;
+                _canFDAdapterMain.MessageReceiveEvent -= ComMessageReceived;
+                _canFDAdapterMain.DisConnect();
+                _canFDAdapterEntity = null;
+
             }
             if (cmb_comList.Text.Contains("CH340"))
             {
@@ -254,7 +256,7 @@ namespace RobotGaitDesign
                 return;
             }
 
-            if (_canFDAdapterMain.Connect())
+            if (_canFDAdapterMain.Connect(300))
             {
                 _isProcessQueueThreadContiue = true;
                 _canFDAdapterMain.MessageReceiveEvent += ComMessageReceived;
@@ -702,12 +704,38 @@ namespace RobotGaitDesign
                 this.Invoke(new Action(() =>
                 {
                     lab_busUsedRate.Text = $"{(rate * 100).ToString("0.00")}%";
+                    if (rate < 0.3)
+                    {
+                        lab_busUsedRate.ForeColor = Color.Green;
+                    }
+                    else if (rate < 0.7)
+                    {
+                        lab_busUsedRate.ForeColor = Color.Yellow;
+                    }
+                    else if (rate < 0.8)
+                    {
+                        lab_busUsedRate.ForeColor = Color.Red;
+                    }
+                    else
+                    {
+                        lab_busUsedRate.ForeColor = Color.DarkRed;
+                        lab_busUsedRate.Text += $"ERROR";
+                    }
                 }));
             }
 
         }
 
+        private void RobotMotorControlMain_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (_canFDAdapterMain != null)
+            {
+                _canFDAdapterMain.BusUseageRateEvent -= BusUseageRate;
+                _canFDAdapterMain.MessageReceiveEvent -= ComMessageReceived;
+                _canFDAdapterMain.DisConnect();
+                _canFDAdapterEntity = null;
 
-
+            }
+        }
     }
 }

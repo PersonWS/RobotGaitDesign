@@ -425,7 +425,7 @@ namespace RobotGaitDesignDemo
                 List<byte[]> sendBufferTemp;
                 List<byte[]> sendBuffer;
                 string str;
-                int threadSleep = 10;
+                int threadSleep = 1;
                 //读取7016 loc_ref 电机目标位置
                 sendBufferTemp = LZMotor.LZMotoInteropeMain.R_ReadMotorParameter(listId, Enum_MotorParameter.loc_ref_电机目标角度);//生成发送的buffer
                 sendBuffer = _baseForm._canFDAdapterMain?.CanAdapterDataProcess.GenerateSendMotorData(sendBufferTemp);

@@ -31,6 +31,8 @@ namespace CanFDAdapter
         int _baudRate = 9600;
 
         private static readonly object _lock = new object();
+        #region 用于总线负载率汇报的字段
+        private static readonly object _lock_report = new object();
         /// <summary>
         /// 计算1秒内传输了多少字节
         /// </summary>
@@ -43,13 +45,21 @@ namespace CanFDAdapter
 
         SpinWaitTimer _timer_BusUseageRate = null;
 
-        public COM_Server(string targetCOMPort, Int32 baudRate = 115200)
+        int _reportInterval = 500;//CAN总线上报时间间隔
+        double _CAN_Rate = 0;//定义了CAN的系数
+        #endregion
+
+        // public int ReportInterval { get => _reportInterval; set { _reportInterval = value; _CAN_Rate = 1000 / _reportInterval * 8 * 1.25; } }
+
+        public COM_Server(string targetCOMPort, Int32 baudRate = 115200,Int32 reportInterval=1000)
         {
             this._targetCOMPort = targetCOMPort;
             this._baudRate = baudRate;
-            _timer_BusUseageRate = new SpinWaitTimer(200);
+            this._reportInterval = reportInterval;
+            _timer_BusUseageRate = new SpinWaitTimer(reportInterval);
             _timer_BusUseageRate.OnElapsed += ElapsedEventHandler;
             _timer_BusUseageRate.Start();
+            _CAN_Rate = 1000d / _reportInterval * 8 * 1.25;
         }
         ~COM_Server()
         {
@@ -95,6 +105,10 @@ namespace CanFDAdapter
             try
             {
                 _serialPort.Write(data, 0, data.Length);
+                lock (_lock_report)
+                {
+                    _receivedBufferCount += data.Length;
+                }
                 return true;
             }
             catch (Exception ex)
@@ -121,7 +135,10 @@ namespace CanFDAdapter
                     int len = _serialPort.BytesToRead;
                     Byte[] readBuffer = new Byte[len];
                     _serialPort.Read(readBuffer, 0, len); //将数据读入缓存
-                    _receivedBufferCount += len;
+                    lock (_lock_report)
+                    {
+                        _receivedBufferCount += len;
+                    }
 #if DEBUG
                     log.Debug($"COM收到原始数据长度{len} ,1s累计长度:{_receivedBufferCount}，COM收到数据内容：{BitConverter.ToString(readBuffer)}");
 #endif
@@ -310,7 +327,7 @@ namespace CanFDAdapter
                     _receivedBufferLast = _receivedBufferCount;
                 }
                 log.Debug("com 定时器触发");
-                rate = (_receivedBufferCount - temp) * 50 / _baudRate;//40=2*8,，再乘以1.25的填充位
+                rate = (_receivedBufferCount - temp) * _CAN_Rate / _baudRate;//40=2*8,，再乘以1.25的填充位
 
                 Task.Run(() => { BusUseageRateEvent(rate); });
             }
