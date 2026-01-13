@@ -127,7 +127,7 @@ namespace LZMotor
     }
     public class MotorParameterValueProcess
     {
-        public static T GetRealMotorParameterTypeByEnumDescription<T>(Enum_MotorParameter enum_MotorParameter, byte[] Data_MotorDataBytes)
+        public static T GetRealMotorParameterValueByEnumDescription<T>(Enum_MotorParameter enum_MotorParameter, byte[] Data_MotorDataBytes)
         {
             T value = default(T);
             string description = GetDescription(enum_MotorParameter);
@@ -155,13 +155,20 @@ namespace LZMotor
                     value = (T)(object)BitConverter.ToUInt32(Data_MotorDataBytes, 4);
                     break;
                 default:
-                    throw new Exception($"电机参数：{enum_MotorParameter}，具备意料之外的description：{description}");
+                    Log.log.Error($"电机参数：{enum_MotorParameter}，具备意料之外的description：{description}");
                     break;
             }
             return value;
         }
-
-        public static T GetRealMotorParameterTypeByEnumDescription<T>(Enum_MotorParameter enum_MotorParameter, string inputValue)
+        /// <summary>
+        /// 通过电机属性的描述来获取电机的真实值
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="enum_MotorParameter"></param>
+        /// <param name="inputValue"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public static T GetRealMotorParameterValueByEnumDescription<T>(Enum_MotorParameter enum_MotorParameter, string inputValue)
         {
             T value = default(T);
             string description = GetDescription(enum_MotorParameter);
@@ -195,6 +202,7 @@ namespace LZMotor
             }
             return value;
         }
+       
 
         // 简单方法：使用反射获取Description
         public static string GetDescription(Enum value)

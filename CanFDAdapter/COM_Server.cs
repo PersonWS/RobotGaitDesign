@@ -46,7 +46,7 @@ namespace CanFDAdapter
         SpinWaitTimer _timer_BusUseageRate = null;
 
         int _reportInterval = 500;//CAN总线上报时间间隔
-        double _CAN_Rate = 0;//定义了CAN的系数
+        double _CAN_RateCoeff = 0;//定义了CAN的系数
         #endregion
 
         // public int ReportInterval { get => _reportInterval; set { _reportInterval = value; _CAN_Rate = 1000 / _reportInterval * 8 * 1.25; } }
@@ -59,7 +59,7 @@ namespace CanFDAdapter
             _timer_BusUseageRate = new SpinWaitTimer(reportInterval);
             _timer_BusUseageRate.OnElapsed += ElapsedEventHandler;
             _timer_BusUseageRate.Start();
-            _CAN_Rate = 1000d / _reportInterval * 8 * 1.25;
+            _CAN_RateCoeff = 1000d / _reportInterval * 8 * 1.25;
         }
         ~COM_Server()
         {
@@ -86,7 +86,7 @@ namespace CanFDAdapter
                                              //一般都设为1
             _serialPort.ReceivedBytesThreshold = 1;
             _serialPort.DataReceived += new SerialDataReceivedEventHandler(CommDataReceived); //设置数据接收事件（监听）
-
+            _receivedBufferCount = _receivedBufferLast = 0;
             try
             {
                 _serialPort.Open(); //打开串口
@@ -326,13 +326,11 @@ namespace CanFDAdapter
                     temp = _receivedBufferLast;
                     _receivedBufferLast = _receivedBufferCount;
                 }
-                log.Debug("com 定时器触发");
-                rate = (_receivedBufferCount - temp) * _CAN_Rate / _baudRate;//40=2*8,，再乘以1.25的填充位
-
-                Task.Run(() => { BusUseageRateEvent(rate); });
+                rate = (_receivedBufferCount - temp) * _CAN_RateCoeff / _baudRate;//40=2*8,，再乘以1.25的填充位
+                //log.Debug($"canRate:{rate}, interval:{_reportInterval}");
+                BusUseageRateEvent(rate);
+                //Task.Run(() => { BusUseageRateEvent(rate); });
             }
-
-
         }
 
 

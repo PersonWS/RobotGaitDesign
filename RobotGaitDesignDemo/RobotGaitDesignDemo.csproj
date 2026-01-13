@@ -84,6 +84,7 @@
     <Compile Include="ProcessEngine.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ShowMessage.cs" />
     <EmbeddedResource Include="RobotMotorControlMain.resx">
       <DependentUpon>RobotMotorControlMain.cs</DependentUpon>
     </EmbeddedResource>

@@ -14,6 +14,7 @@ namespace LZMotor
         Data_Motor motorData;
         static DataTable _dt_motorAck = new DataTable();
         static DataTable _dt_motorReadParameter = new DataTable();
+        static DataTable _dt_SetParameterUnhold = new DataTable();
         static DataAnalysisHelper()
         {
             _dt_motorAck.Columns.Add("canIdSend");
@@ -24,6 +25,11 @@ namespace LZMotor
             _dt_motorAck.Columns.Add("Temperature");
             _dt_motorAck.Columns.Add("Mode");
             _dt_motorAck.Columns.Add("Alarm");
+            _dt_SetParameterUnhold.Columns.Add("canIdSend");
+            //_dt_SetParameterUnhold.Columns.Add("canIdRec");
+            _dt_SetParameterUnhold.Columns.Add("canIdReceive");
+            _dt_SetParameterUnhold.Columns.Add("parameterID");
+            _dt_SetParameterUnhold.Columns.Add("parameterValue");
         }
         public DataAnalysisHelper(ExtendData_ID id, Data_Motor data)
         {
@@ -38,9 +44,9 @@ namespace LZMotor
             return AnalysisAckData_ReturnString(id, motorData, out dt);
         }
         #region 通过适配器的原始报文来解析出can的信息
-        public static List<LZMotorDataMain> AnalysisBytesArrayToCanidAndCandata(CanFDAdapter.CanAdapterEntity canAdapterEntity, byte[] bytes)
+        public static LZMotorDataMain AnalysisBytesArrayToCanidAndCandata(CanFDAdapter.CanAdapterEntity canAdapterEntity, byte[] bytes)
         {
-            List<LZMotorDataMain> lZMotorData = new List<LZMotorDataMain>();
+            LZMotorDataMain lZMotorData = null;
             CanAdapterDataProcess canAdapterDataProcess;
             switch (canAdapterEntity.ChipType)
             {
@@ -59,26 +65,15 @@ namespace LZMotor
             return lZMotorData;
 
         }
-        private static List<LZMotorDataMain> AnalysisBytesArrayToCanidAndCandataSub(CanAdapterDataProcess canAdapterDataProcess, byte[] bytes)
+        private static LZMotorDataMain AnalysisBytesArrayToCanidAndCandataSub(CanAdapterDataProcess canAdapterDataProcess, byte[] bytes)
         {
-            List<LZMotorDataMain> lZMotorDatas = new List<LZMotorDataMain>();
-            List<byte[]> anaBytes = canAdapterDataProcess.AnalysisMotorRetData(bytes);
-            foreach (var item in anaBytes)
-            {
-                //if (bytes.Length != 17)
-                //{
-                //    Log.log.Error($"AnalysisBytesArrayToCanidAndCandata_CH340 ,报文长度不等于17，报文：{BitConverter.ToString(bytes)}");
-                //    continue;
-                //}
-                //byte temp = (byte)(bytes[2] << 3);
-                //拆解数据
-                byte[] idArray = new byte[] { item[3], item[2], item[1], item[0] };
-                int dataLength = BitConverter.ToInt16(new byte[] { item[7], item[6] }, 0);
-                byte[] dataArray = item.Skip(8).Take(8).ToArray();
+           byte[] anaBytes = canAdapterDataProcess.AnalysisMotorRetData(bytes);
+
+                byte[] idArray = new byte[] { anaBytes[3], anaBytes[2], anaBytes[1], anaBytes[0] };
+                int dataLength = BitConverter.ToInt16(new byte[] { anaBytes[7], anaBytes[6] }, 0);
+                byte[] dataArray = anaBytes.Skip(8).Take(anaBytes[7]).ToArray();
                 LZMotorDataMain data = new LZMotorDataMain(new LZMotor.Data_Motor(dataArray), new LZMotor.ExtendData_ID(idArray));
-                lZMotorDatas.Add(data);
-            }
-            return lZMotorDatas;
+            return data;
         }
 
         #endregion
@@ -163,6 +158,7 @@ namespace LZMotor
 
                     break;
                 case Enum_CommunicationType.SetParameterUnhold:
+                    dataTable= AnalysisDataInternal_SetParameterUnhold(id, data.DataBytes);
                     break;
                 case Enum_CommunicationType.FaultFeedback:
                     break;
@@ -248,6 +244,104 @@ namespace LZMotor
                     default:
                         break;
                 }
+            }
+
+            dataTable.Rows.Add(dr);
+            return dataTable;
+        }
+        /// <summary>
+        /// 解析并格式化电机参数写入的信息
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="data"></param>
+        /// <returns></returns>
+
+        private static DataTable AnalysisDataInternal_SetParameterUnhold(ExtendData_ID id, byte[] data)
+        {
+            DataTable dataTable = _dt_SetParameterUnhold.Clone();
+            dataTable.TableName = "SetParameterUnhold";
+            DataRow dr = dataTable.NewRow();
+            dr["canIdSend"] = id.MotorIDSend;
+            dr["canIdReceive"] = id.MotorIDReceive;
+            dr["parameterID"] = BitConverter.ToString(new byte[] { data[1], data[0] }).Replace("-","");
+
+            Enum_MotorParameter enum_MotorParameter = (Enum_MotorParameter)BitConverter.ToInt16(data, 0);
+            object value = MotorParameterValueProcess.GetRealMotorParameterValueByEnumDescription<object>(enum_MotorParameter, data);
+            if (value==null)
+            {
+                return dataTable;
+            }
+            switch (enum_MotorParameter)
+            {
+                case Enum_MotorParameter.drv_fault:
+                    dr["parameterValue"] = value.ToString();
+                    break;
+                case Enum_MotorParameter.drv_temp:
+                    dr["parameterValue"] = value.ToString();
+                    break;
+                case Enum_MotorParameter.run_mode运行模式:
+                    switch ( value.ToString())
+                    {
+                        case "0":
+                            dr["parameterValue"] = "运控模式";
+                            break;
+                        case "1":
+                            dr["parameterValue"] = "位置模式(PP)";
+                            break;
+                        case "2":
+                            dr["parameterValue"] = "速度模式";
+                            break;
+                        case "3":
+                            dr["parameterValue"] = "电流模式";
+                            break;
+                        case "5":
+                            dr["parameterValue"] = "位置模式(CSP)";
+                            break;
+                        default:
+                            Log.log.Error($"AnalysisDataInternal_SetParameterUnhold: run_mode运行模式 ,未知模式：{value.ToString()}");
+                            break;
+                    }
+                    break;
+                case Enum_MotorParameter.limit_torque:
+                    dr["parameterValue"] = value.ToString();
+                    break;
+                case Enum_MotorParameter.mechPos负载端机械角度:
+                    dr["parameterValue"] = value.ToString();
+                    break;
+                case Enum_MotorParameter.cur_kp电流环增益:
+                    dr["parameterValue"] = value.ToString();
+                    break;
+                case Enum_MotorParameter.cur_ki电流环积分:
+                    dr["parameterValue"] = value.ToString();
+                    break;
+                case Enum_MotorParameter.loc_kp位置环增益:
+                    dr["parameterValue"] = value.ToString();
+                    break;
+                case Enum_MotorParameter.spd_kp速度环增益:
+                    dr["parameterValue"] = value.ToString();
+                    break;
+                case Enum_MotorParameter.spd_kI速度环积分:
+                    dr["parameterValue"] = value.ToString();
+                    break;
+                case Enum_MotorParameter.loc_ref_电机目标角度:
+                    //dr["parameterValue"] = value.ToString();
+                    dr["parameterValue"] = ((float)value*57.296).ToString("0.0000");
+                    break;
+                case Enum_MotorParameter.limit_spd_csp速度限制:
+                    dr["parameterValue"] = value.ToString();
+                    break;
+                case Enum_MotorParameter.EPScan_time:
+                    dr["parameterValue"] = ((UInt16)value*5+5).ToString();
+                    break;
+                case Enum_MotorParameter.zero_sta零位状态:
+                    dr["parameterValue"] = value.ToString();
+                    break;
+                case Enum_MotorParameter.add_offset零位偏置:
+                    dr["parameterValue"] = value.ToString();
+                    break;
+                default:
+                    dr["parameterValue"] = value.ToString();
+                    break;
             }
 
             dataTable.Rows.Add(dr);

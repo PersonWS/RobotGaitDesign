@@ -14,27 +14,12 @@ namespace CanFDAdapter
     : base(entity)
         {
         }
-        public override List<byte[]> AnalysisMotorRetData(byte[] sourceData)
+        public override byte[] AnalysisMotorRetData(byte[] sourceData)
         {
-            List<byte[]> retBytes = new List<byte[]>();
-            if (sourceData?.Length > 0 && sourceData[0] != 2 || sourceData.Length < 18 && sourceData.Length % 18 != 0)//异常或者粘包的数据
-            {
-                Log.log.Error($"CanAdapterDataProcess_BaoFengFD-AnalysisData数据，发现异常，数据：{BitConverter.ToString(sourceData).Replace('-', ' ')}");
-                return retBytes;
-            }
-            int total = sourceData.Length / 18;
-            for (int i = 0; i < total; i++)
-            {
-                byte[] data = sourceData.Skip(i * 18).Take(17).ToArray();
-                if (data[0] != 0X2 || sourceData[17] != 0Xaa)
-                {
-                    Log.log.Error($"CanAdapterDataProcess_BaoFengFD-AnalysisData数据，分解报文发现异常，数据：{BitConverter.ToString(sourceData).Replace('-', ' ')}");
-                    continue;
-                }
-                data[4] = (byte)((byte)(data[4] << 3) >> 3);
-                retBytes.Add(data.Skip(1).Take(16).ToArray());
-            }
-            return retBytes;
+            byte[] data = sourceData.Skip(1).Take(sourceData.Length - 2).ToArray();
+            data[4] = (byte)((byte)(data[4] << 3) >> 3);
+
+            return data;
         }
 
         public override List<byte[]> GenerateSendMotorData(List<byte[]> sourceData)
@@ -47,7 +32,7 @@ namespace CanFDAdapter
                 temp[1] = item[3];
                 temp[2] = item[2];
                 temp[3] = item[1];
-                temp[4] =(byte)( item[0]+128);
+                temp[4] = (byte)(item[0] + 128);
                 //Array.Copy(item, 0, temp, 1, 4);//拷贝拓展信息
                 Array.Copy(item, 4, temp, 8, 9);//拷贝data信息
                 temp[17] = 0xAA;

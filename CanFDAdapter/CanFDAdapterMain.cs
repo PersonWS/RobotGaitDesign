@@ -133,6 +133,10 @@ namespace CanFDAdapter
 
         public int Send(List<byte[]> sendList)
         {
+            if (_comServer == null)
+            {
+                return -1;
+            }
             int sendCount = 0;
             foreach (byte[] send in sendList)
             {

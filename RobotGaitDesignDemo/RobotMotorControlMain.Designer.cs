@@ -59,6 +59,7 @@
             this.chk_findMotorID = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.labelX5 = new DevComponents.DotNetBar.LabelX();
             this.lab_busUsedRate = new DevComponents.DotNetBar.LabelX();
+            this.chk_isWriteToMotorData = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.groupPanel1.SuspendLayout();
             this.groupPanel3.SuspendLayout();
             this.SuspendLayout();
@@ -286,13 +287,13 @@
             // 
             // 
             this.chk_OnlyFeedBackData.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.chk_OnlyFeedBackData.Location = new System.Drawing.Point(548, 137);
+            this.chk_OnlyFeedBackData.Location = new System.Drawing.Point(264, 229);
             this.chk_OnlyFeedBackData.Margin = new System.Windows.Forms.Padding(4);
             this.chk_OnlyFeedBackData.Name = "chk_OnlyFeedBackData";
-            this.chk_OnlyFeedBackData.Size = new System.Drawing.Size(248, 58);
+            this.chk_OnlyFeedBackData.Size = new System.Drawing.Size(262, 58);
             this.chk_OnlyFeedBackData.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.chk_OnlyFeedBackData.TabIndex = 17;
-            this.chk_OnlyFeedBackData.Text = "OnlyFeedBackData";
+            this.chk_OnlyFeedBackData.Text = "仅显示电机返回数据";
             this.chk_OnlyFeedBackData.CheckedChanged += new System.EventHandler(this.chk_OnlyFeedBackData_CheckedChanged);
             // 
             // groupPanel1
@@ -387,7 +388,7 @@
             this.groupPanel3.Controls.Add(this.chk_GetMotorAckData);
             this.groupPanel3.Controls.Add(this.btn_saveMotorAckData);
             this.groupPanel3.Controls.Add(this.txt_MotorAckData);
-            this.groupPanel3.Location = new System.Drawing.Point(264, 207);
+            this.groupPanel3.Location = new System.Drawing.Point(927, 207);
             this.groupPanel3.Margin = new System.Windows.Forms.Padding(4);
             this.groupPanel3.Name = "groupPanel3";
             this.groupPanel3.Size = new System.Drawing.Size(684, 205);
@@ -457,7 +458,7 @@
             this.btn_motorRW.Location = new System.Drawing.Point(1481, 13);
             this.btn_motorRW.Margin = new System.Windows.Forms.Padding(4);
             this.btn_motorRW.Name = "btn_motorRW";
-            this.btn_motorRW.Size = new System.Drawing.Size(130, 231);
+            this.btn_motorRW.Size = new System.Drawing.Size(130, 172);
             this.btn_motorRW.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.btn_motorRW.TabIndex = 27;
             this.btn_motorRW.Text = "MotorRW电机交互";
@@ -529,7 +530,7 @@
             this.chk_findMotorID.Location = new System.Drawing.Point(264, 137);
             this.chk_findMotorID.Margin = new System.Windows.Forms.Padding(4);
             this.chk_findMotorID.Name = "chk_findMotorID";
-            this.chk_findMotorID.Size = new System.Drawing.Size(248, 58);
+            this.chk_findMotorID.Size = new System.Drawing.Size(262, 58);
             this.chk_findMotorID.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.chk_findMotorID.TabIndex = 39;
             this.chk_findMotorID.Text = "AutoFindMotorID";
@@ -561,11 +562,28 @@
             this.lab_busUsedRate.TabIndex = 41;
             this.lab_busUsedRate.Text = "0.00%";
             // 
+            // chk_isWriteToMotorData
+            // 
+            this.chk_isWriteToMotorData.BackColor = System.Drawing.Color.Transparent;
+            // 
+            // 
+            // 
+            this.chk_isWriteToMotorData.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.chk_isWriteToMotorData.Location = new System.Drawing.Point(264, 313);
+            this.chk_isWriteToMotorData.Margin = new System.Windows.Forms.Padding(4);
+            this.chk_isWriteToMotorData.Name = "chk_isWriteToMotorData";
+            this.chk_isWriteToMotorData.Size = new System.Drawing.Size(262, 58);
+            this.chk_isWriteToMotorData.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this.chk_isWriteToMotorData.TabIndex = 42;
+            this.chk_isWriteToMotorData.Text = "仅显示电机写入数据";
+            this.chk_isWriteToMotorData.CheckedChanged += new System.EventHandler(this.chk_isWriteToMotorData_CheckedChanged);
+            // 
             // RobotMotorControlMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(192F, 192F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(2221, 1069);
+            this.Controls.Add(this.chk_isWriteToMotorData);
             this.Controls.Add(this.lab_busUsedRate);
             this.Controls.Add(this.labelX5);
             this.Controls.Add(this.btn_motorScanner);
@@ -635,6 +653,7 @@
         private DevComponents.DotNetBar.Controls.CheckBoxX chk_GetMotorAckData;
         private DevComponents.DotNetBar.LabelX labelX5;
         private DevComponents.DotNetBar.LabelX lab_busUsedRate;
+        private DevComponents.DotNetBar.Controls.CheckBoxX chk_isWriteToMotorData;
     }
 }
 

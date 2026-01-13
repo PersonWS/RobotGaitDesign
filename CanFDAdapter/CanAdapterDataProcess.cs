@@ -14,7 +14,7 @@ namespace CanFDAdapter
             this._canAdapterEntity = entity;
         }
 
-        public abstract List< byte[]> AnalysisMotorRetData(byte[] sourceData);
+        public abstract byte[] AnalysisMotorRetData(byte[] sourceData);
         /// <summary>
         /// 生成发送给电机的数据
         /// </summary>
