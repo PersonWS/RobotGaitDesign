@@ -22,8 +22,9 @@ using RobotGaitDesignDemo;
 using System.Reflection.Emit;
 namespace RobotGaitDesign
 {
-    public partial class RobotMotorControlMain : Office2007Form
+    public partial class Frm_RobotMotorControlMain : Office2007Form
     {
+        #region 电机数据相关字段
         public static readonly ILogEntity log = LogHelper.EasyLogger.GetLoggerInstance_log4Net("demo");
         public CanFDAdapter.CanFDAdapterMain _canFDAdapterMain;
         /// <summary>
@@ -59,7 +60,7 @@ namespace RobotGaitDesign
         /// 只显示向电机写入的数据
         /// </summary>
         bool _isWriteToMotorData = false;
-        List<byte> _motorIdList = new List<byte>();
+
         byte _filterID = 0;
         /// <summary>
         /// 显示串口名称 sttring：描述  string2：COM名称
@@ -72,7 +73,7 @@ namespace RobotGaitDesign
         //保存数据的list
         StringBuilder _sb_txt_showMessage = new StringBuilder();
         StringBuilder _sb_txt_MotorAckData = new StringBuilder();
-
+        #endregion
         #region 处理txt文本框显示的数据
         public Queue<ShowMessage> _messageQueue = new Queue<ShowMessage>();
         public readonly object _messageQueueLock = new object();
@@ -80,7 +81,12 @@ namespace RobotGaitDesign
         public bool _ismessageQueueThreadContiue = false;
         #endregion
 
-        public RobotMotorControlMain()
+        #region 电机配置相关字段
+        DataTable _dt_motorInfo = new DataTable();
+        Dictionary<byte, Motor_BaseInfo> _dic_MotorBaseInfo = new System.Collections.Generic.Dictionary<byte, Motor_BaseInfo>();
+        #endregion
+
+        public Frm_RobotMotorControlMain()
         {
             InitializeComponent();
             this.EnableGlass = false;
@@ -103,7 +109,59 @@ namespace RobotGaitDesign
             _messageQueueThread.IsBackground = true;
             _messageQueueThread.Start();
 
+            GetMotorConfig();
+            if (_dic_MotorBaseInfo.Count>0)
+            {
+                foreach (var item in _dic_MotorBaseInfo)
+                {
+                    cmb_idFilter.Items.Add(item.Key);
+                }
+                cmb_idFilter.SelectedIndex = 0;
+            }
+
         }
+        /// <summary>
+        /// 从电机的配置文件获取电机信息
+        /// </summary>
+        private  void GetMotorConfig()
+        {
+            if (!string.IsNullOrEmpty(AppConfigSetData.MotorID) && !string.IsNullOrEmpty(AppConfigSetData.MotorType))
+            {
+                string[] strsID = AppConfigSetData.MotorID.Split(',');
+                string[] strsType = AppConfigSetData.MotorType.Split(',');
+                if (strsID.Count() != strsType.Count())
+                {
+                    log.Error($"AppConfigSetData.MotorID 和 AppConfigSetData.MotorType 数量不匹配");
+                }
+                else
+                {
+                    for (int i = 0; i < strsID.Length; i++)
+                    {
+                        byte id = 0;
+                        if (byte.TryParse(strsID[i], out id) || id > 127)
+                        {
+                            Enum_MotorType type;
+                            if (Enum.TryParse<Enum_MotorType>(strsType[i], out type))
+                            {
+                                Motor_BaseInfo motor_BaseInfo = new Motor_BaseInfo();
+                                motor_BaseInfo.ID = id;
+                                motor_BaseInfo.Type = type;
+                                _dic_MotorBaseInfo.Add(motor_BaseInfo.ID, motor_BaseInfo);
+                            }
+                            else
+                            {
+                                log.Error($"AppConfigSetData.MotorID :{strsID[i]}，对应Motor类型：{strsType[i]}不存在");
+                            }
+                        }
+                        else
+                        {
+                            log.Error($"AppConfigSetData.MotorID :{strsID[i]}，非数值或数值超过127");
+                        }
+                    }
+                }
+            }
+        }
+
         bool _IsProcessing = false;
         private void btn_analysis_Click(object sender, EventArgs e)
         {
@@ -140,9 +198,6 @@ namespace RobotGaitDesign
         }
 
 
-
-
-
         private void AnalysisMotorData(List<string> listIDStr, List<string> listIData)
         {
             //List<byte[]> listID = new List<byte[]>();
@@ -150,14 +205,17 @@ namespace RobotGaitDesign
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < listIDStr.Count; i++)
             {
-                LZMotor.ExtendData_ID id = new LZMotor.ExtendData_ID(listIDStr[i]);
-                LZMotor.Data_Motor data = new LZMotor.Data_Motor(listIData[i]);
+                LZMotor.Motor_ExtendData_ID id = new LZMotor.Motor_ExtendData_ID(listIDStr[i]);
+                LZMotor.Motor_Data data = new LZMotor.Motor_Data(listIData[i]);
                 DataTable dataTable;
-                string ret = LZMotor.DataAnalysisHelper.AnalysisAckData_ReturnString(id, data, out dataTable);
-
-                if (!string.IsNullOrEmpty(ret))
+                if (_dic_MotorBaseInfo.Keys.Contains(id.MotorIDSend))
                 {
-                    sb.Append(ret);
+                    sb.Append(LZMotor.DataAnalysisHelper.AnalysisAckData_ReturnString(id, data, _dic_MotorBaseInfo[id.MotorIDSend], out dataTable));
+                }
+                else
+                {
+                    sb.Append(LZMotor.DataAnalysisHelper.AnalysisAckData_ReturnString(id, data, new Motor_BaseInfo(id.MotorIDSend, Enum_MotorType.RS04) { }, out dataTable));
+                    sb.Append("    该电机配置数据未获取，按RS04来配置");
                 }
                 //ShowMessage($"第{i}行:{ret}");
             }
@@ -381,8 +439,8 @@ namespace RobotGaitDesign
                 //ShowMessage($"添加条数:{listItem.Count}");
                 foreach (byte[] item in listItem)
                 {
-                    LZMotor.ExtendData_ID extendData_ID;
-                    LZMotor.Data_Motor data_Motor;
+                    LZMotor.Motor_ExtendData_ID extendData_ID;
+                    LZMotor.Motor_Data data_Motor;
                     LZMotorDataMain lZMotorData = DataAnalysisHelper.AnalysisBytesArrayToCanidAndCandata(_canFDAdapterEntity, item);
                     if (lZMotorData == null)
                     {
@@ -408,17 +466,45 @@ namespace RobotGaitDesign
                         DataTable dtRet;
                         if (!chk_readMotorVersion.Checked)//如果需要进行版本的读取，则按照以下方式来解析内容
                         {
-                            ret = LZMotor.DataAnalysisHelper.AnalysisAckData_ReturnString(lZMotorData.ExtendData_ID, lZMotorData.Data_Motor, out dtRet);
-                        }
-                        else//启动电机版本判断时执行的函数
-                        {
-                            if (lZMotorData.Data_Motor.DataBytes[0] == 0 && lZMotorData.Data_Motor.DataBytes[1] == 196 && lZMotorData.Data_Motor.DataBytes[2] == 86)
+                            if (_dic_MotorBaseInfo.Keys.Contains(lZMotorData.ExtendData_ID.MotorIDSend))
                             {
-                                ret = LZMotor.DataAnalysisHelper.AnalysisMotorVersionAckData_ReturnString(lZMotorData.ExtendData_ID, lZMotorData.Data_Motor, out dtRet);
+                                ret = LZMotor.DataAnalysisHelper.AnalysisAckData_ReturnString(lZMotorData.ExtendData_ID, lZMotorData.Data_Motor, _dic_MotorBaseInfo[lZMotorData.ExtendData_ID.MotorIDSend], out dtRet) ;
                             }
                             else
                             {
-                                ret = LZMotor.DataAnalysisHelper.AnalysisAckData_ReturnString(lZMotorData.ExtendData_ID, lZMotorData.Data_Motor, out dtRet);
+                                ret = LZMotor.DataAnalysisHelper.AnalysisAckData_ReturnString(lZMotorData.ExtendData_ID, lZMotorData.Data_Motor, new Motor_BaseInfo(lZMotorData.ExtendData_ID.MotorIDSend, Enum_MotorType.RS04) { }, out dtRet) +
+                                    "    提示：该电机配置数据未获取，按RS04来配置";
+                            }
+                        }
+                        else//启动电机版本判断时执行的函数
+                        {
+                            //如果是读取版本号返回的信息
+                            if (lZMotorData.Data_Motor.DataBytes[0] == 0 && lZMotorData.Data_Motor.DataBytes[1] == 196 && lZMotorData.Data_Motor.DataBytes[2] == 86)
+                            {
+                                ret = LZMotor.DataAnalysisHelper.AnalysisMotorVersionAckData_ReturnString(lZMotorData.ExtendData_ID, lZMotorData.Data_Motor, out dtRet);
+                                //更新电机信息
+                                if (_dic_MotorBaseInfo.Keys.Contains(lZMotorData.ExtendData_ID.MotorIDSend))
+                                {
+                                    _dic_MotorBaseInfo[lZMotorData.ExtendData_ID.MotorIDSend].Type = (Enum_MotorType)BitConverter.ToUInt16(new byte[] { lZMotorData.Data_Motor.DataBytes[4], lZMotorData.Data_Motor.DataBytes[3] }, 0);
+                                    _dic_MotorBaseInfo[lZMotorData.ExtendData_ID.MotorIDSend].Version = $"{lZMotorData.Data_Motor.DataBytes[3]}.{lZMotorData.Data_Motor.DataBytes[4]}.{lZMotorData.Data_Motor.DataBytes[5]}.{lZMotorData.Data_Motor.DataBytes[6]}";
+                                }
+                                else
+                                {
+                                    ShowMessage($"电机：{lZMotorData.ExtendData_ID}，未在字典中找到");
+                                }
+                            }
+                            else//不是则按照普通信息处理
+                            {
+                                if (_dic_MotorBaseInfo.Keys.Contains(lZMotorData.ExtendData_ID.MotorIDSend))
+                                {
+                                    ret = LZMotor.DataAnalysisHelper.AnalysisAckData_ReturnString(lZMotorData.ExtendData_ID, lZMotorData.Data_Motor, _dic_MotorBaseInfo[lZMotorData.ExtendData_ID.MotorIDSend], out dtRet) ;
+                                }
+                                else
+                                {
+                                    ret = LZMotor.DataAnalysisHelper.AnalysisAckData_ReturnString(lZMotorData.ExtendData_ID, lZMotorData.Data_Motor, new Motor_BaseInfo(lZMotorData.ExtendData_ID.MotorIDSend, Enum_MotorType.RS04) { }, out dtRet) +
+                                        "    该电机配置数据未获取，按RS04来配置";
+                                }
+
                             }
                         }
 
@@ -453,10 +539,11 @@ namespace RobotGaitDesign
                         if (!_isFilterByMotorId)//未通过ID筛选时就智能录入id
                         {
 
-                            if (chk_findMotorID.Checked && !_motorIdList.Contains(lZMotorData.ExtendData_ID.MotorIDSend))//智能录入ID代码, 不包含就录入
+                            if (chk_findMotorID.Checked && !_dic_MotorBaseInfo.Keys.Contains(lZMotorData.ExtendData_ID.MotorIDSend))//智能录入ID代码, 不包含就录入
                             {
-                                _motorIdList.Add(lZMotorData.ExtendData_ID.MotorIDSend);
-                                _motorIdList.Sort();
+                                Motor_BaseInfo motor_BaseInfo = new Motor_BaseInfo();
+                                motor_BaseInfo.ID = lZMotorData.ExtendData_ID.MotorIDSend;
+                                _dic_MotorBaseInfo.Add(motor_BaseInfo.ID, motor_BaseInfo);
                                 IniMotorIdFilterCmb(lZMotorData.ExtendData_ID.MotorIDSend);
                             }
                             if (chk_GetMotorAckData.Checked && dtRet?.TableName == "motorAck" && dtRet?.Rows.Count > 0)
@@ -515,12 +602,12 @@ namespace RobotGaitDesign
             {
                 this.Invoke(new Action(() =>
                 {
-                    //this.cmb_idFilter.Items.Add(state.ToString());
-                    _motorIdList.Sort();
+                    var sortedDict = _dic_MotorBaseInfo.OrderBy(kvp => kvp.Key)
+                     .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
                     this.cmb_idFilter.Items.Clear();
-                    foreach (var item in _motorIdList)
+                    foreach (var item in sortedDict.Keys)
                     {
-                        if (item == 253)
+                        if (item > 127)
                         {
                             continue;
                         }
@@ -678,13 +765,14 @@ namespace RobotGaitDesign
             }
             ShowMessage("开始搜索1-127号电机是否存在..");
             _isScanner = true;
-
+            chk_OnlyFeedBackData.Checked = false;
+            chk_OnlyWriteToMotorData.Checked = false;
             var thread = new Thread(() =>
             {
                 try
                 {
-                    LZMotor.ExtendData_ID id = new ExtendData_ID(new byte[8]);
-                    LZMotor.Data_Motor data = new Data_Motor(new byte[8]);
+                    LZMotor.Motor_ExtendData_ID id = new Motor_ExtendData_ID(new byte[8]);
+                    LZMotor.Motor_Data data = new Motor_Data(new byte[8]);
                     List<byte[]> sendByte = new List<byte[]>();
                     sendByte.Add(new byte[] { 0, 0, 0xfd, 1, 8, 0, 0, 0, 0, 0, 0, 0, 0 });
                     for (byte i = 1; i < 127; i++)
@@ -764,7 +852,7 @@ namespace RobotGaitDesign
                 Thread.Sleep(50);
                 Task.Run(() =>
                 {
-                    Thread.Sleep(1000);
+                    Thread.Sleep(2000);
                     this.Invoke(new Action(() => { chk_readMotorVersion.Checked = false; }));
                 });
             }
@@ -822,7 +910,25 @@ namespace RobotGaitDesign
 
         private void chk_isWriteToMotorData_CheckedChanged(object sender, EventArgs e)
         {
-            this._isWriteToMotorData = chk_isWriteToMotorData.Checked;
+            this._isWriteToMotorData = chk_OnlyWriteToMotorData.Checked;
+        }
+
+        private void btn_motorScannerResultSave_Click(object sender, EventArgs e)
+        {
+            string id = "", type = "", version = "";
+            foreach (var item in this._dic_MotorBaseInfo.Values)
+            {
+                id += item.ID + ",";
+                type += item.Type + ",";
+                version += item.Version + ",";
+            }
+            if (!string.IsNullOrEmpty(id))
+            {
+                AppConfigSetData.MotorID = id.Substring(0, id.Length - 1);
+                AppConfigSetData.MotorType = type.Substring(0, type.Length - 1); ;
+                AppConfigSetData.MotorVersion = version.Substring(0, version.Length - 1);
+            }
+
         }
     }
 }

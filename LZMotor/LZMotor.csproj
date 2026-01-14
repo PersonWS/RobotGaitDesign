@@ -45,12 +45,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Enum_MotorParameter.cs" />
+    <Compile Include="Enum_MotorType.cs" />
     <Compile Include="MotorCommunicationDataMain.cs" />
     <Compile Include="DataAnalysisHelper.cs" />
     <Compile Include="Enum_CommunicationType.cs" />
     <Compile Include="Enum_RunMode.cs" />
-    <Compile Include="ExtendData_ID.cs" />
-    <Compile Include="Data_Motor.cs" />
+    <Compile Include="Motor_BaseInfo.cs" />
+    <Compile Include="Motor_ExtendData_ID.cs" />
+    <Compile Include="Motor_Data.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="LZMotoInteropeMain.cs" />
     <Compile Include="LZMotorDataMain.cs" />

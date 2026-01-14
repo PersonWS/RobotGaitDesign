@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace LZMotor
 {
-    public class Data_Motor
+    public class Motor_Data
     {
         /// <summary>
         /// 输入的数据
@@ -17,11 +17,11 @@ namespace LZMotor
         string _hexDataString;
         public byte[] DataBytes { get => _dataBytes;  }
 
-        public Data_Motor(byte[] data)
+        public Motor_Data(byte[] data)
         {
             this._dataBytes = data;
         }
-        public Data_Motor(string hexDataString, int length=8)
+        public Motor_Data(string hexDataString, int length=8)
         {
             this._hexDataString = hexDataString;
             if (string.IsNullOrEmpty(this._hexDataString))
@@ -41,7 +41,7 @@ namespace LZMotor
                 }
                 try
                 {
-                    this._dataBytes = ExtendData_ID.HexStringToByteArray(this._hexDataString);
+                    this._dataBytes = Motor_ExtendData_ID.HexStringToByteArray(this._hexDataString);
                     //Array.Reverse(this._dataByte);
                 }
                 catch (Exception ex)

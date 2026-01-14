@@ -12,10 +12,10 @@ namespace LZMotor
     /// </summary>
     public class LZMotoInteropeMain
     {
-        private Data_Motor _data_Motor;
-        private ExtendData_ID _extendData_ID;
-        public Data_Motor Data_Motor { get => _data_Motor; set => _data_Motor = value; }
-        public ExtendData_ID ExtendData_ID { get => _extendData_ID; set => _extendData_ID = value; }
+        private Motor_Data _data_Motor;
+        private Motor_ExtendData_ID _extendData_ID;
+        public Motor_Data Data_Motor { get => _data_Motor; set => _data_Motor = value; }
+        public Motor_ExtendData_ID ExtendData_ID { get => _extendData_ID; set => _extendData_ID = value; }
         public LZMotoInteropeMain()
         {
 
@@ -34,7 +34,7 @@ namespace LZMotor
                 Log.log.Error($"MC_MotorEnable,motorIds is null or empty");
                 return null;
             }
-            List<ExtendData_ID> id = GenerateSendBytesByCommunicationType(motorIds, (byte)Enum_CommunicationType.MotorEnable);
+            List<Motor_ExtendData_ID> id = GenerateSendBytesByCommunicationType(motorIds, (byte)Enum_CommunicationType.MotorEnable);
 
             return GenerateSendBytes(id);
         }
@@ -50,7 +50,7 @@ namespace LZMotor
                 Log.log.Error($"W_MotorDisEnable,motorIds is null or empty");
                 return null;
             }
-            List<ExtendData_ID> id = GenerateSendBytesByCommunicationType(motorIds, (byte)Enum_CommunicationType.MotorDisable);
+            List<Motor_ExtendData_ID> id = GenerateSendBytesByCommunicationType(motorIds, (byte)Enum_CommunicationType.MotorDisable);
             if (!isClearError)
             {
 
@@ -59,9 +59,9 @@ namespace LZMotor
             else
             {
                 List<MotorCommunicationDataMain> mc = new List<MotorCommunicationDataMain>();
-                foreach (ExtendData_ID item in id)
+                foreach (Motor_ExtendData_ID item in id)
                 {
-                    Data_Motor da = new Data_Motor(new byte[] { 1, 0, 0, 0, 0, 0, 0, 0 });
+                    Motor_Data da = new Motor_Data(new byte[] { 1, 0, 0, 0, 0, 0, 0, 0 });
                     MotorCommunicationDataMain m = new MotorCommunicationDataMain(item, da);
                     mc.Add(m);
                 }
@@ -82,11 +82,11 @@ namespace LZMotor
                 Log.log.Error($"W_SetMotorZero,motorIds is null or empty");
                 return null;
             }
-            List<ExtendData_ID> id = GenerateSendBytesByCommunicationType(motorIds, (byte)Enum_CommunicationType.SetMotorZero);
+            List<Motor_ExtendData_ID> id = GenerateSendBytesByCommunicationType(motorIds, (byte)Enum_CommunicationType.SetMotorZero);
             List<MotorCommunicationDataMain> mc = new List<MotorCommunicationDataMain>();
-            foreach (ExtendData_ID item in id)
+            foreach (Motor_ExtendData_ID item in id)
             {
-                Data_Motor da = new Data_Motor(new byte[] { 1, 0, 0, 0, 0, 0, 0, 0 });
+                Motor_Data da = new Motor_Data(new byte[] { 1, 0, 0, 0, 0, 0, 0, 0 });
                 MotorCommunicationDataMain m = new MotorCommunicationDataMain(item, da);
                 mc.Add(m);
 
@@ -105,7 +105,7 @@ namespace LZMotor
                 Log.log.Error($"W_MotorEnable,motorIds is null or empty");
                 return null;
             }
-            List<ExtendData_ID> id = GenerateSendBytesByCommunicationType(motorIds, (byte)Enum_CommunicationType.SetMotorCanID);
+            List<Motor_ExtendData_ID> id = GenerateSendBytesByCommunicationType(motorIds, (byte)Enum_CommunicationType.SetMotorCanID);
             foreach (var item in id)
             {
                 item.UserDefineByte = destinationID;
@@ -125,11 +125,11 @@ namespace LZMotor
                 Log.log.Error($"MC_MotorEnable,motorIds is null or empty");
                 return null;
             }
-            List<ExtendData_ID> id = GenerateSendBytesByCommunicationType(motorIds, (byte)Enum_CommunicationType.MotorReportSet);
+            List<Motor_ExtendData_ID> id = GenerateSendBytesByCommunicationType(motorIds, (byte)Enum_CommunicationType.MotorReportSet);
             List<MotorCommunicationDataMain> mc = new List<MotorCommunicationDataMain>();
-            foreach (ExtendData_ID item in id)
+            foreach (Motor_ExtendData_ID item in id)
             {
-                Data_Motor da = new Data_Motor(new byte[] { 1, 2, 3, 4, 5, 6, (byte)(isEnable ? 1 : 0), 0 });
+                Motor_Data da = new Motor_Data(new byte[] { 1, 2, 3, 4, 5, 6, (byte)(isEnable ? 1 : 0), 0 });
                 MotorCommunicationDataMain m = new MotorCommunicationDataMain(item, da);
                 mc.Add(m);
             }
@@ -152,12 +152,12 @@ namespace LZMotor
                 return null;
             }
 
-            List<ExtendData_ID> id = GenerateSendBytesByCommunicationType(motorIds, (byte)Enum_CommunicationType.SetParameterUnhold);
+            List<Motor_ExtendData_ID> id = GenerateSendBytesByCommunicationType(motorIds, (byte)Enum_CommunicationType.SetParameterUnhold);
             List<MotorCommunicationDataMain> mc = new List<MotorCommunicationDataMain>();
             byte[] para = ConvertToBytes(parameter);
-            foreach (ExtendData_ID item in id)
+            foreach (Motor_ExtendData_ID item in id)
             {
-                Data_Motor da = new Data_Motor(new byte[] { ((Byte)enum_MotorParameter), (byte)(((Int16)enum_MotorParameter) >> 8), 0, 0, para[0], para[1], para[2], para[3] });
+                Motor_Data da = new Motor_Data(new byte[] { ((Byte)enum_MotorParameter), (byte)(((Int16)enum_MotorParameter) >> 8), 0, 0, para[0], para[1], para[2], para[3] });
                 MotorCommunicationDataMain m = new MotorCommunicationDataMain(item, da);
                 mc.Add(m);
 
@@ -180,12 +180,12 @@ namespace LZMotor
                 return null;
             }
 
-            List<ExtendData_ID> id = GenerateSendBytesByCommunicationType(motorIds, (byte)Enum_CommunicationType.SetParameterHold, userDefine);
+            List<Motor_ExtendData_ID> id = GenerateSendBytesByCommunicationType(motorIds, (byte)Enum_CommunicationType.SetParameterHold, userDefine);
             List<MotorCommunicationDataMain> mc = new List<MotorCommunicationDataMain>();
             //byte[] para = ConvertToBytes(parameter);
-            foreach (ExtendData_ID item in id)
+            foreach (Motor_ExtendData_ID item in id)
             {
-                Data_Motor da = new Data_Motor(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 });
+                Motor_Data da = new Motor_Data(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 });
                 MotorCommunicationDataMain m = new MotorCommunicationDataMain(item, da);
                 mc.Add(m);
 
@@ -203,11 +203,11 @@ namespace LZMotor
                 Log.log.Error($"MC_MotorEnable,motorIds is null or empty");
                 return null;
             }
-            List<ExtendData_ID> id = GenerateSendBytesByCommunicationType(motorIds, (byte)Enum_CommunicationType.MotorVersionRead);
+            List<Motor_ExtendData_ID> id = GenerateSendBytesByCommunicationType(motorIds, (byte)Enum_CommunicationType.MotorVersionRead);
             List<MotorCommunicationDataMain> mc = new List<MotorCommunicationDataMain>();
-            foreach (ExtendData_ID item in id)
+            foreach (Motor_ExtendData_ID item in id)
             {
-                Data_Motor da = new Data_Motor(new byte[] { 0, 0xc4,0, 0, 0, 0, 0, 0 });
+                Motor_Data da = new Motor_Data(new byte[] { 0, 0xc4,0, 0, 0, 0, 0, 0 });
                 MotorCommunicationDataMain m = new MotorCommunicationDataMain(item, da);
                 mc.Add(m);
 
@@ -231,12 +231,12 @@ namespace LZMotor
                 return null;
             }
 
-            List<ExtendData_ID> id = GenerateSendBytesByCommunicationType(motorIds, (byte)Enum_CommunicationType.ReadParameter);
+            List<Motor_ExtendData_ID> id = GenerateSendBytesByCommunicationType(motorIds, (byte)Enum_CommunicationType.ReadParameter);
             List<MotorCommunicationDataMain> mc = new List<MotorCommunicationDataMain>();
             byte[] para = BitConverter.GetBytes((UInt16)enum_MotorParameter);
-            foreach (ExtendData_ID item in id)
+            foreach (Motor_ExtendData_ID item in id)
             {
-                Data_Motor da = new Data_Motor(new byte[] { para[0], para[1], 0, 0, 0, 0, 0, 0 });
+                Motor_Data da = new Motor_Data(new byte[] { para[0], para[1], 0, 0, 0, 0, 0, 0 });
                 MotorCommunicationDataMain m = new MotorCommunicationDataMain(item, da);
                 mc.Add(m);
 
@@ -256,13 +256,13 @@ namespace LZMotor
         /// <param name="communicationTypeByte"></param>
         /// <param name="userDefine">用户自定义功能码</param>
         /// <returns></returns>
-        private static List<ExtendData_ID> GenerateSendBytesByCommunicationType(List<byte> motorIds, byte communicationTypeByte, byte userDefine = 0)
+        private static List<Motor_ExtendData_ID> GenerateSendBytesByCommunicationType(List<byte> motorIds, byte communicationTypeByte, byte userDefine = 0)
         {
-            List<ExtendData_ID> mc = new List<ExtendData_ID>();
+            List<Motor_ExtendData_ID> mc = new List<Motor_ExtendData_ID>();
 
             foreach (var motorId in motorIds)
             {
-                ExtendData_ID m = new ExtendData_ID(new byte[8]);
+                Motor_ExtendData_ID m = new Motor_ExtendData_ID(new byte[8]);
                 m.CommunicationTypeByte = communicationTypeByte;
                 m.MotorIDSend = 253;
                 m.MotorIDReceive = motorId;
@@ -292,7 +292,7 @@ namespace LZMotor
         /// <param name="extendData_ID"></param>
         /// <param name="userDefined">用户自定义码</param>
         /// <returns></returns>
-        private static List<byte[]> GenerateSendBytes(List<ExtendData_ID> extendData_ID, byte userDefined = 0)
+        private static List<byte[]> GenerateSendBytes(List<Motor_ExtendData_ID> extendData_ID, byte userDefined = 0)
         {
             List<byte[]> ret = new List<byte[]>();
             List<byte> temp = new List<byte>();

@@ -10,11 +10,12 @@ namespace LZMotor
 {
     public class DataAnalysisHelper
     {
-        ExtendData_ID id;
-        Data_Motor motorData;
+        Motor_ExtendData_ID id;
+        Motor_Data motorData;
         static DataTable _dt_motorAck = new DataTable();
         static DataTable _dt_motorReadParameter = new DataTable();
         static DataTable _dt_SetParameterUnhold = new DataTable();
+        static DataTable _dt_getMotorID = new DataTable();
         static DataAnalysisHelper()
         {
             _dt_motorAck.Columns.Add("canIdSend");
@@ -30,18 +31,21 @@ namespace LZMotor
             _dt_SetParameterUnhold.Columns.Add("canIdReceive");
             _dt_SetParameterUnhold.Columns.Add("parameterID");
             _dt_SetParameterUnhold.Columns.Add("parameterValue");
+
+            _dt_getMotorID.Columns.Add("canIdSend");
+            _dt_getMotorID.Columns.Add("mucId");
         }
-        public DataAnalysisHelper(ExtendData_ID id, Data_Motor data)
+        public DataAnalysisHelper(Motor_ExtendData_ID id, Motor_Data data)
         {
             this.id = id;
             this.motorData = data;
 
         }
 
-        public string AnalysisData_ReturnString()
+        public string AnalysisData_ReturnString(Motor_BaseInfo motor_BaseInfo)
         {
             DataTable dt = new DataTable();
-            return AnalysisAckData_ReturnString(id, motorData, out dt);
+            return AnalysisAckData_ReturnString(id, motorData, motor_BaseInfo, out dt);
         }
         #region 通过适配器的原始报文来解析出can的信息
         public static LZMotorDataMain AnalysisBytesArrayToCanidAndCandata(CanFDAdapter.CanAdapterEntity canAdapterEntity, byte[] bytes)
@@ -67,20 +71,20 @@ namespace LZMotor
         }
         private static LZMotorDataMain AnalysisBytesArrayToCanidAndCandataSub(CanAdapterDataProcess canAdapterDataProcess, byte[] bytes)
         {
-           byte[] anaBytes = canAdapterDataProcess.AnalysisMotorRetData(bytes);
+            byte[] anaBytes = canAdapterDataProcess.AnalysisMotorRetData(bytes);
 
-                byte[] idArray = new byte[] { anaBytes[3], anaBytes[2], anaBytes[1], anaBytes[0] };
-                int dataLength = BitConverter.ToInt16(new byte[] { anaBytes[7], anaBytes[6] }, 0);
-                byte[] dataArray = anaBytes.Skip(8).Take(anaBytes[7]).ToArray();
-                LZMotorDataMain data = new LZMotorDataMain(new LZMotor.Data_Motor(dataArray), new LZMotor.ExtendData_ID(idArray));
+            byte[] idArray = new byte[] { anaBytes[3], anaBytes[2], anaBytes[1], anaBytes[0] };
+            int dataLength = BitConverter.ToInt16(new byte[] { anaBytes[7], anaBytes[6] }, 0);
+            byte[] dataArray = anaBytes.Skip(8).Take(anaBytes[7]).ToArray();
+            LZMotorDataMain data = new LZMotorDataMain(new LZMotor.Motor_Data(dataArray), new LZMotor.Motor_ExtendData_ID(idArray));
             return data;
         }
 
         #endregion
 
-        public static string AnalysisAckData_ReturnString(ExtendData_ID id, Data_Motor data, out DataTable dt)
+        public static string AnalysisAckData_ReturnString(Motor_ExtendData_ID id, Motor_Data data, Motor_BaseInfo motor_BaseInfo, out DataTable dt)
         {
-            dt = AnalysisAckDataInternal(id, data);
+            dt = AnalysisAckDataInternal(id, data, motor_BaseInfo);
             if (dt != null && dt.Rows.Count > 0)
             {
                 StringBuilder sb = new StringBuilder();
@@ -103,7 +107,7 @@ namespace LZMotor
         /// <param name="data"></param>
         /// <param name="dt"></param>
         /// <returns></returns>
-        public static string AnalysisMotorVersionAckData_ReturnString(ExtendData_ID id, Data_Motor data, out DataTable dt)
+        public static string AnalysisMotorVersionAckData_ReturnString(Motor_ExtendData_ID id, Motor_Data data, out DataTable dt)
         {
             dt = new DataTable();
 
@@ -132,7 +136,7 @@ namespace LZMotor
         /// <param name="id"></param>
         /// <param name="data"></param>
         /// <returns></returns>
-        private static DataTable AnalysisAckDataInternal(ExtendData_ID id, Data_Motor data)
+        private static DataTable AnalysisAckDataInternal(Motor_ExtendData_ID id, Motor_Data data, Motor_BaseInfo motor_BaseInfo)
         {
             if (data == null || data.DataBytes == null || id == null)
             {
@@ -151,11 +155,12 @@ namespace LZMotor
             switch ((Enum_CommunicationType)id.CommunicationTypeByte)
             {
                 case Enum_CommunicationType.GetMotorID:
+                    dataTable = AnalysisDataInternal_GetMotorID(id, data.DataBytes);
                     break;
                 case Enum_CommunicationType.MotionControlInstruction:
                     break;
                 case Enum_CommunicationType.AckInformation:
-                    dataTable = AnalysisDataInternal_AckInformation(id, data.DataBytes);
+                    dataTable = AnalysisDataInternal_AckInformation(id, data.DataBytes, motor_BaseInfo);
                     break;
                 case Enum_CommunicationType.MotorEnable:
                     break;
@@ -169,12 +174,12 @@ namespace LZMotor
 
                     break;
                 case Enum_CommunicationType.SetParameterUnhold:
-                    dataTable= AnalysisDataInternal_SetParameterUnhold(id, data.DataBytes);
+                    dataTable = AnalysisDataInternal_SetParameterUnhold(id, data.DataBytes);
                     break;
                 case Enum_CommunicationType.FaultFeedback:
                     break;
                 case Enum_CommunicationType.MotorReportSet:
-                    dataTable = AnalysisDataInternal_AckInformation(id, data.DataBytes);
+                    dataTable = AnalysisDataInternal_AckInformation(id, data.DataBytes, motor_BaseInfo);
                     break;
                 default:
                     break;
@@ -183,7 +188,7 @@ namespace LZMotor
         }
 
 
-        private static DataTable AnalysisDataInternal_AckInformation(ExtendData_ID id, byte[] data)
+        private static DataTable AnalysisDataInternal_AckInformation(Motor_ExtendData_ID id, byte[] data, Motor_BaseInfo motor_BaseInfo)
         {
             DataTable dataTable = _dt_motorAck.Clone();
             dataTable.TableName = "motorAck";
@@ -192,15 +197,36 @@ namespace LZMotor
             //dr["canIdRec"] = id.MotorIDReceive;
             dr["Angle"] = (MapUInt16ToFloat(new byte[] { data[1], data[0] }) * 57.29578F).ToString("0.0000");
 
-            if (id.MotorIDSend < 100)
+            switch (motor_BaseInfo.Type)
             {
-                dr["RotSpeed"] = (MapUInt16ToFloat(new byte[] { data[3], data[2] }, -15, 15) * 19.1082).ToString("0.0000");
-                dr["Torque"] = (MapUInt16ToFloat(new byte[] { data[5], data[4] }, -120, 120)).ToString("0.0000");
-            }
-            else
-            {
-                dr["RotSpeed"] = (MapUInt16ToFloat(new byte[] { data[3], data[2] }, -50, 50) * 19.1082).ToString("0.0000");//* 114.61968
-                dr["Torque"] = (MapUInt16ToFloat(new byte[] { data[5], data[4] }, -5.5f, 5.5f)).ToString("0.0000");
+                case Enum_MotorType.RS01:
+                    dr["RotSpeed"] = (MapUInt16ToFloat(new byte[] { data[3], data[2] }, -44, 44) * 19.1082).ToString("0.0000");
+                    dr["Torque"] = (MapUInt16ToFloat(new byte[] { data[5], data[4] }, -17, 17)).ToString("0.0000");
+                    break;
+                case Enum_MotorType.RS02:
+                    dr["RotSpeed"] = (MapUInt16ToFloat(new byte[] { data[3], data[2] }, -44, 44) * 19.1082).ToString("0.0000");
+                    dr["Torque"] = (MapUInt16ToFloat(new byte[] { data[5], data[4] }, -17, 17)).ToString("0.0000");
+                    break;
+                case Enum_MotorType.RS03:
+                    dr["RotSpeed"] = (MapUInt16ToFloat(new byte[] { data[3], data[2] }, -20, 20) * 19.1082).ToString("0.0000");
+                    dr["Torque"] = (MapUInt16ToFloat(new byte[] { data[5], data[4] }, -60, 60)).ToString("0.0000");
+                    break;
+                case Enum_MotorType.RS04:
+                    dr["RotSpeed"] = (MapUInt16ToFloat(new byte[] { data[3], data[2] }, -15, 15) * 19.1082).ToString("0.0000");
+                    dr["Torque"] = (MapUInt16ToFloat(new byte[] { data[5], data[4] }, -120, 120)).ToString("0.0000");
+                    break;
+                case Enum_MotorType.RS05:
+                    dr["RotSpeed"] = (MapUInt16ToFloat(new byte[] { data[3], data[2] }, -50, 50) * 19.1082).ToString("0.0000");//* 114.61968
+                    dr["Torque"] = (MapUInt16ToFloat(new byte[] { data[5], data[4] }, -5.5f, 5.5f)).ToString("0.0000");
+                    break;
+                case Enum_MotorType.RS06:
+                    dr["RotSpeed"] = (MapUInt16ToFloat(new byte[] { data[3], data[2] }, -50, 50) * 19.1082).ToString("0.0000");
+                    dr["Torque"] = (MapUInt16ToFloat(new byte[] { data[5], data[4] }, -36, 36)).ToString("0.0000");
+                    break;
+                default:
+                    Log.log.Warn($"发现无配置信息的电机，id：{id.MotorIDSend}, 使用RS04电机默认配置进行电机ACK数据转换");
+                    goto case Enum_MotorType.RS04;
+                    break;
             }
 
             dr["Temperature"] = BitConverter.ToUInt16(new byte[] { data[7], data[6] }, 0) / 10;
@@ -268,14 +294,14 @@ namespace LZMotor
         /// <param name="data"></param>
         /// <returns></returns>
 
-        private static DataTable AnalysisDataInternal_SetParameterUnhold(ExtendData_ID id, byte[] data)
+        private static DataTable AnalysisDataInternal_SetParameterUnhold(Motor_ExtendData_ID id, byte[] data)
         {
             DataTable dataTable = _dt_SetParameterUnhold.Clone();
             dataTable.TableName = "SetParameterUnhold";
             DataRow dr = dataTable.NewRow();
             dr["canIdSend"] = id.MotorIDSend;
             dr["canIdReceive"] = id.MotorIDReceive;
-            dr["parameterID"] = BitConverter.ToString(new byte[] { data[1], data[0] }).Replace("-","");
+            dr["parameterID"] = BitConverter.ToString(new byte[] { data[1], data[0] }).Replace("-", "");
 
             Enum_MotorParameter enum_MotorParameter = (Enum_MotorParameter)BitConverter.ToInt16(data, 0);
             object value = MotorParameterValueProcess.GetRealMotorParameterValueByEnumDescription<object>(enum_MotorParameter, data);
@@ -296,7 +322,7 @@ namespace LZMotor
                     dr["parameterValue"] = value.ToString();
                     break;
                 case Enum_MotorParameter.run_mode运行模式:
-                    switch ( value.ToString())
+                    switch (value.ToString())
                     {
                         case "0":
                             dr["parameterValue"] = "运控模式";
@@ -342,13 +368,13 @@ namespace LZMotor
                     break;
                 case Enum_MotorParameter.loc_ref_电机目标角度:
                     //dr["parameterValue"] = value.ToString();
-                    dr["parameterValue"] = ((float)value*57.296).ToString("0.0000");
+                    dr["parameterValue"] = ((float)value * 57.296).ToString("0.0000");
                     break;
                 case Enum_MotorParameter.limit_spd_csp速度限制:
                     dr["parameterValue"] = value.ToString();
                     break;
                 case Enum_MotorParameter.EPScan_time:
-                    dr["parameterValue"] = ((UInt16)value*5+5).ToString();
+                    dr["parameterValue"] = ((UInt16)value * 5 + 5).ToString();
                     break;
                 case Enum_MotorParameter.zero_sta零位状态:
                     dr["parameterValue"] = value.ToString();
@@ -360,10 +386,25 @@ namespace LZMotor
                     dr["parameterValue"] = value.ToString();
                     break;
             }
+            dataTable.Rows.Add(dr);
+            return dataTable;
+        }
+
+        private static DataTable AnalysisDataInternal_GetMotorID(Motor_ExtendData_ID id, byte[] data)
+        {
+            DataTable dataTable = _dt_getMotorID.Clone();
+            dataTable.TableName = "GetMotorID";
+            DataRow dr = dataTable.NewRow();
+            dr["canIdSend"] = id.MotorIDSend;
+            //dr["canIdReceive"] = id.MotorIDReceive;
+            Array.Reverse(data);
+            dr["mucId"] = BitConverter.ToString(data).Replace("-", "");
 
             dataTable.Rows.Add(dr);
             return dataTable;
         }
+
+
 
 
         public static float MapUInt16ToFloat(byte[] byteArray, float minOutput = -12.57f, float maxOutput = 12.57f)

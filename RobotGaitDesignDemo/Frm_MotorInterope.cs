@@ -20,12 +20,12 @@ namespace RobotGaitDesignDemo
 {
     public partial class Frm_MotorInterope : Office2007Form
     {
-        RobotMotorControlMain _baseForm;
+        Frm_RobotMotorControlMain _baseForm;
         DataTable _dt_motorReadParameterReceived = new DataTable();
 
         Thread _motorReadParameterReceivedThread;
 
-        public Frm_MotorInterope(RobotMotorControlMain baseForm)
+        public Frm_MotorInterope(Frm_RobotMotorControlMain baseForm)
         {
             InitializeComponent();
             this.EnableGlass = false;

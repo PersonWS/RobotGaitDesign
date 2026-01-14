@@ -7,7 +7,9 @@ namespace FormSet
 {
     static class AppConfigSetData
     {
-
+        static string _motorID;
+        static string _motorType;
+        static string _motorVersion;
         static bool isShowLockLog = false;
         static bool isShowBusinessLog = false;
         static bool isShowRunLog = false;
@@ -39,6 +41,11 @@ namespace FormSet
             get { return AppConfigSetData.isShowRunLog; }
             set { AppConfigSetData.isShowRunLog = value; }
         }
+
+        public static string MotorID { get => _motorID; set { _motorID = value; WriteDataToConfig("MotorID", value); } }
+        public static string MotorType { get => _motorType; set { _motorType = value; WriteDataToConfig("MotorType", value); } }
+
+        public static string MotorVersion { get => _motorVersion; set { _motorVersion = value; WriteDataToConfig("MotorVersion", value); } }
 
         /// <summary>
         /// 向配置文件写入数据
@@ -79,10 +86,18 @@ namespace FormSet
 
         static AppConfigSetData()
         {
-            
-            if (ConfigurationManager.AppSettings["isShowLockLog"] != null)
+
+            if (ConfigurationManager.AppSettings["MotorID"] != null)
             {
-                isShowLockLog = ConfigurationManager.AppSettings["isShowLockLog"].ToString().ToLower()=="true"?true:false;
+                _motorID = ConfigurationManager.AppSettings["MotorID"].ToString();
+            }
+            if (ConfigurationManager.AppSettings["MotorType"] != null)
+            {
+                _motorType = ConfigurationManager.AppSettings["MotorType"].ToString();
+            }
+            if (ConfigurationManager.AppSettings["MotorVersion"] != null)
+            {
+                _motorVersion = ConfigurationManager.AppSettings["MotorVersion"].ToString();
             }
             if (ConfigurationManager.AppSettings["isShowRunLog"] != null)
             {

@@ -1,6 +1,6 @@
 ﻿namespace RobotGaitDesign
 {
-    partial class RobotMotorControlMain
+    partial class Frm_RobotMotorControlMain
     {
         /// <summary>
         /// 必需的设计器变量。
@@ -59,7 +59,9 @@
             this.chk_findMotorID = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.labelX5 = new DevComponents.DotNetBar.LabelX();
             this.lab_busUsedRate = new DevComponents.DotNetBar.LabelX();
-            this.chk_isWriteToMotorData = new DevComponents.DotNetBar.Controls.CheckBoxX();
+            this.chk_OnlyWriteToMotorData = new DevComponents.DotNetBar.Controls.CheckBoxX();
+            this.btn_motorScannerResultSave = new DevComponents.DotNetBar.ButtonX();
+            this.lab_motorInfo = new DevComponents.DotNetBar.LabelX();
             this.groupPanel1.SuspendLayout();
             this.groupPanel3.SuspendLayout();
             this.SuspendLayout();
@@ -287,7 +289,7 @@
             // 
             // 
             this.chk_OnlyFeedBackData.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.chk_OnlyFeedBackData.Location = new System.Drawing.Point(264, 229);
+            this.chk_OnlyFeedBackData.Location = new System.Drawing.Point(264, 277);
             this.chk_OnlyFeedBackData.Margin = new System.Windows.Forms.Padding(4);
             this.chk_OnlyFeedBackData.Name = "chk_OnlyFeedBackData";
             this.chk_OnlyFeedBackData.Size = new System.Drawing.Size(262, 58);
@@ -433,7 +435,7 @@
             this.chk_GetMotorAckData.Location = new System.Drawing.Point(-1, -20);
             this.chk_GetMotorAckData.Margin = new System.Windows.Forms.Padding(4);
             this.chk_GetMotorAckData.Name = "chk_GetMotorAckData";
-            this.chk_GetMotorAckData.Size = new System.Drawing.Size(108, 125);
+            this.chk_GetMotorAckData.Size = new System.Drawing.Size(108, 167);
             this.chk_GetMotorAckData.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.chk_GetMotorAckData.TabIndex = 40;
             this.chk_GetMotorAckData.Text = "Get Ack Data";
@@ -471,23 +473,23 @@
             this.btn_motorScanner.Location = new System.Drawing.Point(792, 80);
             this.btn_motorScanner.Margin = new System.Windows.Forms.Padding(4);
             this.btn_motorScanner.Name = "btn_motorScanner";
-            this.btn_motorScanner.Size = new System.Drawing.Size(174, 105);
+            this.btn_motorScanner.Size = new System.Drawing.Size(174, 60);
             this.btn_motorScanner.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.btn_motorScanner.TabIndex = 35;
-            this.btn_motorScanner.Text = "MotorScanner";
+            this.btn_motorScanner.Text = "电机扫描01";
             this.btn_motorScanner.Click += new System.EventHandler(this.btn_motorScanner_Click);
             // 
             // btn_ReadMotorVersion
             // 
             this.btn_ReadMotorVersion.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
             this.btn_ReadMotorVersion.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
-            this.btn_ReadMotorVersion.Location = new System.Drawing.Point(1251, 125);
+            this.btn_ReadMotorVersion.Location = new System.Drawing.Point(1251, 95);
             this.btn_ReadMotorVersion.Margin = new System.Windows.Forms.Padding(4);
             this.btn_ReadMotorVersion.Name = "btn_ReadMotorVersion";
-            this.btn_ReadMotorVersion.Size = new System.Drawing.Size(200, 60);
+            this.btn_ReadMotorVersion.Size = new System.Drawing.Size(200, 90);
             this.btn_ReadMotorVersion.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.btn_ReadMotorVersion.TabIndex = 36;
-            this.btn_ReadMotorVersion.Text = "读电机版本(会掉电机使能)";
+            this.btn_ReadMotorVersion.Text = "读电机版本(会掉电机使能)02";
             this.btn_ReadMotorVersion.Click += new System.EventHandler(this.btn_ReadMotorVersion_Click);
             // 
             // chk_readMotorVersion
@@ -496,13 +498,14 @@
             // 
             // 
             this.chk_readMotorVersion.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.chk_readMotorVersion.Location = new System.Drawing.Point(1048, 137);
+            this.chk_readMotorVersion.Location = new System.Drawing.Point(1250, 95);
             this.chk_readMotorVersion.Margin = new System.Windows.Forms.Padding(4);
             this.chk_readMotorVersion.Name = "chk_readMotorVersion";
             this.chk_readMotorVersion.Size = new System.Drawing.Size(197, 58);
             this.chk_readMotorVersion.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.chk_readMotorVersion.TabIndex = 37;
             this.chk_readMotorVersion.Text = "VerAnaysisON";
+            this.chk_readMotorVersion.Visible = false;
             // 
             // chk_analysisFailedShowSocketData
             // 
@@ -510,7 +513,7 @@
             // 
             // 
             this.chk_analysisFailedShowSocketData.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.chk_analysisFailedShowSocketData.Location = new System.Drawing.Point(13, 137);
+            this.chk_analysisFailedShowSocketData.Location = new System.Drawing.Point(264, 203);
             this.chk_analysisFailedShowSocketData.Margin = new System.Windows.Forms.Padding(4);
             this.chk_analysisFailedShowSocketData.Name = "chk_analysisFailedShowSocketData";
             this.chk_analysisFailedShowSocketData.Size = new System.Drawing.Size(243, 58);
@@ -562,33 +565,61 @@
             this.lab_busUsedRate.TabIndex = 41;
             this.lab_busUsedRate.Text = "0.00%";
             // 
-            // chk_isWriteToMotorData
+            // chk_OnlyWriteToMotorData
             // 
-            this.chk_isWriteToMotorData.BackColor = System.Drawing.Color.Transparent;
+            this.chk_OnlyWriteToMotorData.BackColor = System.Drawing.Color.Transparent;
             // 
             // 
             // 
-            this.chk_isWriteToMotorData.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.chk_isWriteToMotorData.Location = new System.Drawing.Point(264, 313);
-            this.chk_isWriteToMotorData.Margin = new System.Windows.Forms.Padding(4);
-            this.chk_isWriteToMotorData.Name = "chk_isWriteToMotorData";
-            this.chk_isWriteToMotorData.Size = new System.Drawing.Size(262, 58);
-            this.chk_isWriteToMotorData.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this.chk_isWriteToMotorData.TabIndex = 42;
-            this.chk_isWriteToMotorData.Text = "仅显示电机写入数据";
-            this.chk_isWriteToMotorData.CheckedChanged += new System.EventHandler(this.chk_isWriteToMotorData_CheckedChanged);
+            this.chk_OnlyWriteToMotorData.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.chk_OnlyWriteToMotorData.Location = new System.Drawing.Point(264, 344);
+            this.chk_OnlyWriteToMotorData.Margin = new System.Windows.Forms.Padding(4);
+            this.chk_OnlyWriteToMotorData.Name = "chk_OnlyWriteToMotorData";
+            this.chk_OnlyWriteToMotorData.Size = new System.Drawing.Size(262, 58);
+            this.chk_OnlyWriteToMotorData.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this.chk_OnlyWriteToMotorData.TabIndex = 42;
+            this.chk_OnlyWriteToMotorData.Text = "仅显示电机写入数据";
+            this.chk_OnlyWriteToMotorData.CheckedChanged += new System.EventHandler(this.chk_isWriteToMotorData_CheckedChanged);
             // 
-            // RobotMotorControlMain
+            // btn_motorScannerResultSave
+            // 
+            this.btn_motorScannerResultSave.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
+            this.btn_motorScannerResultSave.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
+            this.btn_motorScannerResultSave.Location = new System.Drawing.Point(792, 148);
+            this.btn_motorScannerResultSave.Margin = new System.Windows.Forms.Padding(4);
+            this.btn_motorScannerResultSave.Name = "btn_motorScannerResultSave";
+            this.btn_motorScannerResultSave.Size = new System.Drawing.Size(174, 60);
+            this.btn_motorScannerResultSave.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this.btn_motorScannerResultSave.TabIndex = 43;
+            this.btn_motorScannerResultSave.Text = "保存idFilter到配置文件03";
+            this.btn_motorScannerResultSave.Click += new System.EventHandler(this.btn_motorScannerResultSave_Click);
+            // 
+            // lab_motorInfo
+            // 
+            // 
+            // 
+            // 
+            this.lab_motorInfo.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.lab_motorInfo.Location = new System.Drawing.Point(26, 143);
+            this.lab_motorInfo.Margin = new System.Windows.Forms.Padding(4);
+            this.lab_motorInfo.Name = "lab_motorInfo";
+            this.lab_motorInfo.Size = new System.Drawing.Size(180, 52);
+            this.lab_motorInfo.TabIndex = 44;
+            this.lab_motorInfo.Text = "电机信息";
+            // 
+            // Frm_RobotMotorControlMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(192F, 192F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(2221, 1069);
-            this.Controls.Add(this.chk_isWriteToMotorData);
+            this.Controls.Add(this.lab_motorInfo);
+            this.Controls.Add(this.btn_ReadMotorVersion);
+            this.Controls.Add(this.btn_motorScannerResultSave);
+            this.Controls.Add(this.chk_OnlyWriteToMotorData);
             this.Controls.Add(this.lab_busUsedRate);
             this.Controls.Add(this.labelX5);
             this.Controls.Add(this.btn_motorScanner);
             this.Controls.Add(this.chk_readMotorVersion);
-            this.Controls.Add(this.btn_ReadMotorVersion);
             this.Controls.Add(this.btn_motorRW);
             this.Controls.Add(this.groupPanel3);
             this.Controls.Add(this.btn_saveShowMessage);
@@ -609,7 +640,7 @@
             this.Controls.Add(this.chk_findMotorID);
             this.DoubleBuffered = true;
             this.Margin = new System.Windows.Forms.Padding(4);
-            this.Name = "RobotMotorControlMain";
+            this.Name = "Frm_RobotMotorControlMain";
             this.Text = "Form1";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.RobotMotorControlMain_FormClosing);
@@ -653,7 +684,9 @@
         private DevComponents.DotNetBar.Controls.CheckBoxX chk_GetMotorAckData;
         private DevComponents.DotNetBar.LabelX labelX5;
         private DevComponents.DotNetBar.LabelX lab_busUsedRate;
-        private DevComponents.DotNetBar.Controls.CheckBoxX chk_isWriteToMotorData;
+        private DevComponents.DotNetBar.Controls.CheckBoxX chk_OnlyWriteToMotorData;
+        private DevComponents.DotNetBar.ButtonX btn_motorScannerResultSave;
+        private DevComponents.DotNetBar.LabelX lab_motorInfo;
     }
 }
 

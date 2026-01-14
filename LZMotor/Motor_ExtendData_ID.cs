@@ -9,7 +9,7 @@ namespace LZMotor
     /// <summary>
     /// 定义了电机的ID数据
     /// </summary>
-    public class ExtendData_ID
+    public class Motor_ExtendData_ID
     {
         /// <summary>
         /// 输入的数据
@@ -38,7 +38,7 @@ namespace LZMotor
         public byte[] DataBytes { get => new byte[] { CommunicationTypeByte, UserDefineByte, MotorIDSend, MotorIDReceive }; }
 
         //public ExtendData_ID() { }
-        public ExtendData_ID(byte[] dataByte)
+        public Motor_ExtendData_ID(byte[] dataByte)
         {
             this._dataBytes = dataByte;
             MotorIDReceive = _dataBytes[3];
@@ -46,7 +46,7 @@ namespace LZMotor
             UserDefineByte = _dataBytes[1];
             CommunicationTypeByte = _dataBytes[0];
         }
-        public ExtendData_ID(string hexDataString)
+        public Motor_ExtendData_ID(string hexDataString)
         {
             this._hexDataString = hexDataString;
             if (string.IsNullOrEmpty(this._hexDataString))
