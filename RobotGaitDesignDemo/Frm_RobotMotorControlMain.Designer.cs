@@ -487,7 +487,7 @@
             this.btn_ReadMotorVersion.Size = new System.Drawing.Size(200, 60);
             this.btn_ReadMotorVersion.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.btn_ReadMotorVersion.TabIndex = 36;
-            this.btn_ReadMotorVersion.Text = "ReadMotorVersion";
+            this.btn_ReadMotorVersion.Text = "读电机版本(会掉电机使能)";
             this.btn_ReadMotorVersion.Click += new System.EventHandler(this.btn_ReadMotorVersion_Click);
             // 
             // chk_readMotorVersion

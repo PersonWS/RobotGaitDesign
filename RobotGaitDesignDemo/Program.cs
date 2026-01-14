@@ -19,7 +19,7 @@ namespace RobotGaitDesign
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.ThreadException += ShowThreadException;
-            Application.Run(new RobotMotorControlMain());
+            Application.Run(new Frm_RobotMotorControlMain());
         }
 
         private static void ShowThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
