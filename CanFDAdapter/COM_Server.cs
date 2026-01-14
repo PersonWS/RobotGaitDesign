@@ -140,15 +140,16 @@ namespace CanFDAdapter
                         _receivedBufferCount += len;
                     }
 #if DEBUG
-                    log.Debug($"COM收到原始数据长度{len} ,1s累计长度:{_receivedBufferCount}，COM收到数据内容：{BitConverter.ToString(readBuffer)}");
+                    log.Debug($"COM收到原始数据长度{len} ,单位累计长度:{_receivedBufferCount}，COM收到数据内容：{BitConverter.ToString(readBuffer)}");
 #endif
                     //log.Debug(string.Format("{0},{1}", "接收到的信息 ，处理后的信息：", "", Encoding.UTF8.GetString(readBuffer)));
-                    Task.Run(() => { ReceivedMessageEvent?.Invoke(readBuffer); });
+                    // Task.Run(() => { ReceivedMessageEvent?.Invoke(readBuffer); });
+                    ReceivedMessageEvent?.Invoke(readBuffer); 
                     ////处理readBuffer中的数据，自定义处理过程
                     //string msg = Encoding.UTF8.GetString(readBuffer, 0, len); //获取出入库产品编号
                     //log.Debug(string.Format("{0},{1}", "接收到的原始信息", msg));
                 }
-                System.Threading.Thread.Sleep(10);
+                //System.Threading.Thread.Sleep(10);
             }
             catch (Exception ex)
             {

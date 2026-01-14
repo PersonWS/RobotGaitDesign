@@ -11,14 +11,14 @@ namespace LZMotor
     /// </summary>
     public class MotorCommunicationDataMain
     {
-        public Data_Motor data_Motor;
-        public ExtendData_ID extendData_ID;
+        public Motor_Data data_Motor;
+        public Motor_ExtendData_ID extendData_ID;
         public MotorCommunicationDataMain()
         {
-            data_Motor = new Data_Motor(new byte[8]);
-            extendData_ID=new ExtendData_ID(new byte[8]);
+            data_Motor = new Motor_Data(new byte[8]);
+            extendData_ID=new Motor_ExtendData_ID(new byte[8]);
         }
-        public MotorCommunicationDataMain(ExtendData_ID e ,Data_Motor d)
+        public MotorCommunicationDataMain(Motor_ExtendData_ID e ,Motor_Data d)
         {
             data_Motor = d;
             extendData_ID = e;

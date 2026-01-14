@@ -96,7 +96,13 @@ namespace LZMotor
             }
             return "";
         }
-
+        /// <summary>
+        /// 将报文格式化成string
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="data"></param>
+        /// <param name="dt"></param>
+        /// <returns></returns>
         public static string AnalysisMotorVersionAckData_ReturnString(ExtendData_ID id, Data_Motor data, out DataTable dt)
         {
             dt = new DataTable();
@@ -120,7 +126,12 @@ namespace LZMotor
             return sb.ToString();
 
         }
-
+        /// <summary>
+        /// 通过报文的拓展ID及数据来分析报文的内容
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="data"></param>
+        /// <returns></returns>
         private static DataTable AnalysisAckDataInternal(ExtendData_ID id, Data_Motor data)
         {
             if (data == null || data.DataBytes == null || id == null)
@@ -242,6 +253,7 @@ namespace LZMotor
                         dr["Mode"] = "Run";
                         break;
                     default:
+                        dr["Mode"] = "Unknow";
                         break;
                 }
             }
@@ -267,9 +279,13 @@ namespace LZMotor
 
             Enum_MotorParameter enum_MotorParameter = (Enum_MotorParameter)BitConverter.ToInt16(data, 0);
             object value = MotorParameterValueProcess.GetRealMotorParameterValueByEnumDescription<object>(enum_MotorParameter, data);
-            if (value==null)
+            if (value == null)
             {
                 return dataTable;
+            }
+            else
+            {
+                Log.log.Error($"AnalysisDataInternal_SetParameterUnhold,ExtendData_ID:{BitConverter.ToString(id.DataBytes)},data:{data},解析数据失败");
             }
             switch (enum_MotorParameter)
             {
@@ -298,6 +314,7 @@ namespace LZMotor
                             dr["parameterValue"] = "位置模式(CSP)";
                             break;
                         default:
+                            dr["parameterValue"] = "";
                             Log.log.Error($"AnalysisDataInternal_SetParameterUnhold: run_mode运行模式 ,未知模式：{value.ToString()}");
                             break;
                     }
