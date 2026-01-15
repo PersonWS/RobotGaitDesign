@@ -62,6 +62,7 @@
             this.chk_OnlyWriteToMotorData = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.btn_motorScannerResultSave = new DevComponents.DotNetBar.ButtonX();
             this.lab_motorInfo = new DevComponents.DotNetBar.LabelX();
+            this.btn_readConfigMotor = new DevComponents.DotNetBar.ButtonX();
             this.groupPanel1.SuspendLayout();
             this.groupPanel3.SuspendLayout();
             this.SuspendLayout();
@@ -607,11 +608,25 @@
             this.lab_motorInfo.TabIndex = 44;
             this.lab_motorInfo.Text = "电机信息";
             // 
+            // btn_readConfigMotor
+            // 
+            this.btn_readConfigMotor.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
+            this.btn_readConfigMotor.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
+            this.btn_readConfigMotor.Location = new System.Drawing.Point(548, 143);
+            this.btn_readConfigMotor.Margin = new System.Windows.Forms.Padding(4);
+            this.btn_readConfigMotor.Name = "btn_readConfigMotor";
+            this.btn_readConfigMotor.Size = new System.Drawing.Size(204, 65);
+            this.btn_readConfigMotor.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this.btn_readConfigMotor.TabIndex = 45;
+            this.btn_readConfigMotor.Text = "从配置文件获取电机信息";
+            this.btn_readConfigMotor.Click += new System.EventHandler(this.btn_readConfigMotor_Click);
+            // 
             // Frm_RobotMotorControlMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(192F, 192F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(2221, 1069);
+            this.Controls.Add(this.btn_readConfigMotor);
             this.Controls.Add(this.lab_motorInfo);
             this.Controls.Add(this.btn_ReadMotorVersion);
             this.Controls.Add(this.btn_motorScannerResultSave);
@@ -641,7 +656,7 @@
             this.DoubleBuffered = true;
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "Frm_RobotMotorControlMain";
-            this.Text = "Form1";
+            this.Text = "四足机器人电机调试软件";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.RobotMotorControlMain_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
@@ -687,6 +702,7 @@
         private DevComponents.DotNetBar.Controls.CheckBoxX chk_OnlyWriteToMotorData;
         private DevComponents.DotNetBar.ButtonX btn_motorScannerResultSave;
         private DevComponents.DotNetBar.LabelX lab_motorInfo;
+        private DevComponents.DotNetBar.ButtonX btn_readConfigMotor;
     }
 }
 

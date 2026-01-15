@@ -15,7 +15,7 @@ namespace CanFDAdapter
         }
 
         /// <summary>
-        /// 在调用回调前先检查报文的合法性
+        /// 在调用回调前先检查报文的合法性。并将报文进行拆解
         /// </summary>
         /// <param name="b"></param>
         /// <returns></returns>
@@ -33,7 +33,7 @@ namespace CanFDAdapter
                         return new List<byte[]> { };
                     }
                     int processTag = 0;//标记处理到第多少个字节了
-                    for (int i = 0; i < _buffer.Count-2; i++)
+                    for (int i = 0; i < _buffer.Count - 2; i++)
                     {
                         if (_buffer[i] == 65 && _buffer[i + 1] == 84)//检查报文头部
                         {
@@ -44,7 +44,7 @@ namespace CanFDAdapter
                                 i = i + send.Length - 1;
                             }
                         }
-                        processTag = i+1;
+                        processTag = i + 1;
                     }
                     ////处理剩余字符
                     //log.Error($"原始数据长度：{base._buffer.Count} 添加条数：{list.Count}");

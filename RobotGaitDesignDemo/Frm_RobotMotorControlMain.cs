@@ -109,15 +109,7 @@ namespace RobotGaitDesign
             _messageQueueThread.IsBackground = true;
             _messageQueueThread.Start();
 
-            GetMotorConfig();
-            if (_dic_MotorBaseInfo.Count>0)
-            {
-                foreach (var item in _dic_MotorBaseInfo)
-                {
-                    cmb_idFilter.Items.Add(item.Key);
-                }
-                cmb_idFilter.SelectedIndex = 0;
-            }
+
 
         }
         /// <summary>
@@ -775,7 +767,7 @@ namespace RobotGaitDesign
                     LZMotor.Motor_Data data = new Motor_Data(new byte[8]);
                     List<byte[]> sendByte = new List<byte[]>();
                     sendByte.Add(new byte[] { 0, 0, 0xfd, 1, 8, 0, 0, 0, 0, 0, 0, 0, 0 });
-                    for (byte i = 1; i < 127; i++)
+                    for (byte i = 1; i < 128; i++)
                     {
                         sendByte[0][3] = i;
                         List<byte[]> sendBuffer = _canFDAdapterMain?.CanAdapterDataProcess.GenerateSendMotorData(sendByte);
@@ -929,6 +921,23 @@ namespace RobotGaitDesign
                 AppConfigSetData.MotorVersion = version.Substring(0, version.Length - 1);
             }
 
+        }
+
+        private void btn_readConfigMotor_Click(object sender, EventArgs e)
+        {
+            GetMotorConfig();
+            if (_dic_MotorBaseInfo.Count > 0)
+            {
+                foreach (var item in _dic_MotorBaseInfo)
+                {
+                    if (cmb_idFilter.Items.Contains(item.Key))
+                    {
+                        continue;
+                    }
+                    cmb_idFilter.Items.Add(item.Key);
+                }
+                cmb_idFilter.SelectedIndex = 0;
+            }
         }
     }
 }
