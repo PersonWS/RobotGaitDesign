@@ -207,7 +207,7 @@ namespace RobotGaitDesign
                 else
                 {
                     sb.Append(LZMotor.DataAnalysisHelper.AnalysisAckData_ReturnString(id, data, new Motor_BaseInfo(id.MotorIDSend, Enum_MotorType.RS04) { }, out dataTable));
-                    sb.Append("    该电机配置数据未获取，按RS04来配置");
+                    sb.Append("    该电机版本数据未获取，默认型号为RS04");
                 }
                 //ShowMessage($"第{i}行:{ret}");
             }
@@ -327,7 +327,11 @@ namespace RobotGaitDesign
             {
                 cmb_comList.Items.Add(item.Key);
             }
-            cmb_comList.SelectedIndex = 0;
+            if (cmb_comList.Items.Count>0)
+            {
+                cmb_comList.SelectedIndex = 0;
+            }
+
 
         }
 
@@ -388,14 +392,14 @@ namespace RobotGaitDesign
 
         }
 
-
+        int receiedCount = 0;
         private void ComMessageReceived(List<byte[]> msg)
         {
             lock (_motorMsgReceivedLock)
             {
                 _motorMsgReceivedQueue.Enqueue(msg);
 
-                // log.Debug($"ComMessageReceived:{BitConverter.ToString(msg).Replace("-", " ")}");
+                 log.Debug($"ComMessageReceivedCount:{receiedCount++}");
             }
 
         }
@@ -426,6 +430,7 @@ namespace RobotGaitDesign
 
             StringBuilder sb = new StringBuilder();//电机返回值解析
             StringBuilder sb2 = new StringBuilder();//记录电机交互数据
+            //ShowMessage($"本次处理条数:{recMsg.Count}");
             foreach (var listItem in recMsg)
             {
                 //ShowMessage($"添加条数:{listItem.Count}");
@@ -465,7 +470,7 @@ namespace RobotGaitDesign
                             else
                             {
                                 ret = LZMotor.DataAnalysisHelper.AnalysisAckData_ReturnString(lZMotorData.ExtendData_ID, lZMotorData.Data_Motor, new Motor_BaseInfo(lZMotorData.ExtendData_ID.MotorIDSend, Enum_MotorType.RS04) { }, out dtRet) +
-                                    "    提示：该电机配置数据未获取，按RS04来配置";
+                                    "    该电机版本数据未获取，默认型号为RS04";
                             }
                         }
                         else//启动电机版本判断时执行的函数
@@ -494,7 +499,7 @@ namespace RobotGaitDesign
                                 else
                                 {
                                     ret = LZMotor.DataAnalysisHelper.AnalysisAckData_ReturnString(lZMotorData.ExtendData_ID, lZMotorData.Data_Motor, new Motor_BaseInfo(lZMotorData.ExtendData_ID.MotorIDSend, Enum_MotorType.RS04) { }, out dtRet) +
-                                        "    该电机配置数据未获取，按RS04来配置";
+                                        "    该电机版本数据未获取，默认型号为RS04";
                                 }
 
                             }
@@ -575,14 +580,14 @@ namespace RobotGaitDesign
                         _IsProcessing = false;
                     }
                 }
-                if (sb.Length > 4)
-                {
-                    ShowMessage($"{sb.ToString()}", false);
-                }
-                if (sb2.Length > 2)
-                {
-                    ShowMessage_motorAck($"{sb2.ToString().Substring(0, sb2.ToString().Length - 2)}");
-                }
+            }
+            if (sb.Length > 4)
+            {
+                ShowMessage($"{sb.ToString()}", false);
+            }
+            if (sb2.Length > 2)
+            {
+                ShowMessage_motorAck($"{sb2.ToString().Substring(0, sb2.ToString().Length - 2)}");
             }
         }
 

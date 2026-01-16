@@ -87,13 +87,15 @@
             // 
             // 
             this.chk_gprw_motorZeroOffsetProfessional.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.chk_gprw_motorZeroOffsetProfessional.Location = new System.Drawing.Point(25, 662);
+            this.chk_gprw_motorZeroOffsetProfessional.Location = new System.Drawing.Point(8, 94);
             this.chk_gprw_motorZeroOffsetProfessional.Margin = new System.Windows.Forms.Padding(4);
             this.chk_gprw_motorZeroOffsetProfessional.Name = "chk_gprw_motorZeroOffsetProfessional";
-            this.chk_gprw_motorZeroOffsetProfessional.Size = new System.Drawing.Size(100, 58);
+            this.chk_gprw_motorZeroOffsetProfessional.Size = new System.Drawing.Size(137, 58);
             this.chk_gprw_motorZeroOffsetProfessional.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.chk_gprw_motorZeroOffsetProfessional.TabIndex = 84;
-            this.chk_gprw_motorZeroOffsetProfessional.Text = "专家";
+            this.chk_gprw_motorZeroOffsetProfessional.Text = "专家模式";
+            this.chk_gprw_motorZeroOffsetProfessional.CheckedChanged += new System.EventHandler(this.chk_gprw_motorZeroOffsetProfessional_CheckedChanged);
+            this.chk_gprw_motorZeroOffsetProfessional.MouseUp += new System.Windows.Forms.MouseEventHandler(this.chk_gprw_motorZeroOffsetProfessional_MouseUp);
             // 
             // btn_gprw_motorZeroOffset
             // 

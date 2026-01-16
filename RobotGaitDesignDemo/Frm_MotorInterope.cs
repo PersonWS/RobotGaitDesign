@@ -219,7 +219,7 @@ namespace RobotGaitDesignDemo
                 BaseFrmControl.ShowErrorMessageBox(this, "需输入需要控制的电机id，多个id可以用【,】分割");
                 return;
             }
-            if (DialogResult.OK != BaseFrmControl.ShowtMessageBoxWithReturn(this, $"确定要给[{txt_gprw_motorID.Text}]电机置0位吗"))
+            if (!chk_gprw_motorZeroOffsetProfessional.Checked && DialogResult.OK != BaseFrmControl.ShowtMessageBoxWithReturn(this, $"确定要给[{txt_gprw_motorID.Text}]电机置0位吗"))
             {
                 return;
             }
@@ -353,7 +353,7 @@ namespace RobotGaitDesignDemo
                 BaseFrmControl.ShowErrorMessageBox(this, "需输入需要控制的电机id，多个id可以用【,】分割");
                 return;
             }
-            if (DialogResult.OK != BaseFrmControl.ShowtMessageBoxWithReturn(this, $"确定要将电机[{txt_gprw_motorID.Text}]下使能并清除故障吗？"))
+            if (!chk_gprw_motorZeroOffsetProfessional.Checked && DialogResult.OK != BaseFrmControl.ShowtMessageBoxWithReturn(this, $"确定要将电机[{txt_gprw_motorID.Text}]下使能并清除故障吗？"))
             {
                 return;
             }
@@ -691,6 +691,24 @@ namespace RobotGaitDesignDemo
         private void Frm_MotorInterope_Load(object sender, EventArgs e)
         {
             btn_gprw_getAllMotor_Click(sender, e);
+        }
+
+        private void chk_gprw_motorZeroOffsetProfessional_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void chk_gprw_motorZeroOffsetProfessional_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (!chk_gprw_motorZeroOffsetProfessional.Checked)
+            {
+                return;
+            }
+            if (DialogResult.Cancel == BaseFrmControl.ShowtMessageBoxWithReturn(this, $"启用专家模式后，任何操作将不会经过确认，确实要使用专家模式吗？"))
+            {
+                chk_gprw_motorZeroOffsetProfessional.Checked = false;
+                return;
+            }
         }
     }
 }
