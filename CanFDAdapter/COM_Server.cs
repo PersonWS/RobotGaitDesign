@@ -8,6 +8,9 @@ using Microsoft.Win32;
 using System.Management;
 using System.Timers;
 using System.Threading.Tasks;
+using System.Diagnostics;
+using System.Threading;
+using CommonUtility.ThreadHelper;
 
 namespace CanFDAdapter
 {
@@ -51,7 +54,9 @@ namespace CanFDAdapter
 
         // public int ReportInterval { get => _reportInterval; set { _reportInterval = value; _CAN_Rate = 1000 / _reportInterval * 8 * 1.25; } }
 
-        public COM_Server(string targetCOMPort, Int32 baudRate = 115200,Int32 reportInterval=1000)
+        private CancellationTokenSource _readingCts; // 用于控制读取循环的取消
+        private Task _readingTask; // 保存读取任务的引用
+        public COM_Server(string targetCOMPort, Int32 baudRate = 115200, Int32 reportInterval = 1000)
         {
             this._targetCOMPort = targetCOMPort;
             this._baudRate = baudRate;
@@ -85,11 +90,16 @@ namespace CanFDAdapter
                                              //串口对象在收到这样长度的数据之后会触发事件处理函数
                                              //一般都设为1
             _serialPort.ReceivedBytesThreshold = 1;
-            _serialPort.DataReceived += new SerialDataReceivedEventHandler(CommDataReceived); //设置数据接收事件（监听）
+             _serialPort.DataReceived += new SerialDataReceivedEventHandler(CommDataReceived); //设置数据接收事件（监听）
             _receivedBufferCount = _receivedBufferLast = 0;
             try
             {
                 _serialPort.Open(); //打开串口
+                                    // 创建新的CancellationTokenSource来管理读取循环的生命周期
+                //_readingCts = new CancellationTokenSource();
+
+                //// 启动异步读取循环，但不等待它完成（使其在后台运行）
+                //_readingTask = StartContinuousReadingAsync(_readingCts.Token);
                 return true;
             }
             catch (Exception ex)
@@ -100,11 +110,15 @@ namespace CanFDAdapter
 
         }
 
-        internal bool SendData(byte[] data)
+        
+        internal bool SendDataSync(byte[] data)
         {
             try
             {
                 _serialPort.Write(data, 0, data.Length);
+                ThreadHelper.ThreadSlep_HighPrecisionDelay_Media(1);//CAN模块性能不足时使用
+                log.Debug($"COM ,发送数据：{BitConverter.ToString(data)}");
+               // ThreadHelper.ThreadSlep_HighPrecisionDelay_Media(0);//CAN模块性能不足时使用
                 lock (_lock_report)
                 {
                     _receivedBufferCount += data.Length;
@@ -118,6 +132,7 @@ namespace CanFDAdapter
 
             }
         }
+
 
         /// <summary>
         /// 串口数据处理函数
@@ -135,6 +150,13 @@ namespace CanFDAdapter
                     int len = _serialPort.BytesToRead;
                     Byte[] readBuffer = new Byte[len];
                     _serialPort.Read(readBuffer, 0, len); //将数据读入缓存
+
+                    //log.Debug(string.Format("{0},{1}", "接收到的信息 ，处理后的信息：", "", Encoding.UTF8.GetString(readBuffer)));
+                    //Task.Run(() => { ReceivedMessageEvent?.Invoke(readBuffer); });
+                    ReceivedMessageEvent?.Invoke(readBuffer); 
+                    ////处理readBuffer中的数据，自定义处理过程
+                    //string msg = Encoding.UTF8.GetString(readBuffer, 0, len); //获取出入库产品编号
+                    //log.Debug(string.Format("{0},{1}", "接收到的原始信息", msg));
                     lock (_lock_report)
                     {
                         _receivedBufferCount += len;
@@ -142,12 +164,6 @@ namespace CanFDAdapter
 #if DEBUG
                     log.Debug($"COM收到原始数据长度{len} ,单位累计长度:{_receivedBufferCount}，COM收到数据内容：{BitConverter.ToString(readBuffer)}");
 #endif
-                    //log.Debug(string.Format("{0},{1}", "接收到的信息 ，处理后的信息：", "", Encoding.UTF8.GetString(readBuffer)));
-                    // Task.Run(() => { ReceivedMessageEvent?.Invoke(readBuffer); });
-                    ReceivedMessageEvent?.Invoke(readBuffer); 
-                    ////处理readBuffer中的数据，自定义处理过程
-                    //string msg = Encoding.UTF8.GetString(readBuffer, 0, len); //获取出入库产品编号
-                    //log.Debug(string.Format("{0},{1}", "接收到的原始信息", msg));
                 }
                 //System.Threading.Thread.Sleep(10);
             }
@@ -155,6 +171,73 @@ namespace CanFDAdapter
             {
                 log.Error(string.Format("{0},{1}", "提示信息", "接收返回消息异常！具体原因：" + ex.ToString()));
             }
+        }
+
+        // 异步读取循环的核心实现
+        private async Task StartContinuousReadingAsync(CancellationToken cancellationToken)
+        {
+            if (_serialPort?.BaseStream == null)
+            {
+                throw new InvalidOperationException("串口或基础流不可用");
+            }
+
+            byte[] buffer = new byte[4096]; // 4KB缓冲区，可根据波特率调整
+            var stream = _serialPort.BaseStream;
+
+            try
+            {
+                Console.WriteLine("开始连续异步读取...");
+
+                while (!cancellationToken.IsCancellationRequested)
+                {
+                    try
+                    {
+                        // 异步读取数据（没有数据时会在此等待，不占用CPU）
+                        int bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length, cancellationToken);
+
+                        if (bytesRead > 0)
+                        {
+                            // 复制有效数据部分
+                            byte[] receivedData = new byte[bytesRead];
+                            Array.Copy(buffer, receivedData, bytesRead);
+                            _receivedBufferCount += receivedData.Length;
+                            // 处理接收到的数据（非UI操作）
+                            await Task.Run(() => { ReceivedMessageEvent?.Invoke(receivedData); });
+                            log.Debug($"COM收到原始数据长度{receivedData.Length} ,单位累计长度:{_receivedBufferCount}，COM收到数据内容：{BitConverter.ToString(receivedData)}");
+                            // 如果需要更新UI，必须调度到UI线程
+                            // UpdateUI(receivedData);
+                        }
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        // 取消操作是正常的退出途径
+                        Console.WriteLine("读取操作被取消");
+                        break;
+                    }
+                    catch (TimeoutException)
+                    {
+                        // 串口读取超时，继续循环
+                        continue;
+                    }
+                    catch (Exception ex)
+                    {
+                        // 其他异常记录日志，考虑是否退出循环
+                        Console.WriteLine($"读取时发生错误: {ex.Message}");
+                        await Task.Delay(1000, cancellationToken); // 错误后等待1秒再试
+                    }
+                }
+            }
+            finally
+            {
+                Console.WriteLine("异步读取循环已退出");
+            }
+        }
+
+
+        // 停止读取
+        public void StopReading()
+        {
+            _readingCts?.Cancel();
         }
 
         /// <summary>
@@ -166,13 +249,14 @@ namespace CanFDAdapter
             {
                 if (_serialPort != null)
                 {
+                    StopReading();
                     _serialPort.Close();
                 }
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
+                log.Error($"COM SERVER Stop EX:{ex.ToString()}");
             }
 
         }

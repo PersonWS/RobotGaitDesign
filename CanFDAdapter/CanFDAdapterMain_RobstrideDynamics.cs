@@ -43,6 +43,10 @@ namespace CanFDAdapter
                                 list.Add(dataEntity);
                                 i = i + dataEntity.Data.Length - 1;
                             }
+                            else//长度不够就中断循环
+                            {
+                                break;
+                            }
                         }
                         processTag = i + 1;
                     }

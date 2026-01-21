@@ -7,6 +7,7 @@ using LogHelper;
 using System.IO.Ports;
 using CanFDAdapter;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace CanFDAdapter
 {
@@ -128,8 +129,9 @@ namespace CanFDAdapter
                     log.Error(string.Format("COM Send传入类型错误，传入类型：{0}", obj.GetType().ToString().ToLower()));
                     return false;
             }
-            return _comServer.SendData(sendArray);
+            return _comServer.SendDataSync(sendArray);
         }
+
         public int Send(List<byte[]> sendList)
         {
             if (_comServer == null)
@@ -137,13 +139,14 @@ namespace CanFDAdapter
                 return -1;
             }
             int sendCount = 0;
+            //int ret = _comServer.SendDataASync(sendList);
+
             foreach (byte[] send in sendList)
             {
                 try
                 {
-                    log.Debug($"COM ,发送数据：{BitConverter.ToString(send)}");
-                    bool ret = _comServer.SendData(send);
 
+                    bool ret = _comServer.SendDataSync(send);
                     sendCount += send.Length;
                 }
                 catch (Exception ex)

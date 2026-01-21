@@ -346,6 +346,10 @@ namespace RobotGaitDesign
             _comDic = CanFDAdapter.COM_Server.GetComPortsWithNames();
             foreach (var item in _comDic)
             {
+                if (item.Key.Contains("蓝牙")|| item.Key.Contains("Blue"))
+                {
+                    continue;
+                }
                 cmb_comList.Items.Add(item.Key);
             }
             if (cmb_comList.Items.Count > 0)
@@ -358,6 +362,7 @@ namespace RobotGaitDesign
 
         private void btn_connect_Click(object sender, EventArgs e)
         {
+            ShowMessage($"准备连接:{cmb_comList.Text}");
             int baudRate = 921600;
             if (_canFDAdapterMain != null)
             {
@@ -822,7 +827,7 @@ namespace RobotGaitDesign
                         List<byte[]> sendBuffer = _canFDAdapterMain?.CanAdapterDataProcess.GenerateSendMotorData(sendByte);
                         //string str = BitConverter.ToString(sendBuffer[0]).Replace("-", " ");
                         _canFDAdapterMain?.Send(sendBuffer);
-                        //Thread.Sleep(10);
+
                     }
                     ShowMessage("电机轮询完成！");
                 }
@@ -865,6 +870,11 @@ namespace RobotGaitDesign
             }
 
             List<byte> listId = new List<byte>();
+            Task.Run(() =>
+            {
+                Thread.Sleep(2000);
+                this.Invoke(new Action(() => { chk_readMotorVersion.Checked = false; }));
+            });
             foreach (var item in cmb_idFilter.Items)
             {
                 byte id;
@@ -890,12 +900,8 @@ namespace RobotGaitDesign
                 sendBuffer = _canFDAdapterMain?.CanAdapterDataProcess.GenerateSendMotorData(sendBufferTemp);
                 str = BitConverter.ToString(sendBuffer?[0]).Replace("-", " ");
                 _canFDAdapterMain?.Send(sendBuffer);
-                Thread.Sleep(50);
-                Task.Run(() =>
-                {
-                    Thread.Sleep(2000);
-                    this.Invoke(new Action(() => { chk_readMotorVersion.Checked = false; }));
-                });
+                ThreadHelper.ThreadSlep_HighPrecisionDelay_Media(10);
+
             }
             catch (Exception ex)
             {

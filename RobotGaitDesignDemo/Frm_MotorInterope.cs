@@ -542,7 +542,8 @@ namespace RobotGaitDesignDemo
                 BaseFrmControl.ShowErrorMessageBox(this, "需要输入上报间隔的值");
                 return;
             }
-            SaveMotorParameter(Enum_MotorParameter.EPScan_time, (uint)(uint.Parse(txt_gprw_motorReprotInterval.Text)) / 5 - 1, 0, false);
+            uint eps = uint.Parse(txt_gprw_motorReprotInterval.Text) < 10 ? 10 : uint.Parse(txt_gprw_motorReprotInterval.Text);
+            SaveMotorParameter(Enum_MotorParameter.EPScan_time, eps / 5 - 2, 0, false);
         }
 
         private void btn_gprw_UnEnableMotorReport_Click(object sender, EventArgs e)
