@@ -26,15 +26,16 @@ namespace LZMotor
         /// 电机上使能
         /// </summary>
         /// <param name="motorIds"></param>
+        /// <param name="sendID">发送方的ID</param>
         /// <returns></returns>
-        public static List<byte[]> W_MotorEnable(List<byte> motorIds)
+        public static List<byte[]> W_MotorEnable(List<byte> motorIds, byte sendID = 0)
         {
             if (motorIds == null || motorIds.Count == 0)
             {
                 Log.log.Error($"MC_MotorEnable,motorIds is null or empty");
                 return null;
             }
-            List<Motor_ExtendData_ID> id = GenerateSendBytesByCommunicationType(motorIds, (byte)Enum_CommunicationType.MotorEnable);
+            List<Motor_ExtendData_ID> id = GenerateSendBytesByCommunicationType(motorIds, (byte)Enum_CommunicationType.MotorEnable, 0, sendID);
 
             return GenerateSendBytes(id);
         }
@@ -42,15 +43,16 @@ namespace LZMotor
         /// 电机下使能
         /// </summary>
         /// <param name="motorIds"></param>
+        /// <param name="sendID">发送方的ID</param>
         /// <returns></returns>
-        public static List<byte[]> W_MotorDisEnable(List<byte> motorIds,bool isClearError)
+        public static List<byte[]> W_MotorDisable(List<byte> motorIds, bool isClearError, byte sendID = 0)
         {
             if (motorIds == null || motorIds.Count == 0)
             {
                 Log.log.Error($"W_MotorDisEnable,motorIds is null or empty");
                 return null;
             }
-            List<Motor_ExtendData_ID> id = GenerateSendBytesByCommunicationType(motorIds, (byte)Enum_CommunicationType.MotorDisable);
+            List<Motor_ExtendData_ID> id = GenerateSendBytesByCommunicationType(motorIds, (byte)Enum_CommunicationType.MotorDisable, 0, sendID);
             if (!isClearError)
             {
 
@@ -74,15 +76,16 @@ namespace LZMotor
         /// 电机设置0位
         /// </summary>
         /// <param name="motorIds"></param>
+        /// <param name="sendID">发送方的ID</param>
         /// <returns></returns>
-        public static List<byte[]> W_SetMotorZero(List<byte> motorIds)
+        public static List<byte[]> W_SetMotorZero(List<byte> motorIds, byte sendID = 0)
         {
             if (motorIds == null || motorIds.Count == 0)
             {
                 Log.log.Error($"W_SetMotorZero,motorIds is null or empty");
                 return null;
             }
-            List<Motor_ExtendData_ID> id = GenerateSendBytesByCommunicationType(motorIds, (byte)Enum_CommunicationType.SetMotorZero);
+            List<Motor_ExtendData_ID> id = GenerateSendBytesByCommunicationType(motorIds, (byte)Enum_CommunicationType.SetMotorZero, 0, sendID);
             List<MotorCommunicationDataMain> mc = new List<MotorCommunicationDataMain>();
             foreach (Motor_ExtendData_ID item in id)
             {
@@ -97,15 +100,16 @@ namespace LZMotor
         /// 设置电机id
         /// </summary>
         /// <param name="motorIds"></param>
+        /// <param name="sendID">发送方的ID</param>
         /// <returns></returns>
-        public static List<byte[]> W_MotorEnable(List<byte> motorIds,byte destinationID)
+        public static List<byte[]> W_SetMotorCanID(List<byte> motorIds, byte destinationID, byte sendID = 0)
         {
             if (motorIds == null || motorIds.Count == 0)
             {
                 Log.log.Error($"W_MotorEnable,motorIds is null or empty");
                 return null;
             }
-            List<Motor_ExtendData_ID> id = GenerateSendBytesByCommunicationType(motorIds, (byte)Enum_CommunicationType.SetMotorCanID);
+            List<Motor_ExtendData_ID> id = GenerateSendBytesByCommunicationType(motorIds, (byte)Enum_CommunicationType.SetMotorCanID, 0, sendID);
             foreach (var item in id)
             {
                 item.UserDefineByte = destinationID;
@@ -117,15 +121,16 @@ namespace LZMotor
         /// 电机上报开关
         /// </summary>
         /// <param name="motorIds"></param>
+        /// <param name="sendID">发送方的ID</param>
         /// <returns></returns>
-        public static List<byte[]> W_MotorReport(List<byte> motorIds, bool isEnable)
+        public static List<byte[]> W_MotorReport(List<byte> motorIds, bool isEnable, byte sendID = 0)
         {
             if (motorIds == null || motorIds.Count == 0)
             {
                 Log.log.Error($"MC_MotorEnable,motorIds is null or empty");
                 return null;
             }
-            List<Motor_ExtendData_ID> id = GenerateSendBytesByCommunicationType(motorIds, (byte)Enum_CommunicationType.MotorReportSet);
+            List<Motor_ExtendData_ID> id = GenerateSendBytesByCommunicationType(motorIds, (byte)Enum_CommunicationType.MotorReportSet, 0, sendID);
             List<MotorCommunicationDataMain> mc = new List<MotorCommunicationDataMain>();
             foreach (Motor_ExtendData_ID item in id)
             {
@@ -143,8 +148,9 @@ namespace LZMotor
         /// <param name="enum_MotorParameter"></param>
         /// <param name="parameter"></param>
         /// <param name="userDefine">用户自定义字段</param>
+        /// <param name="sendID">发送方的ID</param>
         /// <returns></returns>
-        public static List<byte[]> W_SetMotorParameter<T>(List<byte> motorIds, Enum_MotorParameter enum_MotorParameter, T parameter, byte userDefine = 0)
+        public static List<byte[]> W_SetMotorParameter<T>(List<byte> motorIds, Enum_MotorParameter enum_MotorParameter, T parameter, byte userDefine = 0, byte sendID = 0)
         {
             if (motorIds == null || motorIds.Count == 0)
             {
@@ -152,7 +158,7 @@ namespace LZMotor
                 return null;
             }
 
-            List<Motor_ExtendData_ID> id = GenerateSendBytesByCommunicationType(motorIds, (byte)Enum_CommunicationType.SetParameterUnhold);
+            List<Motor_ExtendData_ID> id = GenerateSendBytesByCommunicationType(motorIds, (byte)Enum_CommunicationType.SetParameterUnhold, 0, sendID);
             List<MotorCommunicationDataMain> mc = new List<MotorCommunicationDataMain>();
             byte[] para = ConvertToBytes(parameter);
             foreach (Motor_ExtendData_ID item in id)
@@ -171,8 +177,9 @@ namespace LZMotor
         /// <param name="enum_MotorParameter"></param>
         /// <param name="parameter"></param>
         /// <param name="userDefine"></param>
+        /// <param name="sendID">发送方的ID</param>
         /// <returns></returns>
-        public static List<byte[]> W_SetMotorParameterHoldSave<T>(List<byte> motorIds, Enum_MotorParameter enum_MotorParameter, T parameter, byte userDefine = 0) 
+        public static List<byte[]> W_SetMotorParameterHoldSave<T>(List<byte> motorIds, Enum_MotorParameter enum_MotorParameter, T parameter, byte userDefine = 0, byte sendID = 0)
         {
             if (motorIds == null || motorIds.Count == 0)
             {
@@ -180,7 +187,7 @@ namespace LZMotor
                 return null;
             }
 
-            List<Motor_ExtendData_ID> id = GenerateSendBytesByCommunicationType(motorIds, (byte)Enum_CommunicationType.SetParameterHold, userDefine);
+            List<Motor_ExtendData_ID> id = GenerateSendBytesByCommunicationType(motorIds, (byte)Enum_CommunicationType.SetParameterHold, userDefine, sendID);
             List<MotorCommunicationDataMain> mc = new List<MotorCommunicationDataMain>();
             //byte[] para = ConvertToBytes(parameter);
             foreach (Motor_ExtendData_ID item in id)
@@ -196,18 +203,18 @@ namespace LZMotor
         #endregion
 
         #region 电机数据读取
-        public static List<byte[]> R_ReadMotorVersion(List<byte> motorIds)
+        public static List<byte[]> R_ReadMotorVersion(List<byte> motorIds, byte sendID = 0)
         {
             if (motorIds == null || motorIds.Count == 0)
             {
                 Log.log.Error($"MC_MotorEnable,motorIds is null or empty");
                 return null;
             }
-            List<Motor_ExtendData_ID> id = GenerateSendBytesByCommunicationType(motorIds, (byte)Enum_CommunicationType.MotorVersionRead);
+            List<Motor_ExtendData_ID> id = GenerateSendBytesByCommunicationType(motorIds, (byte)Enum_CommunicationType.MotorVersionRead, 0, sendID);
             List<MotorCommunicationDataMain> mc = new List<MotorCommunicationDataMain>();
             foreach (Motor_ExtendData_ID item in id)
             {
-                Motor_Data da = new Motor_Data(new byte[] { 0, 0xc4,0, 0, 0, 0, 0, 0 });
+                Motor_Data da = new Motor_Data(new byte[] { 0, 0xc4, 0, 0, 0, 0, 0, 0 });
                 MotorCommunicationDataMain m = new MotorCommunicationDataMain(item, da);
                 mc.Add(m);
 
@@ -222,8 +229,9 @@ namespace LZMotor
         /// </summary>
         /// <param name="motorIds"></param>
         /// <param name="enum_MotorParameter"></param>
+        /// <param name="sendID">发送的CANID</param>
         /// <returns>返回需要发送的数组</returns>
-        public static List<byte[]> R_ReadMotorParameter(List<byte> motorIds, Enum_MotorParameter enum_MotorParameter)
+        public static List<byte[]> R_ReadMotorParameter(List<byte> motorIds, Enum_MotorParameter enum_MotorParameter, byte sendID = 0)
         {
             if (motorIds == null || motorIds.Count == 0)
             {
@@ -231,7 +239,7 @@ namespace LZMotor
                 return null;
             }
 
-            List<Motor_ExtendData_ID> id = GenerateSendBytesByCommunicationType(motorIds, (byte)Enum_CommunicationType.ReadParameter);
+            List<Motor_ExtendData_ID> id = GenerateSendBytesByCommunicationType(motorIds, (byte)Enum_CommunicationType.ReadParameter, 0, sendID);
             List<MotorCommunicationDataMain> mc = new List<MotorCommunicationDataMain>();
             byte[] para = BitConverter.GetBytes((UInt16)enum_MotorParameter);
             foreach (Motor_ExtendData_ID item in id)
@@ -255,8 +263,9 @@ namespace LZMotor
         /// <param name="motorIds"></param>
         /// <param name="communicationTypeByte"></param>
         /// <param name="userDefine">用户自定义功能码</param>
+        /// <param name="SendID">定义发送方的ID</param>
         /// <returns></returns>
-        private static List<Motor_ExtendData_ID> GenerateSendBytesByCommunicationType(List<byte> motorIds, byte communicationTypeByte, byte userDefine = 0)
+        private static List<Motor_ExtendData_ID> GenerateSendBytesByCommunicationType(List<byte> motorIds, byte communicationTypeByte, byte userDefine = 0, byte SendID = 253)
         {
             List<Motor_ExtendData_ID> mc = new List<Motor_ExtendData_ID>();
 
@@ -264,7 +273,7 @@ namespace LZMotor
             {
                 Motor_ExtendData_ID m = new Motor_ExtendData_ID(new byte[8]);
                 m.CommunicationTypeByte = communicationTypeByte;
-                m.MotorIDSend = 253;
+                m.MotorIDSend = SendID;
                 m.MotorIDReceive = motorId;
                 m.UserDefineByte = userDefine;
                 mc.Add(m);
@@ -281,6 +290,7 @@ namespace LZMotor
                 temp.Add((byte)(item.data_Motor.DataBytes.Length));
                 temp.AddRange(item.data_Motor.DataBytes);
                 ret.Add(temp.ToArray());
+                Log.log.Debug($"生成CAN发送指令,{BitConverter.ToString(item.extendData_ID.DataBytes)}  {item.data_Motor.DataBytes.Length.ToString().PadLeft(2, '0')}  {BitConverter.ToString(item.data_Motor.DataBytes)}");
                 temp.Clear();
             }
             return ret;
@@ -303,6 +313,7 @@ namespace LZMotor
                 temp.AddRange(new byte[] { 08, 00, 00, 00, 00, 00, 00, 00, 00 });
 
                 ret.Add(temp.ToArray());
+                Log.log.Debug($"生成CAN发送指令,{BitConverter.ToString(item.DataBytes)}  08  00-00-00-00-00-00-00-00");
                 temp.Clear();
             }
             return ret;

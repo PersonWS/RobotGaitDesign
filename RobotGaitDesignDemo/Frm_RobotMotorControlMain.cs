@@ -20,6 +20,7 @@ using CanFDAdapter;
 using System.Reflection;
 using RobotGaitDesignDemo;
 using System.Reflection.Emit;
+using CommonUtility.ThreadHelper;
 namespace RobotGaitDesign
 {
     public partial class Frm_RobotMotorControlMain : Office2007Form
@@ -115,15 +116,16 @@ namespace RobotGaitDesign
         /// <summary>
         /// 从电机的配置文件获取电机信息
         /// </summary>
-        private  void GetMotorConfig()
+        private void GetMotorConfig()
         {
             if (!string.IsNullOrEmpty(AppConfigSetData.MotorID) && !string.IsNullOrEmpty(AppConfigSetData.MotorType))
             {
                 string[] strsID = AppConfigSetData.MotorID.Split(',');
                 string[] strsType = AppConfigSetData.MotorType.Split(',');
-                if (strsID.Count() != strsType.Count())
+                string[] strsVersion = AppConfigSetData.MotorVersion.Split(',');
+                if (strsID.Count() != strsType.Count() || strsID.Count() != strsVersion.Count())
                 {
-                    log.Error($"AppConfigSetData.MotorID 和 AppConfigSetData.MotorType 数量不匹配");
+                    log.Error($"MotorID 和 MotorType,MotorVersion 数量不匹配");
                 }
                 else
                 {
@@ -135,9 +137,24 @@ namespace RobotGaitDesign
                             Enum_MotorType type;
                             if (Enum.TryParse<Enum_MotorType>(strsType[i], out type))
                             {
+                                if (_dic_MotorBaseInfo.Keys.Contains(id))
+                                {
+                                    _dic_MotorBaseInfo[id].Type = type;
+                                    continue;
+                                }
                                 Motor_BaseInfo motor_BaseInfo = new Motor_BaseInfo();
                                 motor_BaseInfo.ID = id;
                                 motor_BaseInfo.Type = type;
+                                string[] ver = strsVersion[i].Split('.');
+                                if (ver.Length == 4)
+                                {
+                                    motor_BaseInfo.VersionBytes = new byte[] { (byte)ver[0][0], (byte)ver[1][0], (byte)ver[2][0], (byte)ver[3][0] };
+                                }
+                                else
+                                {
+                                    log.Error($" motor_BaseInfo.ID :{motor_BaseInfo.ID}, motor_BaseInfo.VersionBytes 转换失败，源数据：{strsVersion[i]}");
+                                }
+
                                 _dic_MotorBaseInfo.Add(motor_BaseInfo.ID, motor_BaseInfo);
                             }
                             else
@@ -327,7 +344,7 @@ namespace RobotGaitDesign
             {
                 cmb_comList.Items.Add(item.Key);
             }
-            if (cmb_comList.Items.Count>0)
+            if (cmb_comList.Items.Count > 0)
             {
                 cmb_comList.SelectedIndex = 0;
             }
@@ -399,7 +416,7 @@ namespace RobotGaitDesign
             {
                 _motorMsgReceivedQueue.Enqueue(msg);
 
-                 log.Debug($"ComMessageReceivedCount:{receiedCount++}");
+                log.Debug($"ComMessageReceivedCount:{receiedCount++}");
             }
 
         }
@@ -408,7 +425,7 @@ namespace RobotGaitDesign
             while (_isProcessQueueThreadContiue)
             {
                 ProcessComMessageSub();
-                Thread.Sleep(5);
+                ThreadHelper.HighPrecisionDelay(5);
             }
         }
         /*********************************************************处理COM接收到的数据主函数*******************************************************/
@@ -438,7 +455,7 @@ namespace RobotGaitDesign
                 {
                     LZMotor.Motor_ExtendData_ID extendData_ID;
                     LZMotor.Motor_Data data_Motor;
-                    LZMotorDataMain lZMotorData = DataAnalysisHelper.AnalysisBytesArrayToCanidAndCandata(_canFDAdapterEntity, item);
+                    LZMotorDataMain lZMotorData = DataAnalysisHelper.AnalysisAdapterDataBytesArrayToCanIDAndCanData(_canFDAdapterEntity, item);
                     if (lZMotorData == null)
                     {
                         //ShowMessage($"报文解析失败，源报文：{BitConverter.ToString(item).Replace('-', ' ')}", true, Enum_Log4Net_RecordLevel.ERROR);
@@ -465,7 +482,7 @@ namespace RobotGaitDesign
                         {
                             if (_dic_MotorBaseInfo.Keys.Contains(lZMotorData.ExtendData_ID.MotorIDSend))
                             {
-                                ret = LZMotor.DataAnalysisHelper.AnalysisAckData_ReturnString(lZMotorData.ExtendData_ID, lZMotorData.Data_Motor, _dic_MotorBaseInfo[lZMotorData.ExtendData_ID.MotorIDSend], out dtRet) ;
+                                ret = LZMotor.DataAnalysisHelper.AnalysisAckData_ReturnString(lZMotorData.ExtendData_ID, lZMotorData.Data_Motor, _dic_MotorBaseInfo[lZMotorData.ExtendData_ID.MotorIDSend], out dtRet);
                             }
                             else
                             {
@@ -483,7 +500,8 @@ namespace RobotGaitDesign
                                 if (_dic_MotorBaseInfo.Keys.Contains(lZMotorData.ExtendData_ID.MotorIDSend))
                                 {
                                     _dic_MotorBaseInfo[lZMotorData.ExtendData_ID.MotorIDSend].Type = (Enum_MotorType)BitConverter.ToUInt16(new byte[] { lZMotorData.Data_Motor.DataBytes[4], lZMotorData.Data_Motor.DataBytes[3] }, 0);
-                                    _dic_MotorBaseInfo[lZMotorData.ExtendData_ID.MotorIDSend].Version = $"{lZMotorData.Data_Motor.DataBytes[3]}.{lZMotorData.Data_Motor.DataBytes[4]}.{lZMotorData.Data_Motor.DataBytes[5]}.{lZMotorData.Data_Motor.DataBytes[6]}";
+                                    _dic_MotorBaseInfo[lZMotorData.ExtendData_ID.MotorIDSend].VersionBytes = lZMotorData.Data_Motor.DataBytes.Skip(3).Take(4).ToArray();
+                                   // _dic_MotorBaseInfo[lZMotorData.ExtendData_ID.MotorIDSend].Version = $"{lZMotorData.Data_Motor.DataBytes[3]}.{lZMotorData.Data_Motor.DataBytes[4]}.{lZMotorData.Data_Motor.DataBytes[5]}.{lZMotorData.Data_Motor.DataBytes[6]}";
                                 }
                                 else
                                 {
@@ -494,7 +512,7 @@ namespace RobotGaitDesign
                             {
                                 if (_dic_MotorBaseInfo.Keys.Contains(lZMotorData.ExtendData_ID.MotorIDSend))
                                 {
-                                    ret = LZMotor.DataAnalysisHelper.AnalysisAckData_ReturnString(lZMotorData.ExtendData_ID, lZMotorData.Data_Motor, _dic_MotorBaseInfo[lZMotorData.ExtendData_ID.MotorIDSend], out dtRet) ;
+                                    ret = LZMotor.DataAnalysisHelper.AnalysisAckData_ReturnString(lZMotorData.ExtendData_ID, lZMotorData.Data_Motor, _dic_MotorBaseInfo[lZMotorData.ExtendData_ID.MotorIDSend], out dtRet);
                                 }
                                 else
                                 {
@@ -776,7 +794,7 @@ namespace RobotGaitDesign
                     {
                         sendByte[0][3] = i;
                         List<byte[]> sendBuffer = _canFDAdapterMain?.CanAdapterDataProcess.GenerateSendMotorData(sendByte);
-                        string str = BitConverter.ToString(sendBuffer[0]).Replace("-", " ");
+                        //string str = BitConverter.ToString(sendBuffer[0]).Replace("-", " ");
                         _canFDAdapterMain?.Send(sendBuffer);
                         //Thread.Sleep(10);
                     }
@@ -913,11 +931,12 @@ namespace RobotGaitDesign
         private void btn_motorScannerResultSave_Click(object sender, EventArgs e)
         {
             string id = "", type = "", version = "";
-            foreach (var item in this._dic_MotorBaseInfo.Values)
+            var sortedByKey = _dic_MotorBaseInfo.OrderBy(pair => pair.Key);
+            foreach (var item in sortedByKey)
             {
-                id += item.ID + ",";
-                type += item.Type + ",";
-                version += item.Version + ",";
+                id += item.Value.ID + ",";
+                type += item.Value.Type + ",";
+                version += item.Value.Version + ",";
             }
             if (!string.IsNullOrEmpty(id))
             {
@@ -943,6 +962,12 @@ namespace RobotGaitDesign
                 }
                 cmb_idFilter.SelectedIndex = 0;
             }
+        }
+
+        private void btn_clearDdFilter_Click(object sender, EventArgs e)
+        {
+            cmb_idFilter.Items.Clear();
+            _dic_MotorBaseInfo.Clear();
         }
     }
 }

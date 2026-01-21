@@ -63,6 +63,7 @@
             this.btn_motorScannerResultSave = new DevComponents.DotNetBar.ButtonX();
             this.lab_motorInfo = new DevComponents.DotNetBar.LabelX();
             this.btn_readConfigMotor = new DevComponents.DotNetBar.ButtonX();
+            this.btn_clearDdFilter = new DevComponents.DotNetBar.ButtonX();
             this.groupPanel1.SuspendLayout();
             this.groupPanel3.SuspendLayout();
             this.SuspendLayout();
@@ -621,11 +622,25 @@
             this.btn_readConfigMotor.Text = "从配置文件获取电机信息";
             this.btn_readConfigMotor.Click += new System.EventHandler(this.btn_readConfigMotor_Click);
             // 
+            // btn_clearDdFilter
+            // 
+            this.btn_clearDdFilter.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
+            this.btn_clearDdFilter.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
+            this.btn_clearDdFilter.Location = new System.Drawing.Point(548, 229);
+            this.btn_clearDdFilter.Margin = new System.Windows.Forms.Padding(4);
+            this.btn_clearDdFilter.Name = "btn_clearDdFilter";
+            this.btn_clearDdFilter.Size = new System.Drawing.Size(204, 65);
+            this.btn_clearDdFilter.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this.btn_clearDdFilter.TabIndex = 46;
+            this.btn_clearDdFilter.Text = "清除idFilter";
+            this.btn_clearDdFilter.Click += new System.EventHandler(this.btn_clearDdFilter_Click);
+            // 
             // Frm_RobotMotorControlMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(192F, 192F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(2221, 1069);
+            this.Controls.Add(this.btn_clearDdFilter);
             this.Controls.Add(this.btn_readConfigMotor);
             this.Controls.Add(this.lab_motorInfo);
             this.Controls.Add(this.btn_ReadMotorVersion);
@@ -703,6 +718,7 @@
         private DevComponents.DotNetBar.ButtonX btn_motorScannerResultSave;
         private DevComponents.DotNetBar.LabelX lab_motorInfo;
         private DevComponents.DotNetBar.ButtonX btn_readConfigMotor;
+        private DevComponents.DotNetBar.ButtonX btn_clearDdFilter;
     }
 }
 

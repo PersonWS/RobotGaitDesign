@@ -17,6 +17,7 @@ namespace CanFDAdapter
         public string PID { get; set; }
         public CanAdapterTypeEnum ChipType { get; set; }
         public bool IsReadOnly { get; set; } = false;
+
         public CanAdapterEntity(string comPort, int comBaud)
         {
             this.ComPort = comPort;

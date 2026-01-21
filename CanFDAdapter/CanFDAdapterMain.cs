@@ -130,7 +130,6 @@ namespace CanFDAdapter
             }
             return _comServer.SendData(sendArray);
         }
-
         public int Send(List<byte[]> sendList)
         {
             if (_comServer == null)
@@ -144,7 +143,6 @@ namespace CanFDAdapter
                 {
                     log.Debug($"COM ,发送数据：{BitConverter.ToString(send)}");
                     bool ret = _comServer.SendData(send);
-                    Thread.Sleep(1);
 
                     sendCount += send.Length;
                 }
@@ -155,6 +153,7 @@ namespace CanFDAdapter
             }
             return sendCount;
         }
+
 
         protected virtual List<byte[]> BeforeMessageReceiveEventInvoke(byte[] b)
         {

@@ -31,6 +31,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CommonUtility, Version=1.0.0.1, Culture=neutral, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\CommonDLL\CommonUtility.dll</HintPath>
+    </Reference>
     <Reference Include="LogHelper">
       <HintPath>..\CommonDLL\LogHelper.dll</HintPath>
     </Reference>
