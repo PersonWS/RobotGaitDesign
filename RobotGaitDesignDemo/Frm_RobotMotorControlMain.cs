@@ -307,10 +307,14 @@ namespace RobotGaitDesign
                         msgList = _messageQueue.ToList();
                         _messageQueue.Clear();
                     }
-                    else { continue; }
+                    else
+                    {
+                        Thread.Sleep(500);
+                        continue;
+                    }
                 }
                 ShowMessage_sub(msgList);
-                Thread.Sleep(200);
+                Thread.Sleep(500);
             }
 
         }
@@ -357,12 +361,25 @@ namespace RobotGaitDesign
             int baudRate = 921600;
             if (_canFDAdapterMain != null)
             {
+                ShowMessage($"canFDAdapterMain 存在，释放canFDAdapterMain...");
                 _canFDAdapterMain.BusUseageRateEvent -= BusUseageRate;
                 _canFDAdapterMain.MessageReceiveEvent -= ComMessageReceived;
                 _canFDAdapterMain.DisConnect();
                 _canFDAdapterEntity = null;
-
+                ShowMessage($"canFDAdapterMain 释放完成");
             }
+            if (_processQueueThread == null|| _processQueueThread.ThreadState!= ThreadState.Running)//启动处理线程
+            {
+                _processQueueThread = null;
+                ShowMessage($"启动数据处理线程ProcessComMessage...");
+                _isProcessQueueThreadContiue = true;
+                _processQueueThread = new Thread(ProcessComMessage);
+                _processQueueThread.Name = "processMotorData";
+                _processQueueThread.IsBackground = true;
+                _processQueueThread.Start();
+            }
+
+
             if (cmb_comList.Text.Contains("CH340"))
             {
                 baudRate = 921600;
@@ -390,13 +407,10 @@ namespace RobotGaitDesign
 
             if (_canFDAdapterMain.Connect(500))
             {
-                _isProcessQueueThreadContiue = true;
+
                 _canFDAdapterMain.MessageReceiveEvent += ComMessageReceived;
                 _canFDAdapterMain.BusUseageRateEvent += BusUseageRate;
-                _processQueueThread = new Thread(ProcessComMessage);
-                _processQueueThread.Name = "processMotorData";
-                _processQueueThread.IsBackground = true;
-                _processQueueThread.Start();
+
                 ShowMessage($"{cmb_comList.Text}   连接成功");
                 this.btn_connect.Enabled = false;
                 this.btn_disConnect.Enabled = true;
@@ -420,13 +434,23 @@ namespace RobotGaitDesign
             }
 
         }
+
         private void ProcessComMessage()
         {
+            ShowMessage($"启动数据处理线程ProcessComMessage成功!");
+            int total = 0;
             while (_isProcessQueueThreadContiue)
             {
+                DateTime dtSpan = DateTime.Now;
                 ProcessComMessageSub();
-                ThreadHelper.HighPrecisionDelay(5);
+                total = (int)(9 - (dtSpan - DateTime.Now).TotalMilliseconds);
+                if (total > 0)
+                {
+                    ThreadHelper.ThreadSlep_HighPrecisionDelay_Media(total);
+                }
+
             }
+            ShowMessage($"数据处理线程ProcessComMessage结束!");
         }
         /*********************************************************处理COM接收到的数据主函数*******************************************************/
         private void ProcessComMessageSub()
@@ -501,7 +525,7 @@ namespace RobotGaitDesign
                                 {
                                     _dic_MotorBaseInfo[lZMotorData.ExtendData_ID.MotorIDSend].Type = (Enum_MotorType)BitConverter.ToUInt16(new byte[] { lZMotorData.Data_Motor.DataBytes[4], lZMotorData.Data_Motor.DataBytes[3] }, 0);
                                     _dic_MotorBaseInfo[lZMotorData.ExtendData_ID.MotorIDSend].VersionBytes = lZMotorData.Data_Motor.DataBytes.Skip(3).Take(4).ToArray();
-                                   // _dic_MotorBaseInfo[lZMotorData.ExtendData_ID.MotorIDSend].Version = $"{lZMotorData.Data_Motor.DataBytes[3]}.{lZMotorData.Data_Motor.DataBytes[4]}.{lZMotorData.Data_Motor.DataBytes[5]}.{lZMotorData.Data_Motor.DataBytes[6]}";
+                                    // _dic_MotorBaseInfo[lZMotorData.ExtendData_ID.MotorIDSend].Version = $"{lZMotorData.Data_Motor.DataBytes[3]}.{lZMotorData.Data_Motor.DataBytes[4]}.{lZMotorData.Data_Motor.DataBytes[5]}.{lZMotorData.Data_Motor.DataBytes[6]}";
                                 }
                                 else
                                 {
@@ -650,9 +674,11 @@ namespace RobotGaitDesign
             }
             _canFDAdapterMain = null;
             ShowMessage($"{cmb_comList.Text}   连接已断开");
+            
             this.btn_connect.Enabled = true;
             this.btn_disConnect.Enabled = false;
             this._IsProcessing = false;
+            _motorMsgReceivedQueue.Clear();
         }
 
         private void chk_filterByMotorID_CheckedChanged(object sender, EventArgs e)

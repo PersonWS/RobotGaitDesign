@@ -68,8 +68,8 @@ namespace CanFDAdapter
                         int sleepMs = (int)(remainingTicks * 1000 / Stopwatch.Frequency);
                         if (sleepMs > 0)
                         {
-                            ThreadHelper.HighPrecisionDelay(Math.Min(sleepMs, 1));
-                            //Thread.Sleep(Math.Min(sleepMs, 1));
+                            ThreadHelper.ThreadSlep_HighPrecisionDelay_Media(Math.Min(sleepMs, 1));
+                           // Thread.Sleep(Math.Min(sleepMs, 1));
                         }
                     }
                     else
