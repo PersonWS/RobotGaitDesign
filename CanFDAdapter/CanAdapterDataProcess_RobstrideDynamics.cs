@@ -12,10 +12,10 @@ namespace CanFDAdapter
             : base(entity)
         {
         }
-        public override byte[] AnalysisMotorRetData(byte[] sourceData)
+        public override CanAdapterReceivedDataEntity AnalysisMotorRetData(CanAdapterReceivedDataEntity sourceData)
         {
             // Array.Copy(BitConverter.GetBytes(BitConverter.ToInt32(data, 2) >> 3), 0, data, 2, 4);
-            byte[] tempid = sourceData.Skip(2).Take(4).ToArray();
+            byte[] tempid = sourceData.Data.Skip(2).Take(4).ToArray();
             Array.Reverse(tempid);
             tempid = BitConverter.GetBytes(BitConverter.ToUInt32(tempid, 0) >> 3);
             //Array.Reverse(tempid);
@@ -23,11 +23,12 @@ namespace CanFDAdapter
             List<byte> tempBuffer = new List<byte>();
             tempBuffer.AddRange(tempid);
             tempBuffer.AddRange(new byte[] { 0, 0, 0, 8 });
-            tempBuffer.AddRange(sourceData.Skip(7).Take(sourceData[6]).ToArray());
+            tempBuffer.AddRange(sourceData.Data.Skip(7).Take(sourceData.Data[6]).ToArray());
 
 
 
-            return tempBuffer.ToArray();
+            sourceData.Data= tempBuffer.ToArray();
+            return sourceData;
         }
 
         public override List<byte[]> GenerateSendMotorData(List<byte[]> sourceData)

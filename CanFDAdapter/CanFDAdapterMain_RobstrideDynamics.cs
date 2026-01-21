@@ -19,10 +19,9 @@ namespace CanFDAdapter
         /// </summary>
         /// <param name="b"></param>
         /// <returns></returns>
-        protected override List<byte[]> BeforeMessageReceiveEventInvoke(byte[] b)
+        protected override List<CanAdapterReceivedDataEntity> BeforeMessageReceiveEventInvoke(byte[] b)
         {
-            List<byte[]> list = new List<byte[]>();
-            byte[] send = new byte[] { };
+            List<CanAdapterReceivedDataEntity> list = new List<CanAdapterReceivedDataEntity>();
             lock (_lock)
             {
                 base._buffer.AddRange(b);
@@ -30,18 +29,19 @@ namespace CanFDAdapter
                 {
                     if (b.Length < 2)
                     {
-                        return new List<byte[]> { };
+                        return new List<CanAdapterReceivedDataEntity> { };
                     }
                     int processTag = 0;//标记处理到第多少个字节了
                     for (int i = 0; i < _buffer.Count - 2; i++)
                     {
+                        CanAdapterReceivedDataEntity dataEntity =new CanAdapterReceivedDataEntity(null,DateTime.Now);
                         if (_buffer[i] == 65 && _buffer[i + 1] == 84)//检查报文头部
                         {
                             if (_buffer.Count - i > 16)
                             {
-                                send = _buffer.Skip(i).Take(9 + (_buffer[i + 6])).ToArray();//分解出整段报文
-                                list.Add(send);
-                                i = i + send.Length - 1;
+                                dataEntity.Data = _buffer.Skip(i).Take(9 + (_buffer[i + 6])).ToArray();//分解出整段报文
+                                list.Add(dataEntity);
+                                i = i + dataEntity.Data.Length - 1;
                             }
                         }
                         processTag = i + 1;

@@ -13,14 +13,16 @@ namespace LZMotor
     {
         private Motor_Data _data_Motor;
         private Motor_ExtendData_ID _extendData_ID;
-
-        public LZMotorDataMain(Motor_Data data_Motor, Motor_ExtendData_ID extendData_ID)
+        private DateTime _timeStamp;
+        public LZMotorDataMain(Motor_Data data_Motor, Motor_ExtendData_ID extendData_ID, DateTime timeStamp)
         {
             this._data_Motor = data_Motor;
             this._extendData_ID = extendData_ID;
+            _timeStamp = timeStamp;
         }
 
         public Motor_Data Data_Motor { get => _data_Motor; set => _data_Motor = value; }
         public Motor_ExtendData_ID ExtendData_ID { get => _extendData_ID; set => _extendData_ID = value; }
+        public DateTime TimeStamp { get => _timeStamp; set => _timeStamp = value; }
     }
 }

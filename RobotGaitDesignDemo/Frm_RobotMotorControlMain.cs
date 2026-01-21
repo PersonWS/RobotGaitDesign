@@ -31,7 +31,7 @@ namespace RobotGaitDesign
         /// <summary>
         /// 读取电机主动上报数据的队列
         /// </summary>
-        private Queue<List<byte[]>> _motorMsgReceivedQueue;
+        private Queue<List<CanAdapterReceivedDataEntity>> _motorMsgReceivedQueue;
         private readonly object _motorMsgReceivedLock = new object();
         Thread _processQueueThread;
         bool _isProcessQueueThreadContiue = false;
@@ -92,7 +92,7 @@ namespace RobotGaitDesign
             InitializeComponent();
             this.EnableGlass = false;
             this.FormBorderStyle = FormBorderStyle.SizableToolWindow;
-            _motorMsgReceivedQueue = new Queue<List<byte[]>>();
+            _motorMsgReceivedQueue = new Queue<List<CanAdapterReceivedDataEntity>>();
             Ini();
         }
         private void Ini()
@@ -424,7 +424,7 @@ namespace RobotGaitDesign
         }
 
         int receiedCount = 0;
-        private void ComMessageReceived(List<byte[]> msg)
+        private void ComMessageReceived(List<CanAdapterReceivedDataEntity> msg)
         {
             lock (_motorMsgReceivedLock)
             {
@@ -455,7 +455,7 @@ namespace RobotGaitDesign
         /*********************************************************处理COM接收到的数据主函数*******************************************************/
         private void ProcessComMessageSub()
         {
-            List<List<byte[]>> recMsg = null;
+            List<List<CanAdapterReceivedDataEntity>> recMsg = null;
             lock (_motorMsgReceivedLock)
             {
                 if (_motorMsgReceivedQueue.Count > 0)
@@ -475,7 +475,7 @@ namespace RobotGaitDesign
             foreach (var listItem in recMsg)
             {
                 //ShowMessage($"添加条数:{listItem.Count}");
-                foreach (byte[] item in listItem)
+                foreach (CanAdapterReceivedDataEntity item in listItem)
                 {
                     LZMotor.Motor_ExtendData_ID extendData_ID;
                     LZMotor.Motor_Data data_Motor;
@@ -483,7 +483,7 @@ namespace RobotGaitDesign
                     if (lZMotorData == null)
                     {
                         //ShowMessage($"报文解析失败，源报文：{BitConverter.ToString(item).Replace('-', ' ')}", true, Enum_Log4Net_RecordLevel.ERROR);
-                        log.Error($"报文解析失败，源报文：{BitConverter.ToString(item).Replace('-', ' ')}");
+                        log.Error($"报文解析失败，源报文：{BitConverter.ToString(item.Data).Replace('-', ' ')}");
                         continue;
                     }
                     try
@@ -568,11 +568,11 @@ namespace RobotGaitDesign
                         if (chk_analysisFailedShowSocketData.Checked && string.IsNullOrEmpty(ret))//如果没解析就直接显示原始报文
                         {
                             //   byte[] temp2 ;
-                            ret = $"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff")}: id:{BitConverter.ToString(lZMotorData.ExtendData_ID.DataBytes)}, data:{BitConverter.ToString(lZMotorData.Data_Motor.DataBytes)}";
+                            ret = $"{item.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss.fff")}: id:{BitConverter.ToString(lZMotorData.ExtendData_ID.DataBytes)}, data:{BitConverter.ToString(lZMotorData.Data_Motor.DataBytes)}";
                         }
                         else
                         {
-                            ret = $"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff")}: {ret}";
+                            ret = $"{item.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss.fff")}: {ret}";
                         }
 
                         if (!_isFilterByMotorId)//未通过ID筛选时就智能录入id

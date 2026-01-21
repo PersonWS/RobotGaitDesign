@@ -14,12 +14,12 @@ namespace CanFDAdapter
     : base(entity)
         {
         }
-        public override byte[] AnalysisMotorRetData(byte[] sourceData)
+        public override CanAdapterReceivedDataEntity AnalysisMotorRetData(CanAdapterReceivedDataEntity sourceData)
         {
-            byte[] data = sourceData.Skip(1).Take(sourceData.Length - 2).ToArray();
+            byte[] data = sourceData.Data.Skip(1).Take(sourceData.Data.Length - 2).ToArray();
             data[4] = (byte)((byte)(data[4] << 3) >> 3);
-
-            return data;
+            sourceData.Data = data;
+            return sourceData;
         }
 
         public override List<byte[]> GenerateSendMotorData(List<byte[]> sourceData)

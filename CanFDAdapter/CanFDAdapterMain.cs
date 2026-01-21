@@ -24,7 +24,7 @@ namespace CanFDAdapter
         /// </summary>
         public event Action<double> BusUseageRateEvent;
 
-        public event Action<List<byte[]>> MessageReceiveEvent;
+        public event Action<List<CanAdapterReceivedDataEntity>> MessageReceiveEvent;
         CanAdapterEntity _canAdapterEntity;
 
         public CanAdapterEntity CanAdapterEntity { get => _canAdapterEntity; }
@@ -155,9 +155,9 @@ namespace CanFDAdapter
         }
 
 
-        protected virtual List<byte[]> BeforeMessageReceiveEventInvoke(byte[] b)
+        protected virtual List<CanAdapterReceivedDataEntity> BeforeMessageReceiveEventInvoke(byte[] b)
         {
-            return new List<byte[]>() { b };
+            return new List<CanAdapterReceivedDataEntity>() { new CanAdapterReceivedDataEntity(b, DateTime.Now) };
         }
 
 

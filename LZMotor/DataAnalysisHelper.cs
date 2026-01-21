@@ -48,7 +48,7 @@ namespace LZMotor
             return AnalysisAckData_ReturnString(id, motorData, motor_BaseInfo, out dt);
         }
         #region 通过适配器的原始报文来解析出can的信息
-        public static LZMotorDataMain AnalysisAdapterDataBytesArrayToCanIDAndCanData(CanFDAdapter.CanAdapterEntity canAdapterEntity, byte[] bytes)
+        public static LZMotorDataMain AnalysisAdapterDataBytesArrayToCanIDAndCanData(CanFDAdapter.CanAdapterEntity canAdapterEntity, CanAdapterReceivedDataEntity dataEntity)
         {
             LZMotorDataMain lZMotorData = null;
             CanAdapterDataProcess canAdapterDataProcess;
@@ -56,29 +56,29 @@ namespace LZMotor
             {
                 case CanFDAdapter.CanAdapterTypeEnum.CH340:
                     canAdapterDataProcess = new CanAdapterDataProcess_RobstrideDynamics(null);
-                    lZMotorData = AnalysisBytesArrayToCanidAndCandataSub(canAdapterDataProcess, bytes);
+                    lZMotorData = AnalysisBytesArrayToCanidAndCandataSub(canAdapterDataProcess, dataEntity);
                     break;
                 case CanFDAdapter.CanAdapterTypeEnum.ch341:
                     canAdapterDataProcess = new CanAdapterDataProcess_BaoFengFD(null);
-                    lZMotorData = AnalysisBytesArrayToCanidAndCandataSub(canAdapterDataProcess, bytes);
+                    lZMotorData = AnalysisBytesArrayToCanidAndCandataSub(canAdapterDataProcess, dataEntity);
                     break;
                 default:
                     Log.log.Error($"AnalysisBytesArrayToCanidAndCandata,unkonwn type:{canAdapterEntity.ChipType}");
                     return null;
                     break;
             }
-            Log.log.Debug($"解析adapter数据，source：{BitConverter.ToString(bytes)} , result:,{BitConverter.ToString(lZMotorData.ExtendData_ID.DataBytes)}  {lZMotorData.Data_Motor.DataBytes.Length.ToString().PadLeft(2, '0')}  {BitConverter.ToString(lZMotorData.Data_Motor.DataBytes)}");
+            Log.log.Debug($"解析adapter数据，source：{BitConverter.ToString(dataEntity.Data)} , result:,{BitConverter.ToString(lZMotorData.ExtendData_ID.DataBytes)}  {lZMotorData.Data_Motor.DataBytes.Length.ToString().PadLeft(2, '0')}  {BitConverter.ToString(lZMotorData.Data_Motor.DataBytes)}");
             return lZMotorData;
 
         }
-        private static LZMotorDataMain AnalysisBytesArrayToCanidAndCandataSub(CanAdapterDataProcess canAdapterDataProcess, byte[] bytes)
+        private static LZMotorDataMain AnalysisBytesArrayToCanidAndCandataSub(CanAdapterDataProcess canAdapterDataProcess, CanAdapterReceivedDataEntity dataEntity)
         {
-            byte[] anaBytes = canAdapterDataProcess.AnalysisMotorRetData(bytes);
+            CanAdapterReceivedDataEntity anaBytes = canAdapterDataProcess.AnalysisMotorRetData(dataEntity);
 
-            byte[] idArray = new byte[] { anaBytes[3], anaBytes[2], anaBytes[1], anaBytes[0] };
-            int dataLength = BitConverter.ToInt16(new byte[] { anaBytes[7], anaBytes[6] }, 0);
-            byte[] dataArray = anaBytes.Skip(8).Take(anaBytes[7]).ToArray();
-            LZMotorDataMain data = new LZMotorDataMain(new LZMotor.Motor_Data(dataArray), new LZMotor.Motor_ExtendData_ID(idArray));
+            byte[] idArray = new byte[] { anaBytes.Data[3], anaBytes.Data[2], anaBytes.Data[1], anaBytes.Data[0] };
+            int dataLength = BitConverter.ToInt16(new byte[] { anaBytes.Data[7], anaBytes.Data[6] }, 0);
+            byte[] dataArray = anaBytes.Data.Skip(8).Take(anaBytes.Data[7]).ToArray();
+            LZMotorDataMain data = new LZMotorDataMain(new LZMotor.Motor_Data(dataArray), new LZMotor.Motor_ExtendData_ID(idArray),dataEntity.TimeStamp);
             return data;
         }
 

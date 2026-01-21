@@ -31,7 +31,7 @@ namespace LZMotor
         /// <summary>
         /// 读取电机主动上报数据的队列
         /// </summary>
-        private Queue<List<byte[]>> _motorMsgReceivedQueue;
+        private Queue<List<CanAdapterReceivedDataEntity>> _motorMsgReceivedQueue;
         private readonly object _motorMsgReceivedLock = new object();
         /// <summary>
         /// 接收到的条数总数
@@ -117,7 +117,7 @@ namespace LZMotor
 
         }
 
-        private void ComMessageReceived(List<byte[]> msg)
+        private void ComMessageReceived(List<CanAdapterReceivedDataEntity> msg)
         {
             lock (_motorMsgReceivedLock)
             {
@@ -132,7 +132,7 @@ namespace LZMotor
         public override void ProcessMethod_Customer()
         {
             _processCoutNew++;
-            List<List<byte[]>> recMsg = null;
+            List<List<CanAdapterReceivedDataEntity>> recMsg = null;
             lock (_motorMsgReceivedLock)
             {
                 if (_motorMsgReceivedQueue.Count > 0)
