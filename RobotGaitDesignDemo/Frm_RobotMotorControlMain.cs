@@ -87,6 +87,12 @@ namespace RobotGaitDesign
         Dictionary<byte, Motor_BaseInfo> _dic_MotorBaseInfo = new System.Collections.Generic.Dictionary<byte, Motor_BaseInfo>();
         #endregion
 
+
+        #region canAlyst2设备相关字段
+        //扫描是不是有canAlyst2设备
+        VCI_BOARD_INFO[] _VCI_BOARD_INFOS = new VCI_BOARD_INFO[50];
+        #endregion
+
         public Frm_RobotMotorControlMain()
         {
             InitializeComponent();
@@ -346,7 +352,7 @@ namespace RobotGaitDesign
             _comDic = CanFDAdapter.COM_Server.GetComPortsWithNames();
             foreach (var item in _comDic)
             {
-                if (item.Key.Contains("蓝牙")|| item.Key.Contains("Blue"))
+                if (item.Key.Contains("蓝牙") || item.Key.Contains("Blue"))
                 {
                     continue;
                 }
@@ -357,6 +363,12 @@ namespace RobotGaitDesign
                 cmb_comList.SelectedIndex = 0;
             }
 
+            //扫描是不是有canAlyst2设备
+            int num1 = CanFDAdapter.CanAlyst2_Interope.VCI_FindUsbDevice2(ref _VCI_BOARD_INFOS[0]);
+            for (int i = 0; i < num1; i++)
+            {
+                cmb_comList.Items.Add($"CanAlyst2_{i}");
+            }
 
         }
 
@@ -373,7 +385,7 @@ namespace RobotGaitDesign
                 _canFDAdapterEntity = null;
                 ShowMessage($"canFDAdapterMain 释放完成");
             }
-            if (_processQueueThread == null|| _processQueueThread.ThreadState!= ThreadState.Running)//启动处理线程
+            if (_processQueueThread == null || _processQueueThread.ThreadState != ThreadState.Running)//启动处理线程
             {
                 _processQueueThread = null;
                 ShowMessage($"启动数据处理线程ProcessComMessage...");
@@ -399,10 +411,23 @@ namespace RobotGaitDesign
 
                 baudRate = 921600;
                 _canFDAdapterEntity = new CanFDAdapter.CanAdapterEntity(_comDic[cmb_comList.Text], baudRate);
-                _canFDAdapterEntity.ChipType = CanFDAdapter.CanAdapterTypeEnum.ch341;
+                _canFDAdapterEntity.ChipType = CanFDAdapter.CanAdapterTypeEnum.canAlyst2;
                 //_canFDAdapterEntity.Description = txt_batchCan.Text;
-                _canFDAdapterEntity.ComPort = _comDic[cmb_comList.Text];
-                _canFDAdapterMain = new CanFDAdapter.CanFDAdapterMain_BaoFeng(_canFDAdapterEntity);
+                //_canFDAdapterEntity.ComPort = _comDic[cmb_comList.Text];
+                _canFDAdapterMain = new CanFDAdapter.CanFDAdapterMain_BaoFeng(_canFDAdapterEntity); 
+
+
+            }
+            else if (cmb_comList.Text.Contains("CanAlyst2"))
+            {
+                string[] strs = cmb_comList.Text.Split('_');//分解获得id号
+                UInt16 seq = Convert.ToUInt16(strs[1]);
+                _canFDAdapterEntity = new CanFDAdapter.CanAdapterEntity_CanAlyst2(4, seq);
+                _canFDAdapterEntity.ChipType = CanFDAdapter.CanAdapterTypeEnum.canAlyst2;
+                //_canFDAdapterEntity.Description = txt_batchCan.Text;
+                //_canFDAdapterEntity.ComPort = _comDic[cmb_comList.Text];
+                _canFDAdapterMain = new CanFDAdapter.CanFDAdapterMain_CanAlyst2(_canFDAdapterEntity);
+                ((CanFDAdapterMain_CanAlyst2)_canFDAdapterMain).VCI_BOARD_INFOS = this._VCI_BOARD_INFOS[seq];//给出板子信息
             }
             else
             {
@@ -679,7 +704,7 @@ namespace RobotGaitDesign
             }
             _canFDAdapterMain = null;
             ShowMessage($"{cmb_comList.Text}   连接已断开");
-            
+
             this.btn_connect.Enabled = true;
             this.btn_disConnect.Enabled = false;
             this._IsProcessing = false;
@@ -817,18 +842,22 @@ namespace RobotGaitDesign
             {
                 try
                 {
-                    LZMotor.Motor_ExtendData_ID id = new Motor_ExtendData_ID(new byte[8]);
-                    LZMotor.Motor_Data data = new Motor_Data(new byte[8]);
+                    //LZMotor.Motor_ExtendData_ID id = new Motor_ExtendData_ID(new byte[8]);
+                    //LZMotor.Motor_Data data = new Motor_Data(new byte[8]);
+                    byte[] template = new byte[] { 0, 0, 0xfd, 1, 8, 0, 0, 0, 0, 0, 0, 0, 0 };
                     List<byte[]> sendByte = new List<byte[]>();
-                    sendByte.Add(new byte[] { 0, 0, 0xfd, 1, 8, 0, 0, 0, 0, 0, 0, 0, 0 });
+                    sendByte.Add(template);
                     for (byte i = 1; i < 128; i++)
                     {
-                        sendByte[0][3] = i;
-                        List<byte[]> sendBuffer = _canFDAdapterMain?.CanAdapterDataProcess.GenerateSendMotorData(sendByte);
-                        //string str = BitConverter.ToString(sendBuffer[0]).Replace("-", " ");
-                        _canFDAdapterMain?.Send(sendBuffer);
+                        byte[] data = new byte[template.Length];
+                        Array.Copy(template, data, template.Length);
+                        data[3] = i;
+                        sendByte.Add(data);
 
                     }
+                    List<byte[]> sendBuffer = _canFDAdapterMain?.CanAdapterDataProcess.GenerateSendMotorData(sendByte);
+                    //string str = BitConverter.ToString(sendBuffer[0]).Replace("-", " ");
+                    _canFDAdapterMain?.Send(sendBuffer);
                     ShowMessage("电机轮询完成！");
                 }
                 catch (Exception ex)

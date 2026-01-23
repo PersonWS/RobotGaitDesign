@@ -24,5 +24,7 @@ namespace CanFDAdapter
             this.ComBaud = comBaud;
         }
 
+
+
     }
 }

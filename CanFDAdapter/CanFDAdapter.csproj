@@ -21,6 +21,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -50,11 +52,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CanAdapterDataProcess.cs" />
+    <Compile Include="CanAdapterDataProcess_CanAlyst2.cs" />
     <Compile Include="CanAdapterDataProcess_RobstrideDynamics.cs" />
     <Compile Include="CanAdapterEntity.cs" />
+    <Compile Include="CanAdapterEntity_CanAlyst2.cs" />
     <Compile Include="CanAdapterReceivedDataEntity.cs" />
     <Compile Include="CanAdapterTypeEnum.cs" />
+    <Compile Include="CanAlyst2_Interope.cs" />
+    <Compile Include="CanAlyst2_Struct.cs" />
     <Compile Include="CanFDAdapterMain_BaoFeng.cs" />
+    <Compile Include="CanFDAdapterMain_CanAlyst2.cs" />
     <Compile Include="CanFDAdapterMain_RobstrideDynamics.cs" />
     <Compile Include="Class1.cs" />
     <Compile Include="CanAdapterDataProcess_BaoFengFD.cs" />

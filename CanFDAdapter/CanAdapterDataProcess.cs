@@ -22,5 +22,7 @@ namespace CanFDAdapter
         /// <returns></returns>
         public abstract List<byte[]> GenerateSendMotorData(List<byte[]> sourceData);
 
+        //public abstract List<CanAdapterReceivedDataEntity> GenerateSendMotorData(CanAdapterReceivedDataEntity sourceData);
+
     }
 }

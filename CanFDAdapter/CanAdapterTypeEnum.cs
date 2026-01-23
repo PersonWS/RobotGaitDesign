@@ -10,5 +10,6 @@ namespace CanFDAdapter
     {
         CH340,
         ch341,
+        canAlyst2
     }
 }

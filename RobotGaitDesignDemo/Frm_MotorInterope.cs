@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -34,6 +35,8 @@ namespace RobotGaitDesignDemo
             Ini();
         }
 
+        [DllImport("controlcan.dll")]
+        static extern UInt32 VCI_FindUsbDevice2(ref VCI_BOARD_INFO pInfo);
         private void Ini()
         {
             foreach (var item in Enum.GetNames(typeof(LZMotor.Enum_RunMode)))

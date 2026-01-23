@@ -116,7 +116,7 @@ namespace CanFDAdapter
             try
             {
                 _serialPort.Write(data, 0, data.Length);
-                ThreadHelper.ThreadSlep_HighPrecisionDelay_Media(1);//CAN模块性能不足时使用
+
                 log.Debug($"COM ,发送数据：{BitConverter.ToString(data)}");
                // ThreadHelper.ThreadSlep_HighPrecisionDelay_Media(0);//CAN模块性能不足时使用
                 lock (_lock_report)

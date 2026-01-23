@@ -8,6 +8,7 @@ using System.IO.Ports;
 using CanFDAdapter;
 using System.Threading;
 using System.Threading.Tasks;
+using CommonUtility.ThreadHelper;
 
 namespace CanFDAdapter
 {
@@ -54,16 +55,26 @@ namespace CanFDAdapter
 
                     _canAdapterDataProcess = new CanAdapterDataProcess_BaoFengFD(canAdapterEntity);
                     break;
+                case CanAdapterTypeEnum.canAlyst2:
+
+                    _canAdapterDataProcess = new CanAdapterDataProcess_CanAlyst2(canAdapterEntity);
+                    break;
                 default:
                     break;
             }
         }
 
+        ///// <summary>
+        ///// 
+        ///// </summary>
+        ///// <returns></returns>
         /// <summary>
         /// 建立连接
         /// </summary>
+        /// <param name="baudUsedRefreshRate"></param>
+        /// <param name="reserved">保留参数</param>
         /// <returns>true：连接成功   false ：连接失败，查看日志确定错误信息</returns>
-        public bool Connect(int baudUsedRefreshRate = 500)
+        public virtual bool Connect(int baudUsedRefreshRate = 500,int reserved=0)
         {
             List<string> comList = COM_Server.GetComlist(false); //首先获取本机关联的串行端口列表            
             if (comList.Count == 0)
@@ -132,7 +143,7 @@ namespace CanFDAdapter
             return _comServer.SendDataSync(sendArray);
         }
 
-        public int Send(List<byte[]> sendList)
+        public virtual int Send(List<byte[]> sendList)
         {
             if (_comServer == null)
             {
@@ -148,6 +159,7 @@ namespace CanFDAdapter
 
                     bool ret = _comServer.SendDataSync(send);
                     sendCount += send.Length;
+                    ThreadHelper.ThreadSlep_HighPrecisionDelay_Media(1);//CAN模块性能不足时使用
                 }
                 catch (Exception ex)
                 {
@@ -157,6 +169,32 @@ namespace CanFDAdapter
             return sendCount;
         }
 
+        public virtual int Send(List<CanAdapterReceivedDataEntity> sendList)
+        {
+            if (_comServer == null)
+            {
+                return -1;
+            }
+            int sendCount = 0;
+            //int ret = _comServer.SendDataASync(sendList);
+
+            foreach (CanAdapterReceivedDataEntity send in sendList)
+            {
+                try
+                {
+
+                    bool ret = _comServer.SendDataSync(send.Data);
+                    sendCount += send.Data.Length;
+                    ThreadHelper.ThreadSlep_HighPrecisionDelay_Media(1);//CAN模块性能不足时使用
+                }
+                catch (Exception ex)
+                {
+                    Log.log.Error($"sendError , ex:{ex.ToString()}");
+                }
+            }
+            return sendList.Count;
+        }
+
 
         protected virtual List<CanAdapterReceivedDataEntity> BeforeMessageReceiveEventInvoke(byte[] b)
         {
@@ -164,16 +202,24 @@ namespace CanFDAdapter
         }
 
 
-        private void Receive(byte[] b)
+        protected void Receive(byte[] b)
         {
             MessageReceiveEvent?.Invoke(BeforeMessageReceiveEventInvoke(b));
+        }
+        /// <summary>
+        /// 在子类调用父类事件
+        /// </summary>
+        /// <param name="entities"></param>
+        protected void MessageReceiveEventExecute(List<CanAdapterReceivedDataEntity> entities)
+        {
+            MessageReceiveEvent?.Invoke(entities);
         }
 
 
         /// <summary>
         /// 断开COM连接，不用时必须要断开，否则下次就连接不上了
         /// </summary>
-        public void DisConnect()
+        public virtual void DisConnect()
         {
             if (_comServer != null)
             {
