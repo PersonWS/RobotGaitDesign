@@ -107,7 +107,6 @@ namespace CanFDAdapter
                 {
                     channelSum = _VCI_BOARD_INFOS.Value.can_Num;
                 }
-                channelSum = 1;
                 for (int i = 0; i < channelSum; i++)
                 {
                     ///初始化
@@ -115,18 +114,18 @@ namespace CanFDAdapter
                     ret1 = CanAlyst2_Interope.VCI_InitCAN(this._canAdapterEntity_CanAlyst2.DeviceType, this._canAdapterEntity_CanAlyst2.DeviceIndex, (uint)i, ref vCI_INIT_CONFIG);
                     if (ret1 == 0)
                     {
-                        log.Error($"初始化设备失败,请检查设备类型:{this._canAdapterEntity_CanAlyst2.DeviceType}，设备索引号:{this._canAdapterEntity_CanAlyst2.DeviceIndex},CAN通道:{i}是否正确");
+                        log.Error($"初始化CAN通道:{i}失败,请检查设备类型:{this._canAdapterEntity_CanAlyst2.DeviceType}，设备索引号:{this._canAdapterEntity_CanAlyst2.DeviceIndex}是否正确");
                         return false;
                     }
                     else if (ret1 == -1)
                     {
 
-                        log.Error($"初始化设备失败，该设备不存在或已离线,设备类型:{this._canAdapterEntity_CanAlyst2.DeviceType}，设备索引号:{this._canAdapterEntity_CanAlyst2.DeviceIndex},CAN通道:{i}");
+                        log.Error($"初始化CAN通道:{i}失败，该设备不存在或已离线，设备类型:{this._canAdapterEntity_CanAlyst2.DeviceType}，设备索引号:{this._canAdapterEntity_CanAlyst2.DeviceIndex}");
                         return false;
                     }
                     else
                     {
-                        log.Info($"初始化设备成功,设备类型:{this._canAdapterEntity_CanAlyst2.DeviceType}，设备索引号:{this._canAdapterEntity_CanAlyst2.DeviceIndex},CAN通道:{i}");
+                        log.Info($"初始化CAN通道:{i}成功,设备类型:{this._canAdapterEntity_CanAlyst2.DeviceType}，设备索引号:{this._canAdapterEntity_CanAlyst2.DeviceIndex}");
                     }
                     ret1 = CanAlyst2_Interope.VCI_StartCAN(this._canAdapterEntity_CanAlyst2.DeviceType, this._canAdapterEntity_CanAlyst2.DeviceIndex, (uint)i);
                     if (ret1 == 0)
