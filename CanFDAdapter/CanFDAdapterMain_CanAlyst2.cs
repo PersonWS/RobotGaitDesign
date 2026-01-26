@@ -20,13 +20,20 @@ namespace CanFDAdapter
         /// <summary>
         /// 接收到的数据
         /// </summary>
-        VCI_CAN_OBJ[] m_recobj = new VCI_CAN_OBJ[1000];
+        VCI_CAN_OBJ[] m_recobj = new VCI_CAN_OBJ[2500];
 
         Thread _receivedThread;
         /// <summary>
-        /// 开始建立连接的时间
+        /// 开始0.1秒计时的基准时间
         /// </summary>
-        DateTime m_ConnecTime;
+        DateTime _timerStamp;
+
+        /// <summary>
+        /// 开始0.1秒计时的定时器时间
+        /// </summary>
+        uint _timerStampSpan = 0;
+
+
         /// <summary>
         /// 是否继续接收数据
         /// </summary>
@@ -95,7 +102,7 @@ namespace CanFDAdapter
                 }
                 else
                 {
-                    m_ConnecTime = DateTime.UtcNow;
+                    //m_ConnecTime = DateTime.UtcNow;
                     log.Info($"设备连接成功,设备类型:{this._canAdapterEntity_CanAlyst2.DeviceType}，设备索引号:{this._canAdapterEntity_CanAlyst2.DeviceIndex}");
                 }
 
@@ -166,21 +173,25 @@ namespace CanFDAdapter
         {
             while (_isReceivedContinue)
             {
-                ReceivedPoolSub();
+                for (int i = 0; i < channelSum; i++)
+                {
+                    ReceivedPoolSub(i);
+                }
+
                 CommonUtility.ThreadHelper.ThreadHelper.ThreadSlep_HighPrecisionDelay_Media(10);
             }
         }
         /// <summary>
         /// 轮询缓存区是否收到了数据
         /// </summary>
-        private void ReceivedPoolSub()
+        private void ReceivedPoolSub(Int32 canid)
         {
             List<CanAdapterReceivedDataEntity> dataList = new List<CanAdapterReceivedDataEntity>();
             try
             {
                 Int32 res = 0;
 
-                res = CanAlyst2_Interope.VCI_Receive(this._canAdapterEntity_CanAlyst2.DeviceType, this._canAdapterEntity_CanAlyst2.DeviceIndex, m_canind, m_recobj, 1000, 100);
+                res = CanAlyst2_Interope.VCI_Receive(this._canAdapterEntity_CanAlyst2.DeviceType, this._canAdapterEntity_CanAlyst2.DeviceIndex, m_canind, m_recobj, 2500, 100);
 
                 if (res == 0xFFFFFFFF || res == 0)
                 { return; };//当设备未初始化时，返回0xFFFFFFFF，不进行列表显示。
@@ -193,7 +204,17 @@ namespace CanFDAdapter
                     bytes.AddRange(m_recobj[i].ID);
                     bytes.AddRange(new byte[] { 0, 0, 0, (byte)m_recobj[i].DataLen });
                     bytes.AddRange(m_recobj[i].Data);
-                    dataList.Add(new CanAdapterReceivedDataEntity(bytes.ToArray(), DateTime.Now));
+                    if (_timerStampSpan==0)//如果为0则重置datetime为当前的实际值
+                    {
+                        _timerStampSpan = m_recobj[i].TimeStamp;
+                        _timerStamp=DateTime.Now;
+                    }
+                    if (_timerStampSpan > m_recobj[i].TimeStamp)//如果值溢出了，则进行溢出值的计算
+                    {
+                        _timerStamp.AddMilliseconds(4294967295 - _timerStampSpan / 10);
+                        _timerStampSpan = m_recobj[i].TimeStamp;
+                    }
+                    dataList.Add(new CanAdapterReceivedDataEntity(bytes.ToArray(), _timerStamp.AddMilliseconds((m_recobj[i].TimeStamp - _timerStampSpan) / 10)));
                     //dataList.Add(new CanAdapterReceivedDataEntity(bytes.ToArray(), this.m_ConnecTime.AddMilliseconds(m_recobj[i].TimeStamp/10)));
                 }
                 base.MessageReceiveEventExecute(dataList);
@@ -254,10 +275,10 @@ namespace CanFDAdapter
                     sendobj.DataLen = send.Data[4];
                     sendobj.Data = send.Data.Skip(5).Take(sendobj.DataLen).ToArray();
                     int ret = CanAlyst2_Interope.VCI_Transmit(_canAdapterEntity_CanAlyst2.DeviceType, _canAdapterEntity_CanAlyst2.DeviceIndex, (uint)send.Channel, ref sendobj, 1);
-                    if ( ret== 1)
+                    if (ret == 1)
                     {
                         log.Debug($"CAN发送成功:{BitConverter.ToString(send.Data)}, index:{this._canAdapterEntity_CanAlyst2.DeviceIndex}，channel:{send.Channel}");
-                       
+
                     }
                     else
                     {
