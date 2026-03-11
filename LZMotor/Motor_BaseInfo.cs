@@ -13,6 +13,10 @@ namespace LZMotor
         private string _version;
         public string Version { get { return _version; } }
         private byte[] _versionBytes = new byte[4];
+        /***电机限位信息***/
+        private float _motorPositiveDegreeLimit = 90;
+        private float _motorNegativeDegreeLimit = -90;
+
         public byte[] VersionBytes
         {
             set

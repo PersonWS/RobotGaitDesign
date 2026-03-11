@@ -326,20 +326,6 @@ namespace RobotGaitDesign
         }
 
 
-        private void ShowMessage_motorAck(string msg)
-        {
-            if (_sb_txt_MotorAckData.Length > BaseFrmControl.TextBoxMaxLength * 100)
-            {
-                lock (_lock)
-                {
-                    StringBuilder stemp = new StringBuilder();
-                    stemp.Append(_sb_txt_MotorAckData.ToString().Substring(_sb_txt_MotorAckData.Length / 2));
-                    _sb_txt_MotorAckData = stemp;
-                }
-            }
-            _sb_txt_MotorAckData.Append(BaseFrmControl.ShowMessageOnTextBox(this, txt_MotorAckData, msg, false, true));
-        }
-
         private void btn_log_Click(object sender, EventArgs e)
         {
             LogHelper.EasyLogger.ShowDiagnoseForm();
@@ -500,7 +486,7 @@ namespace RobotGaitDesign
             }
 
             StringBuilder sb = new StringBuilder();//电机返回值解析
-            StringBuilder sb2 = new StringBuilder();//记录电机交互数据
+           // StringBuilder sb2 = new StringBuilder();//记录电机交互数据
             //ShowMessage($"本次处理条数:{recMsg.Count}");
             foreach (var listItem in recMsg)
             {
@@ -615,13 +601,6 @@ namespace RobotGaitDesign
                                 _dic_MotorBaseInfo.Add(motor_BaseInfo.ID, motor_BaseInfo);
                                 IniMotorIdFilterCmb(lZMotorData.ExtendData_ID.MotorIDSend);
                             }
-                            if (chk_GetMotorAckData.Checked && dtRet?.TableName == "motorAck" && dtRet?.Rows.Count > 0)
-                            {
-                                foreach (DataRow row in dtRet.Rows)
-                                {
-                                    sb2.Append($"{row[0]},{row[1]},{row[2]},{row[3]},{row[4]}\r\n");
-                                }
-                            }
                             sb.Append(ret + "\r\n");
                             //ShowMessage($"id:{extendData_ID.MotorIDSend} ,msg:{ret}");
                         }
@@ -630,13 +609,6 @@ namespace RobotGaitDesign
 
                             if (lZMotorData.ExtendData_ID.MotorIDSend == (this._filterID) || lZMotorData.ExtendData_ID.MotorIDReceive == (this._filterID))
                             {
-                                if (chk_GetMotorAckData.Checked && dtRet?.TableName == "motorAck" && dtRet?.Rows.Count > 0)
-                                {
-                                    foreach (DataRow row in dtRet.Rows)
-                                    {
-                                        sb2.Append($"{row[0]},{row[1]},{row[2]},{row[3]},{row[4]}\r\n");
-                                    }
-                                }
                                 sb.Append(ret + "\r\n");
                             }
                             else
@@ -656,10 +628,6 @@ namespace RobotGaitDesign
             if (sb.Length > 4)
             {
                 ShowMessage($"{sb.ToString()}", false);
-            }
-            if (sb2.Length > 2)
-            {
-                ShowMessage_motorAck($"{sb2.ToString().Substring(0, sb2.ToString().Length - 2)}");
             }
         }
 
@@ -770,17 +738,6 @@ namespace RobotGaitDesign
             ShowMessage($"保存完成 fileName:{fileName}");
         }
 
-        private void btn_saveMotorAckData_Click(object sender, EventArgs e)
-        {
-            string fileName = "motorAckData" + DateTime.Now.ToString("MM-dd-HH-mm-ss-fff");
-            lock (_lock)
-            {
-                TextOperate.WriteToFile(fileName, _sb_txt_MotorAckData.ToString());
-                _sb_txt_MotorAckData.Clear();
-            }
-            ShowMessage($"保存完成 fileName:{fileName}");
-            txt_MotorAckData.Text = "";
-        }
         bool _IsMouseDown = false;
 
         private void btn_motorRW_Click(object sender, EventArgs e)
@@ -844,7 +801,7 @@ namespace RobotGaitDesign
                 {
                     //LZMotor.Motor_ExtendData_ID id = new Motor_ExtendData_ID(new byte[8]);
                     //LZMotor.Motor_Data data = new Motor_Data(new byte[8]);
-                    byte[] template = new byte[] { 0, 0, 0xfd, 1, 8, 0, 0, 0, 0, 0, 0, 0, 0 };
+                    byte[] template = new byte[] { 0, 0, 0xfd, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0 };
                     List<byte[]> sendByte = new List<byte[]>();
                     sendByte.Add(template);
                     for (byte i = 1; i < 128; i++)

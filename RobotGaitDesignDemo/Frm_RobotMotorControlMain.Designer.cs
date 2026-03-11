@@ -47,10 +47,6 @@
             this.groupPanel1 = new DevComponents.DotNetBar.Controls.GroupPanel();
             this.btn_clearShowMessage = new DevComponents.DotNetBar.ButtonX();
             this.btn_saveShowMessage = new DevComponents.DotNetBar.ButtonX();
-            this.txt_MotorAckData = new DevComponents.DotNetBar.Controls.TextBoxX();
-            this.groupPanel3 = new DevComponents.DotNetBar.Controls.GroupPanel();
-            this.chk_GetMotorAckData = new DevComponents.DotNetBar.Controls.CheckBoxX();
-            this.btn_saveMotorAckData = new DevComponents.DotNetBar.ButtonX();
             this.btn_motorRW = new DevComponents.DotNetBar.ButtonX();
             this.btn_motorScanner = new DevComponents.DotNetBar.ButtonX();
             this.btn_ReadMotorVersion = new DevComponents.DotNetBar.ButtonX();
@@ -64,8 +60,8 @@
             this.lab_motorInfo = new DevComponents.DotNetBar.LabelX();
             this.btn_readConfigMotor = new DevComponents.DotNetBar.ButtonX();
             this.btn_clearDdFilter = new DevComponents.DotNetBar.ButtonX();
+            this.btn_StepExecute = new DevComponents.DotNetBar.ButtonX();
             this.groupPanel1.SuspendLayout();
-            this.groupPanel3.SuspendLayout();
             this.SuspendLayout();
             // 
             // btn_analysis
@@ -370,91 +366,6 @@
             this.btn_saveShowMessage.Text = "保存数据";
             this.btn_saveShowMessage.Click += new System.EventHandler(this.btn_saveShowMessage_Click);
             // 
-            // txt_MotorAckData
-            // 
-            // 
-            // 
-            // 
-            this.txt_MotorAckData.Border.Class = "TextBoxBorder";
-            this.txt_MotorAckData.Border.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.txt_MotorAckData.Location = new System.Drawing.Point(112, 12);
-            this.txt_MotorAckData.Margin = new System.Windows.Forms.Padding(4);
-            this.txt_MotorAckData.Multiline = true;
-            this.txt_MotorAckData.Name = "txt_MotorAckData";
-            this.txt_MotorAckData.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txt_MotorAckData.Size = new System.Drawing.Size(422, 154);
-            this.txt_MotorAckData.TabIndex = 25;
-            // 
-            // groupPanel3
-            // 
-            this.groupPanel3.CanvasColor = System.Drawing.SystemColors.Control;
-            this.groupPanel3.ColorSchemeStyle = DevComponents.DotNetBar.eDotNetBarStyle.Office2007;
-            this.groupPanel3.Controls.Add(this.chk_GetMotorAckData);
-            this.groupPanel3.Controls.Add(this.btn_saveMotorAckData);
-            this.groupPanel3.Controls.Add(this.txt_MotorAckData);
-            this.groupPanel3.Location = new System.Drawing.Point(927, 207);
-            this.groupPanel3.Margin = new System.Windows.Forms.Padding(4);
-            this.groupPanel3.Name = "groupPanel3";
-            this.groupPanel3.Size = new System.Drawing.Size(684, 205);
-            // 
-            // 
-            // 
-            this.groupPanel3.Style.BackColor2SchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBackground2;
-            this.groupPanel3.Style.BackColorGradientAngle = 90;
-            this.groupPanel3.Style.BackColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBackground;
-            this.groupPanel3.Style.BorderBottom = DevComponents.DotNetBar.eStyleBorderType.Solid;
-            this.groupPanel3.Style.BorderBottomWidth = 1;
-            this.groupPanel3.Style.BorderColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBorder;
-            this.groupPanel3.Style.BorderLeft = DevComponents.DotNetBar.eStyleBorderType.Solid;
-            this.groupPanel3.Style.BorderLeftWidth = 1;
-            this.groupPanel3.Style.BorderRight = DevComponents.DotNetBar.eStyleBorderType.Solid;
-            this.groupPanel3.Style.BorderRightWidth = 1;
-            this.groupPanel3.Style.BorderTop = DevComponents.DotNetBar.eStyleBorderType.Solid;
-            this.groupPanel3.Style.BorderTopWidth = 1;
-            this.groupPanel3.Style.CornerDiameter = 4;
-            this.groupPanel3.Style.CornerType = DevComponents.DotNetBar.eCornerType.Rounded;
-            this.groupPanel3.Style.TextAlignment = DevComponents.DotNetBar.eStyleTextAlignment.Center;
-            this.groupPanel3.Style.TextColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelText;
-            this.groupPanel3.Style.TextLineAlignment = DevComponents.DotNetBar.eStyleTextAlignment.Near;
-            // 
-            // 
-            // 
-            this.groupPanel3.StyleMouseDown.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            // 
-            // 
-            // 
-            this.groupPanel3.StyleMouseOver.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.groupPanel3.TabIndex = 26;
-            this.groupPanel3.Text = "电机ACK数据";
-            // 
-            // chk_GetMotorAckData
-            // 
-            this.chk_GetMotorAckData.BackColor = System.Drawing.Color.Transparent;
-            // 
-            // 
-            // 
-            this.chk_GetMotorAckData.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.chk_GetMotorAckData.Location = new System.Drawing.Point(-1, -20);
-            this.chk_GetMotorAckData.Margin = new System.Windows.Forms.Padding(4);
-            this.chk_GetMotorAckData.Name = "chk_GetMotorAckData";
-            this.chk_GetMotorAckData.Size = new System.Drawing.Size(108, 167);
-            this.chk_GetMotorAckData.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this.chk_GetMotorAckData.TabIndex = 40;
-            this.chk_GetMotorAckData.Text = "Get Ack Data";
-            // 
-            // btn_saveMotorAckData
-            // 
-            this.btn_saveMotorAckData.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
-            this.btn_saveMotorAckData.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
-            this.btn_saveMotorAckData.Location = new System.Drawing.Point(552, 8);
-            this.btn_saveMotorAckData.Margin = new System.Windows.Forms.Padding(4);
-            this.btn_saveMotorAckData.Name = "btn_saveMotorAckData";
-            this.btn_saveMotorAckData.Size = new System.Drawing.Size(112, 154);
-            this.btn_saveMotorAckData.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this.btn_saveMotorAckData.TabIndex = 26;
-            this.btn_saveMotorAckData.Text = "保存数据";
-            this.btn_saveMotorAckData.Click += new System.EventHandler(this.btn_saveMotorAckData_Click);
-            // 
             // btn_motorRW
             // 
             this.btn_motorRW.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
@@ -635,11 +546,24 @@
             this.btn_clearDdFilter.Text = "清除idFilter";
             this.btn_clearDdFilter.Click += new System.EventHandler(this.btn_clearDdFilter_Click);
             // 
+            // btn_StepExecute
+            // 
+            this.btn_StepExecute.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
+            this.btn_StepExecute.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
+            this.btn_StepExecute.Location = new System.Drawing.Point(1481, 203);
+            this.btn_StepExecute.Margin = new System.Windows.Forms.Padding(4);
+            this.btn_StepExecute.Name = "btn_StepExecute";
+            this.btn_StepExecute.Size = new System.Drawing.Size(130, 209);
+            this.btn_StepExecute.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this.btn_StepExecute.TabIndex = 47;
+            this.btn_StepExecute.Text = "步态执行";
+            // 
             // Frm_RobotMotorControlMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(192F, 192F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(2221, 1069);
+            this.Controls.Add(this.btn_StepExecute);
             this.Controls.Add(this.btn_clearDdFilter);
             this.Controls.Add(this.btn_readConfigMotor);
             this.Controls.Add(this.lab_motorInfo);
@@ -651,7 +575,6 @@
             this.Controls.Add(this.btn_motorScanner);
             this.Controls.Add(this.chk_readMotorVersion);
             this.Controls.Add(this.btn_motorRW);
-            this.Controls.Add(this.groupPanel3);
             this.Controls.Add(this.btn_saveShowMessage);
             this.Controls.Add(this.btn_clearShowMessage);
             this.Controls.Add(this.groupPanel1);
@@ -676,7 +599,6 @@
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.RobotMotorControlMain_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.groupPanel1.ResumeLayout(false);
-            this.groupPanel3.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -702,16 +624,12 @@
         private DevComponents.DotNetBar.Controls.GroupPanel groupPanel1;
         private DevComponents.DotNetBar.ButtonX btn_clearShowMessage;
         private DevComponents.DotNetBar.ButtonX btn_saveShowMessage;
-        private DevComponents.DotNetBar.Controls.TextBoxX txt_MotorAckData;
-        private DevComponents.DotNetBar.Controls.GroupPanel groupPanel3;
-        private DevComponents.DotNetBar.ButtonX btn_saveMotorAckData;
         private DevComponents.DotNetBar.ButtonX btn_motorRW;
         private DevComponents.DotNetBar.ButtonX btn_motorScanner;
         private DevComponents.DotNetBar.ButtonX btn_ReadMotorVersion;
         private DevComponents.DotNetBar.Controls.CheckBoxX chk_readMotorVersion;
         private DevComponents.DotNetBar.Controls.CheckBoxX chk_analysisFailedShowSocketData;
         private DevComponents.DotNetBar.Controls.CheckBoxX chk_findMotorID;
-        private DevComponents.DotNetBar.Controls.CheckBoxX chk_GetMotorAckData;
         private DevComponents.DotNetBar.LabelX labelX5;
         private DevComponents.DotNetBar.LabelX lab_busUsedRate;
         private DevComponents.DotNetBar.Controls.CheckBoxX chk_OnlyWriteToMotorData;
@@ -719,6 +637,7 @@
         private DevComponents.DotNetBar.LabelX lab_motorInfo;
         private DevComponents.DotNetBar.ButtonX btn_readConfigMotor;
         private DevComponents.DotNetBar.ButtonX btn_clearDdFilter;
+        private DevComponents.DotNetBar.ButtonX btn_StepExecute;
     }
 }
 

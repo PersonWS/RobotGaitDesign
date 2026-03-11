@@ -49,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Enum_MotorError.cs" />
     <Compile Include="Enum_MotorParameter.cs" />
     <Compile Include="Enum_MotorType.cs" />
     <Compile Include="LZMotorServerMain.cs" />

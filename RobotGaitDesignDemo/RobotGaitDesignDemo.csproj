@@ -51,6 +51,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\CommonDLL\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="NPOI, Version=2.4.1.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\CommonDLL\NPOI.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -81,6 +85,12 @@
     <Compile Include="Frm_MotorInterope.Designer.cs">
       <DependentUpon>Frm_MotorInterope.cs</DependentUpon>
     </Compile>
+    <Compile Include="Frm_StepExecute.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Frm_StepExecute.Designer.cs">
+      <DependentUpon>Frm_StepExecute.cs</DependentUpon>
+    </Compile>
     <Compile Include="ProcessEngine.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -90,6 +100,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Frm_MotorInterope.resx">
       <DependentUpon>Frm_MotorInterope.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Frm_StepExecute.resx">
+      <DependentUpon>Frm_StepExecute.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

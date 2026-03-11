@@ -228,9 +228,12 @@ namespace LZMotor
                     switch (motor_BaseInfo.Version)
                     {
                         case "0.4.2.2":
-                            dr["Angle"] =( BitConverter.ToSingle(data, 0)*57.2975F).ToString("0.0000");
+                            dr["Angle"] = (BitConverter.ToSingle(data, 0) * 57.2975F).ToString("0.0000");
                             dr["RotSpeed"] = (MapUInt16ToFloat(new byte[] { data[5], data[4] }, -44, 44) * 19.1082).ToString("0.0000");
                             dr["Torque"] = (MapUInt16ToFloat(new byte[] { data[7], data[6] }, -17, 17)).ToString("0.0000");
+                            break;
+                        case "0.4.2.3":
+                            goto case "0.4.2.2";
                             break;
                         default:
                             dr["Angle"] = (MapUInt16ToFloat(new byte[] { data[1], data[0] }) * 57.29578F).ToString("0.0000");
@@ -249,6 +252,8 @@ namespace LZMotor
                             dr["RotSpeed"] = (MapUInt16ToFloat(new byte[] { data[5], data[4] }, -50, 50) * 19.1082).ToString("0.0000");//* 114.61968
                             dr["Torque"] = (MapUInt16ToFloat(new byte[] { data[7], data[6] }, -5.5f, 5.5f)).ToString("0.0000");
                             break;
+                        case "0.5.3.2":
+                            goto case "0.5.3.1";
                         default:
                             dr["Angle"] = (MapUInt16ToFloat(new byte[] { data[1], data[0] }) * 57.29578F).ToString("0.0000");
                             dr["RotSpeed"] = (MapUInt16ToFloat(new byte[] { data[3], data[2] }, -50, 50) * 19.1082).ToString("0.0000");//* 114.61968
@@ -350,7 +355,7 @@ namespace LZMotor
             }
             else
             {
-                Log.log.Error($"AnalysisDataInternal_SetParameterUnhold,ExtendData_ID:{BitConverter.ToString(id.DataBytes)},data:{data},解析数据失败");
+                Log.log.Error($"AnalysisDataInternal_SetParameterUnhold,ExtendData_ID:{BitConverter.ToString(id.DataBytes)},data:{BitConverter.ToString(data)},解析数据失败");
             }
             switch (enum_MotorParameter)
             {

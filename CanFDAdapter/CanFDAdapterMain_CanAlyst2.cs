@@ -194,7 +194,9 @@ namespace CanFDAdapter
                 res = CanAlyst2_Interope.VCI_Receive(this._canAdapterEntity_CanAlyst2.DeviceType, this._canAdapterEntity_CanAlyst2.DeviceIndex, m_canind, m_recobj, 2500, 100);
 
                 if (res == 0xFFFFFFFF || res == 0)
-                { return; };//当设备未初始化时，返回0xFFFFFFFF，不进行列表显示。
+                {
+                    return;
+                };//当设备未初始化时，返回0xFFFFFFFF，不进行列表显示。
 
                 for (UInt32 i = 0; i < res; i++)
                 {
@@ -204,10 +206,10 @@ namespace CanFDAdapter
                     bytes.AddRange(m_recobj[i].ID);
                     bytes.AddRange(new byte[] { 0, 0, 0, (byte)m_recobj[i].DataLen });
                     bytes.AddRange(m_recobj[i].Data);
-                    if (_timerStampSpan==0)//如果为0则重置datetime为当前的实际值
+                    if (_timerStampSpan == 0)//如果为0则重置datetime为当前的实际值
                     {
                         _timerStampSpan = m_recobj[i].TimeStamp;
-                        _timerStamp=DateTime.Now;
+                        _timerStamp = DateTime.Now;
                     }
                     if (_timerStampSpan > m_recobj[i].TimeStamp)//如果值溢出了，则进行溢出值的计算
                     {
