@@ -118,7 +118,7 @@
             this.txt_id.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.txt_id.Size = new System.Drawing.Size(332, 116);
             this.txt_id.TabIndex = 3;
-            this.txt_id.Text = "FD-03-02-98";
+            this.txt_id.Text = "18-00-01-00";
             // 
             // txt_motorData
             // 

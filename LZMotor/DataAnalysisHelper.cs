@@ -201,7 +201,11 @@ namespace LZMotor
             DataRow dr = dataTable.NewRow();
             dr["canIdSend"] = id.MotorIDSend;
             //dr["canIdRec"] = id.MotorIDReceive;
-
+            if (data.Length<8)
+            {
+                Log.log.Error($"AnalysisDataInternal_AckInformation，data：{BitConverter.ToString(data)}, 需要长度8，实际长度{data.Length}");
+                throw new Exception($"AnalysisDataInternal_AckInformation，data：{BitConverter.ToString(data)}, 需要长度8，实际长度{data.Length}");
+            }
 
             switch (motor_BaseInfo.Type)
             {

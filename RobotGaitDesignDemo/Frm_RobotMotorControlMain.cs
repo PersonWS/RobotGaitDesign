@@ -180,6 +180,7 @@ namespace RobotGaitDesign
         bool _IsProcessing = false;
         private void btn_analysis_Click(object sender, EventArgs e)
         {
+
             if (_IsProcessing)
             {
                 FormSet.BaseFrmControl.ShowDefalutMessageBox(this, "其他任务正在处理中");
@@ -202,7 +203,9 @@ namespace RobotGaitDesign
 
             try
             {
-                _IsProcessing = true;
+
+
+                    //_IsProcessing = true;
                 AnalysisMotorData(listIDStr, listIData);
             }
             catch (Exception ex)
@@ -218,24 +221,37 @@ namespace RobotGaitDesign
             //List<byte[]> listID = new List<byte[]>();
             //List<byte[]> listData = new List<byte[]>();
             StringBuilder sb = new StringBuilder();
+            List < CanAdapterReceivedDataEntity > canList=new List<CanAdapterReceivedDataEntity> ();
             for (int i = 0; i < listIDStr.Count; i++)
             {
                 LZMotor.Motor_ExtendData_ID id = new LZMotor.Motor_ExtendData_ID(listIDStr[i]);
                 LZMotor.Motor_Data data = new LZMotor.Motor_Data(listIData[i]);
-                DataTable dataTable;
-                if (_dic_MotorBaseInfo.Keys.Contains(id.MotorIDSend))
-                {
-                    sb.Append(LZMotor.DataAnalysisHelper.AnalysisAckData_ReturnString(id, data, _dic_MotorBaseInfo[id.MotorIDSend], out dataTable));
-                }
-                else
-                {
-                    sb.Append(LZMotor.DataAnalysisHelper.AnalysisAckData_ReturnString(id, data, new Motor_BaseInfo(id.MotorIDSend, Enum_MotorType.RS04) { }, out dataTable));
-                    sb.Append("    该电机版本数据未获取，默认型号为RS04");
-                }
-                //ShowMessage($"第{i}行:{ret}");
+
+                CanAdapterReceivedDataEntity canAdapterReceivedDataEntity = new CanAdapterReceivedDataEntity();
+                List<byte> d1 = new List<byte>();
+                d1.AddRange(id.DataBytes);
+                d1.AddRange(new byte[] { 0,0,0, (byte)data.DataBytes.Length});
+                d1.AddRange(data.DataBytes);
+                canAdapterReceivedDataEntity.Data =d1.ToArray();
+
+                canList.Add(canAdapterReceivedDataEntity);
+
+                //    DataTable dataTable;
+                //    if (_dic_MotorBaseInfo.Keys.Contains(id.MotorIDSend))
+                //    {
+                //        sb.Append(LZMotor.DataAnalysisHelper.AnalysisAckData_ReturnString(id, data, _dic_MotorBaseInfo[id.MotorIDSend], out dataTable));
+                //    }
+                //    else
+                //    {
+                //        sb.Append(LZMotor.DataAnalysisHelper.AnalysisAckData_ReturnString(id, data, new Motor_BaseInfo(id.MotorIDSend, Enum_MotorType.RS04) { }, out dataTable));
+                //        sb.Append("    该电机版本数据未获取，默认型号为RS04");
+                //    }
+                //    //ShowMessage($"第{i}行:{ret}");
             }
-            ShowMessage(sb.ToString());
-            _IsProcessing = false;
+
+            _motorMsgReceivedQueue.Enqueue(canList);
+            //ShowMessage(sb.ToString());
+            //_IsProcessing = false;
 
         }
 
@@ -334,6 +350,14 @@ namespace RobotGaitDesign
         private void btn_refresh_Click(object sender, EventArgs e)
         {
             cmb_comList.Items.Clear();
+
+            //扫描是不是有canAlyst2设备
+            int num1 = CanFDAdapter.CanAlyst2_Interope.VCI_FindUsbDevice2(ref _VCI_BOARD_INFOS[0]);
+            for (int i = 0; i < num1; i++)
+            {
+                cmb_comList.Items.Add($"CanAlyst2_{i}");
+            }
+            //扫描COM设备
             // List<string> comList = CanFDAdapter.COM_Server.GetComlist();
             _comDic = CanFDAdapter.COM_Server.GetComPortsWithNames();
             foreach (var item in _comDic)
@@ -349,12 +373,6 @@ namespace RobotGaitDesign
                 cmb_comList.SelectedIndex = 0;
             }
 
-            //扫描是不是有canAlyst2设备
-            int num1 = CanFDAdapter.CanAlyst2_Interope.VCI_FindUsbDevice2(ref _VCI_BOARD_INFOS[0]);
-            for (int i = 0; i < num1; i++)
-            {
-                cmb_comList.Items.Add($"CanAlyst2_{i}");
-            }
 
         }
 
@@ -430,6 +448,7 @@ namespace RobotGaitDesign
                 ShowMessage($"{cmb_comList.Text}   连接成功");
                 this.btn_connect.Enabled = false;
                 this.btn_disConnect.Enabled = true;
+                this.btn_refresh_ext.Enabled = false;
 
             }
             else
@@ -616,13 +635,14 @@ namespace RobotGaitDesign
                                 log.Debug($"id:{lZMotorData.ExtendData_ID.MotorIDSend} ,msg:{ret}");
                             }
                         }
-
                     }
                     catch (Exception ex)
                     {
                         BaseFrmControl.ShowErrorMessageBox(this, $"{ex.ToString()}");
-                        _IsProcessing = false;
+                        
                     }
+                    finally
+                    { _IsProcessing = false; }
                 }
             }
             if (sb.Length > 4)
@@ -675,6 +695,7 @@ namespace RobotGaitDesign
 
             this.btn_connect.Enabled = true;
             this.btn_disConnect.Enabled = false;
+            this.btn_refresh_ext.Enabled = true;
             this._IsProcessing = false;
             _motorMsgReceivedQueue.Clear();
         }
@@ -986,6 +1007,7 @@ namespace RobotGaitDesign
         {
             cmb_idFilter.Items.Clear();
             _dic_MotorBaseInfo.Clear();
+            cmb_comList.Text = "";
         }
     }
 }
