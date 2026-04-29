@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RobotGaitDesignDemo;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -19,7 +20,8 @@ namespace RobotGaitDesign
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.ThreadException += ShowThreadException;
-            Application.Run(new Frm_RobotMotorControlMain());
+            //Application.Run(new Frm_RobotMotorControlMain
+            Application.Run(new Frm_StepExecute());
         }
 
         private static void ShowThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)

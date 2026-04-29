@@ -8,6 +8,7 @@ namespace LZMotor
 {
     public enum Enum_MotorType : uint
     {
+        Null = 0,
         RS01 = 0x01,
         RS02 = 0x02,
         RS03 = 0x03,

@@ -93,6 +93,10 @@ namespace RobotGaitDesign
         VCI_BOARD_INFO[] _VCI_BOARD_INFOS = new VCI_BOARD_INFO[50];
         #endregion
 
+        #region 供其他类调用的回调
+        public event Action<List<CanAdapterReceivedDataEntity>> MessageReceiveEvent;
+        #endregion
+
         public Frm_RobotMotorControlMain()
         {
             InitializeComponent();
@@ -116,6 +120,8 @@ namespace RobotGaitDesign
             _messageQueueThread.IsBackground = true;
             _messageQueueThread.Start();
 
+            cmb_motrorBrand.Items.Add("灵族时代");
+            cmb_motrorBrand.SelectedIndex = 0;
 
 
         }
@@ -177,6 +183,8 @@ namespace RobotGaitDesign
             }
         }
 
+
+
         bool _IsProcessing = false;
         private void btn_analysis_Click(object sender, EventArgs e)
         {
@@ -205,7 +213,7 @@ namespace RobotGaitDesign
             {
 
 
-                    //_IsProcessing = true;
+                //_IsProcessing = true;
                 AnalysisMotorData(listIDStr, listIData);
             }
             catch (Exception ex)
@@ -215,13 +223,17 @@ namespace RobotGaitDesign
             }
         }
 
-
+        /// <summary>
+        /// 手动输入数据来解析电机数据
+        /// </summary>
+        /// <param name="listIDStr"></param>
+        /// <param name="listIData"></param>
         private void AnalysisMotorData(List<string> listIDStr, List<string> listIData)
         {
             //List<byte[]> listID = new List<byte[]>();
             //List<byte[]> listData = new List<byte[]>();
             StringBuilder sb = new StringBuilder();
-            List < CanAdapterReceivedDataEntity > canList=new List<CanAdapterReceivedDataEntity> ();
+            List<CanAdapterReceivedDataEntity> canList = new List<CanAdapterReceivedDataEntity>();
             for (int i = 0; i < listIDStr.Count; i++)
             {
                 LZMotor.Motor_ExtendData_ID id = new LZMotor.Motor_ExtendData_ID(listIDStr[i]);
@@ -230,9 +242,9 @@ namespace RobotGaitDesign
                 CanAdapterReceivedDataEntity canAdapterReceivedDataEntity = new CanAdapterReceivedDataEntity();
                 List<byte> d1 = new List<byte>();
                 d1.AddRange(id.DataBytes);
-                d1.AddRange(new byte[] { 0,0,0, (byte)data.DataBytes.Length});
+                d1.AddRange(new byte[] { 0, 0, 0, (byte)data.DataBytes.Length });
                 d1.AddRange(data.DataBytes);
-                canAdapterReceivedDataEntity.Data =d1.ToArray();
+                canAdapterReceivedDataEntity.Data = d1.ToArray();
 
                 canList.Add(canAdapterReceivedDataEntity);
 
@@ -378,6 +390,11 @@ namespace RobotGaitDesign
 
         private void btn_connect_Click(object sender, EventArgs e)
         {
+            if (string.IsNullOrEmpty(cmb_comList.Text))
+            {
+                BaseFrmControl.ShowErrorMessageBox(this, "未选定调试器");
+                return;
+            }
             ShowMessage($"准备连接:{cmb_comList.Text}");
             int baudRate = 921600;
             if (_canFDAdapterMain != null)
@@ -388,16 +405,6 @@ namespace RobotGaitDesign
                 _canFDAdapterMain.DisConnect();
                 _canFDAdapterEntity = null;
                 ShowMessage($"canFDAdapterMain 释放完成");
-            }
-            if (_processQueueThread == null || _processQueueThread.ThreadState != ThreadState.Running)//启动处理线程
-            {
-                _processQueueThread = null;
-                ShowMessage($"启动数据处理线程ProcessComMessage...");
-                _isProcessQueueThreadContiue = true;
-                _processQueueThread = new Thread(ProcessComMessage);
-                _processQueueThread.Name = "processMotorData";
-                _processQueueThread.IsBackground = true;
-                _processQueueThread.Start();
             }
 
 
@@ -418,7 +425,7 @@ namespace RobotGaitDesign
                 _canFDAdapterEntity.ChipType = CanFDAdapter.CanAdapterTypeEnum.canAlyst2;
                 //_canFDAdapterEntity.Description = txt_batchCan.Text;
                 //_canFDAdapterEntity.ComPort = _comDic[cmb_comList.Text];
-                _canFDAdapterMain = new CanFDAdapter.CanFDAdapterMain_BaoFeng(_canFDAdapterEntity); 
+                _canFDAdapterMain = new CanFDAdapter.CanFDAdapterMain_BaoFeng(_canFDAdapterEntity);
 
 
             }
@@ -446,9 +453,11 @@ namespace RobotGaitDesign
                 _canFDAdapterMain.BusUseageRateEvent += BusUseageRate;
 
                 ShowMessage($"{cmb_comList.Text}   连接成功");
+                SetButtonsEnable(this, true);
                 this.btn_connect.Enabled = false;
-                this.btn_disConnect.Enabled = true;
                 this.btn_refresh_ext.Enabled = false;
+                this.btn_disConnect.Enabled = true;
+                this.cmb_comList.Enabled = false;
 
             }
             else
@@ -464,7 +473,7 @@ namespace RobotGaitDesign
             lock (_motorMsgReceivedLock)
             {
                 _motorMsgReceivedQueue.Enqueue(msg);
-
+                this.MessageReceiveEvent?.Invoke(msg);
                 log.Debug($"ComMessageReceivedCount:{receiedCount++}");
             }
 
@@ -505,8 +514,8 @@ namespace RobotGaitDesign
             }
 
             StringBuilder sb = new StringBuilder();//电机返回值解析
-           // StringBuilder sb2 = new StringBuilder();//记录电机交互数据
-            //ShowMessage($"本次处理条数:{recMsg.Count}");
+                                                   // StringBuilder sb2 = new StringBuilder();//记录电机交互数据
+                                                   //ShowMessage($"本次处理条数:{recMsg.Count}");
             foreach (var listItem in recMsg)
             {
                 //ShowMessage($"添加条数:{listItem.Count}");
@@ -639,7 +648,7 @@ namespace RobotGaitDesign
                     catch (Exception ex)
                     {
                         BaseFrmControl.ShowErrorMessageBox(this, $"{ex.ToString()}");
-                        
+
                     }
                     finally
                     { _IsProcessing = false; }
@@ -678,13 +687,26 @@ namespace RobotGaitDesign
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            this.btn_disConnect.Enabled = false;
+            SetButtonsEnable(this, false);
+            this.btn_connect.Enabled = true;
             btn_refresh_Click(sender, e);
+
+            if (_processQueueThread == null || _processQueueThread.ThreadState != ThreadState.Running)//启动处理线程
+            {
+                _processQueueThread = null;
+                ShowMessage($"启动数据处理线程ProcessComMessage...");
+                _isProcessQueueThreadContiue = true;
+                _processQueueThread = new Thread(ProcessComMessage);
+                _processQueueThread.Name = "processMotorData";
+                _processQueueThread.IsBackground = true;
+                _processQueueThread.Start();
+            }
+
         }
 
         private void btn_disConnect_Click(object sender, EventArgs e)
         {
-            _isProcessQueueThreadContiue = false;
+            //_isProcessQueueThreadContiue = false;
             if (_canFDAdapterMain != null)
             {
                 _canFDAdapterMain.DisConnect();
@@ -693,10 +715,11 @@ namespace RobotGaitDesign
             _canFDAdapterMain = null;
             ShowMessage($"{cmb_comList.Text}   连接已断开");
 
+            SetButtonsEnable(this, false);
             this.btn_connect.Enabled = true;
-            this.btn_disConnect.Enabled = false;
             this.btn_refresh_ext.Enabled = true;
             this._IsProcessing = false;
+            this.cmb_comList.Enabled = true;
             _motorMsgReceivedQueue.Clear();
         }
 
@@ -709,7 +732,18 @@ namespace RobotGaitDesign
         {
             try
             {
-                this._filterID = Convert.ToByte(cmb_idFilter.Text);
+                byte id = Convert.ToByte(cmb_idFilter.Text);
+                this._filterID = id;
+                if (_dic_MotorBaseInfo.Keys.Contains(id))
+                {
+                    lab_motorType.Text = _dic_MotorBaseInfo[id].Type.ToString();
+                    lab_motorVersion.Text = string.IsNullOrEmpty( _dic_MotorBaseInfo[id].Version)?"Null" : _dic_MotorBaseInfo[id].Version;
+                }
+                else
+                {
+                    lab_motorType.Text = "Null";
+                    lab_motorVersion.Text ="Null";
+                }
             }
             catch (Exception)
             {
@@ -733,7 +767,11 @@ namespace RobotGaitDesign
         private void cmb_idFilter_KeyPress(object sender, KeyPressEventArgs e)
         {
             BaseFrmControl.KeyPressWithDigital(this, sender, e);
-            this._filterID = Convert.ToByte(cmb_idFilter.Text);
+            if (!string.IsNullOrEmpty(cmb_idFilter.Text))
+            {
+                this._filterID = Convert.ToByte(cmb_idFilter.Text);
+            }
+
         }
 
         private void chk_OnlyFeedBackData_CheckedChanged(object sender, EventArgs e)
@@ -744,7 +782,11 @@ namespace RobotGaitDesign
         private void btn_clearShowMessage_Click(object sender, EventArgs e)
         {
             this.txt_showMessage.Text = "";
-            _sb_txt_showMessage.Clear();
+            if (DialogResult.OK == BaseFrmControl.ShowtMessageBoxWithReturn(this, "确定要清除LOG列表的信息吗？"))
+            {
+                _sb_txt_showMessage.Clear();
+            }
+
         }
 
         private void btn_saveShowMessage_Click(object sender, EventArgs e)
@@ -784,7 +826,7 @@ namespace RobotGaitDesign
             }
             _frm_MotorInterope = new Frm_MotorInterope(this);
             _frm_MotorInterope.FormClosed += Frm_MotorInteropeClosedEventHandler;
-            _frm_MotorInterope.Size = new Size(865, 550);
+            _frm_MotorInterope.Size = new Size(830, 640);
             _frm_MotorInterope.StartPosition = FormStartPosition.CenterParent;
             _frm_MotorInterope.Show();
 
@@ -836,6 +878,7 @@ namespace RobotGaitDesign
                     List<byte[]> sendBuffer = _canFDAdapterMain?.CanAdapterDataProcess.GenerateSendMotorData(sendByte);
                     //string str = BitConverter.ToString(sendBuffer[0]).Replace("-", " ");
                     _canFDAdapterMain?.Send(sendBuffer);
+                    Thread.Sleep(100);
                     ShowMessage("电机轮询完成！");
                 }
                 catch (Exception ex)
@@ -1007,7 +1050,39 @@ namespace RobotGaitDesign
         {
             cmb_idFilter.Items.Clear();
             _dic_MotorBaseInfo.Clear();
-            cmb_comList.Text = "";
+            cmb_idFilter.Text = "";
         }
+
+
+        /// <summary>
+        /// connect之后置为enble ，
+        /// </summary>
+        /// <param name="parent"></param>
+        /// <param name="enable"></param>
+        private void SetButtonsEnable(Control parent, bool enable)
+        {
+            foreach (Control control in parent.Controls)
+            {
+                if (control is ButtonX button)
+                {
+                    if (!(button as ButtonX).Name.EndsWith("ext"))
+                    {
+                        button.Enabled = enable;
+                    }
+
+                }
+
+                // 递归遍历子容器
+                if (control.HasChildren)
+                {
+                    SetButtonsEnable(control, enable);
+                }
+            }
+        }
+
+
+
+
+
     }
 }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace LZMotor
 {
     /// <summary>
-    /// 
+    /// 电机通讯数据
     /// </summary>
     public class MotorCommunicationDataMain
     {
