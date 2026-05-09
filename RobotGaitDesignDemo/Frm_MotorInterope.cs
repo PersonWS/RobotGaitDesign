@@ -272,8 +272,8 @@ namespace RobotGaitDesignDemo
         /// <param name="enum_MotorParameter"></param>
         /// <param name="parameter"></param>
         /// <param name="userDefine"></param>
-        /// <param name="isNeedHod"></param>
-        private void SaveMotorParameter<T>(Enum_MotorParameter enum_MotorParameter, T parameter, byte userDefine = 0, bool isNeedHod = true)
+        /// <param name="isNeedHold"></param>
+        private void SaveMotorParameter<T>(Enum_MotorParameter enum_MotorParameter, T parameter, byte userDefine = 0, bool isNeedHold = true)
         {
 
             List<byte> listId = new List<byte>();
@@ -296,7 +296,7 @@ namespace RobotGaitDesignDemo
             List<byte[]> sendBuffer = _baseForm._canFDAdapterMain?.CanAdapterDataProcess.GenerateSendMotorData(sendBufferTemp);
             string str = BitConverter.ToString(sendBuffer[0]).Replace("-", " ");
             _baseForm._canFDAdapterMain?.Send(sendBuffer);
-            if (isNeedHod)
+            if (isNeedHold)
             {
                 //保存值
                 sendBufferTemp = LZMotor.LZMotoInteropeMain.W_SetMotorParameterHoldSave
@@ -741,7 +741,7 @@ namespace RobotGaitDesignDemo
                 BaseFrmControl.ShowErrorMessageBox(this, "允许修改的角度范围为-5到5度");
                 return;
             }
-            SaveMotorParameter(Enum_MotorParameter.add_offset零位偏置, (float)((float)value / 114.5916), 0, chk_gprw_isParameterHold.Checked);
+            SaveMotorParameter(Enum_MotorParameter.add_offset零位偏置, (float)((float)value / 57.296), 0, chk_gprw_isParameterHold.Checked);
         }
 
         private void btn_gprw_clearDgv_motorParameter_Click(object sender, EventArgs e)

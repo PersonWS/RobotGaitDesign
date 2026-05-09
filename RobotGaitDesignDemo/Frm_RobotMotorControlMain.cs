@@ -84,7 +84,10 @@ namespace RobotGaitDesign
 
         #region 电机配置相关字段
         DataTable _dt_motorInfo = new DataTable();
-        Dictionary<byte, Motor_BaseInfo> _dic_MotorBaseInfo = new System.Collections.Generic.Dictionary<byte, Motor_BaseInfo>();
+        /// <summary>
+        /// 电机的基础信息   byte ： 电机id
+        /// </summary>
+       public  Dictionary<byte, Motor_BaseInfo> _dic_MotorBaseInfo = new System.Collections.Generic.Dictionary<byte, Motor_BaseInfo>();
         #endregion
 
 

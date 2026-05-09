@@ -259,9 +259,9 @@
             this.labelX4.Location = new System.Drawing.Point(8, 75);
             this.labelX4.Margin = new System.Windows.Forms.Padding(4);
             this.labelX4.Name = "labelX4";
-            this.labelX4.Size = new System.Drawing.Size(108, 48);
+            this.labelX4.Size = new System.Drawing.Size(160, 48);
             this.labelX4.TabIndex = 14;
-            this.labelX4.Text = "idFilter:";
+            this.labelX4.Text = "IDFilter:";
             // 
             // cmb_idFilter
             // 
@@ -270,7 +270,7 @@
             this.cmb_idFilter.FormattingEnabled = true;
             this.cmb_idFilter.IntegralHeight = false;
             this.cmb_idFilter.ItemHeight = 24;
-            this.cmb_idFilter.Location = new System.Drawing.Point(151, 85);
+            this.cmb_idFilter.Location = new System.Drawing.Point(176, 85);
             this.cmb_idFilter.Margin = new System.Windows.Forms.Padding(4);
             this.cmb_idFilter.Name = "cmb_idFilter";
             this.cmb_idFilter.Size = new System.Drawing.Size(278, 32);
@@ -431,7 +431,7 @@
             this.chk_readMotorVersion.Location = new System.Drawing.Point(10, 199);
             this.chk_readMotorVersion.Margin = new System.Windows.Forms.Padding(4);
             this.chk_readMotorVersion.Name = "chk_readMotorVersion";
-            this.chk_readMotorVersion.Size = new System.Drawing.Size(197, 58);
+            this.chk_readMotorVersion.Size = new System.Drawing.Size(222, 58);
             this.chk_readMotorVersion.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.chk_readMotorVersion.TabIndex = 37;
             this.chk_readMotorVersion.Text = "VerAnaysisON";
@@ -462,7 +462,7 @@
             this.chk_findMotorID.Checked = true;
             this.chk_findMotorID.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chk_findMotorID.CheckValue = "Y";
-            this.chk_findMotorID.Location = new System.Drawing.Point(233, 150);
+            this.chk_findMotorID.Location = new System.Drawing.Point(8, 251);
             this.chk_findMotorID.Margin = new System.Windows.Forms.Padding(4);
             this.chk_findMotorID.Name = "chk_findMotorID";
             this.chk_findMotorID.Size = new System.Drawing.Size(224, 58);
@@ -535,7 +535,7 @@
             // 
             // 
             this.labelX9.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.labelX9.Location = new System.Drawing.Point(10, 250);
+            this.labelX9.Location = new System.Drawing.Point(13, 332);
             this.labelX9.Margin = new System.Windows.Forms.Padding(4);
             this.labelX9.Name = "labelX9";
             this.labelX9.Size = new System.Drawing.Size(180, 52);
@@ -641,7 +641,7 @@
             this.cmb_motrorBrand.FormattingEnabled = true;
             this.cmb_motrorBrand.IntegralHeight = false;
             this.cmb_motrorBrand.ItemHeight = 24;
-            this.cmb_motrorBrand.Location = new System.Drawing.Point(151, 28);
+            this.cmb_motrorBrand.Location = new System.Drawing.Point(176, 28);
             this.cmb_motrorBrand.Margin = new System.Windows.Forms.Padding(4);
             this.cmb_motrorBrand.Name = "cmb_motrorBrand";
             this.cmb_motrorBrand.Size = new System.Drawing.Size(278, 32);
@@ -658,7 +658,7 @@
             this.labelX7.Location = new System.Drawing.Point(10, 12);
             this.labelX7.Margin = new System.Windows.Forms.Padding(4);
             this.labelX7.Name = "labelX7";
-            this.labelX7.Size = new System.Drawing.Size(133, 48);
+            this.labelX7.Size = new System.Drawing.Size(158, 48);
             this.labelX7.TabIndex = 50;
             this.labelX7.Text = "MotorBrand:";
             // 
@@ -669,7 +669,7 @@
             // 
             // 
             this.lab_motorVersion.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.lab_motorVersion.Location = new System.Drawing.Point(198, 310);
+            this.lab_motorVersion.Location = new System.Drawing.Point(201, 392);
             this.lab_motorVersion.Margin = new System.Windows.Forms.Padding(4);
             this.lab_motorVersion.Name = "lab_motorVersion";
             this.lab_motorVersion.Size = new System.Drawing.Size(180, 52);
@@ -683,7 +683,7 @@
             // 
             // 
             this.lab_motorType.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.lab_motorType.Location = new System.Drawing.Point(198, 250);
+            this.lab_motorType.Location = new System.Drawing.Point(201, 332);
             this.lab_motorType.Margin = new System.Windows.Forms.Padding(4);
             this.lab_motorType.Name = "lab_motorType";
             this.lab_motorType.Size = new System.Drawing.Size(180, 52);
@@ -697,7 +697,7 @@
             // 
             // 
             this.labelX6.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.labelX6.Location = new System.Drawing.Point(10, 310);
+            this.labelX6.Location = new System.Drawing.Point(13, 392);
             this.labelX6.Margin = new System.Windows.Forms.Padding(4);
             this.labelX6.Name = "labelX6";
             this.labelX6.Size = new System.Drawing.Size(180, 52);
@@ -801,7 +801,7 @@
             this.grp_motorInterope.Controls.Add(this.btn_log_ext);
             this.grp_motorInterope.Location = new System.Drawing.Point(1417, 355);
             this.grp_motorInterope.Name = "grp_motorInterope";
-            this.grp_motorInterope.Size = new System.Drawing.Size(683, 170);
+            this.grp_motorInterope.Size = new System.Drawing.Size(683, 158);
             // 
             // 
             // 

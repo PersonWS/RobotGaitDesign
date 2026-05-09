@@ -22,6 +22,26 @@ namespace LZMotor
         }
 
         #region 写入电机参数
+
+        /// <summary>
+        /// 设定CSP模式下的目标位置
+        /// </summary>
+        /// <param name="motorIds"></param>
+        /// <param name="loc_ref">目标位置</param>
+        /// <param name="sendID"></param>
+        /// <returns></returns>
+        public static List<byte[]> W_MotorSetCSP_TargetPosition(List<byte> motorIds, float loc_ref ,byte sendID = 0)
+        {
+            if (motorIds == null || motorIds.Count == 0)
+            {
+                Log.log.Error($"MC_MotorEnable,motorIds is null or empty");
+                return null;
+            }
+            List<Motor_ExtendData_ID> id = GenerateSendBytesByCommunicationType(motorIds, (byte)Enum_CommunicationType.SetParameterUnhold, 0, sendID);
+          //  object value = MotorParameterValueProcess.GetRealMotorParameterValueByEnumDescription<object>(Enum_MotorParameter.loc_ref_电机目标角度, txt_gprw_SetMotorParameter.Text);
+            return GenerateSendBytes(id);
+        }
+
         /// <summary>
         /// 电机上使能
         /// </summary>
@@ -142,7 +162,7 @@ namespace LZMotor
         }
 
         /// <summary>
-        /// 电机非易失性参数设定,第一步修改值
+        /// 电机参数设定/如果需要进行非易失性保存，下一步需执行W_SetMotorParameterHoldSave
         /// </summary>
         /// <param name="motorIds"></param>
         /// <param name="enum_MotorParameter"></param>
@@ -297,7 +317,7 @@ namespace LZMotor
         }
 
         /// <summary>
-        ///
+        ///根据电机ID数据返回一个可发送的报文，适用于数据区都是0的报文
         /// </summary>
         /// <param name="extendData_ID"></param>
         /// <param name="userDefined">用户自定义码</param>

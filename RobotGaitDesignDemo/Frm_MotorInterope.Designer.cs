@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             this.labelX13 = new DevComponents.DotNetBar.LabelX();
             this.chk_gprw_motorZeroOffsetProfessional = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.btn_gprw_motorZeroOffset = new DevComponents.DotNetBar.ButtonX();
@@ -38,10 +38,11 @@
             this.dgv_motorParameter = new DevComponents.DotNetBar.Controls.DataGridViewX();
             this.btn_gprw_clearDgv_motorParameter = new DevComponents.DotNetBar.ButtonX();
             this.btn_gprw_modifyMotorID = new DevComponents.DotNetBar.ButtonX();
-            this.txt_gprw_destinationMotorID = new DevComponents.DotNetBar.Controls.TextBoxX();
-            this.labelX11 = new DevComponents.DotNetBar.LabelX();
-            this.txt_gprw_soureMotorID = new DevComponents.DotNetBar.Controls.TextBoxX();
+            this.gp_singleMotor = new DevComponents.DotNetBar.Controls.GroupPanel();
             this.labelX10 = new DevComponents.DotNetBar.LabelX();
+            this.txt_gprw_soureMotorID = new DevComponents.DotNetBar.Controls.TextBoxX();
+            this.labelX11 = new DevComponents.DotNetBar.LabelX();
+            this.txt_gprw_destinationMotorID = new DevComponents.DotNetBar.Controls.TextBoxX();
             this.chk_gprw_isParameterHold = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.btn_gprw_motorParameterRead = new DevComponents.DotNetBar.ButtonX();
             this.btn_gprw_SetMotorReportInterval = new DevComponents.DotNetBar.ButtonX();
@@ -63,15 +64,14 @@
             this.labelX8 = new DevComponents.DotNetBar.LabelX();
             this.btn_gprw_SetMotorParameter = new DevComponents.DotNetBar.ButtonX();
             this.groupPanel1 = new DevComponents.DotNetBar.Controls.GroupPanel();
-            this.groupPanel2 = new DevComponents.DotNetBar.Controls.GroupPanel();
             this.groupPanel3 = new DevComponents.DotNetBar.Controls.GroupPanel();
-            this.groupPanel4 = new DevComponents.DotNetBar.Controls.GroupPanel();
+            this.groupPanel2 = new DevComponents.DotNetBar.Controls.GroupPanel();
             this.groupPanel5 = new DevComponents.DotNetBar.Controls.GroupPanel();
             ((System.ComponentModel.ISupportInitialize)(this.dgv_motorParameter)).BeginInit();
+            this.gp_singleMotor.SuspendLayout();
             this.groupPanel1.SuspendLayout();
-            this.groupPanel2.SuspendLayout();
             this.groupPanel3.SuspendLayout();
-            this.groupPanel4.SuspendLayout();
+            this.groupPanel2.SuspendLayout();
             this.groupPanel5.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -86,9 +86,9 @@
             this.labelX13.Location = new System.Drawing.Point(16, 306);
             this.labelX13.Margin = new System.Windows.Forms.Padding(4);
             this.labelX13.Name = "labelX13";
-            this.labelX13.Size = new System.Drawing.Size(199, 48);
+            this.labelX13.Size = new System.Drawing.Size(225, 48);
             this.labelX13.TabIndex = 81;
-            this.labelX13.Text = "零位偏置[谨慎]:";
+            this.labelX13.Text = "零位角度(deg)偏置:";
             // 
             // chk_gprw_motorZeroOffsetProfessional
             // 
@@ -97,10 +97,10 @@
             // 
             // 
             this.chk_gprw_motorZeroOffsetProfessional.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.chk_gprw_motorZeroOffsetProfessional.Location = new System.Drawing.Point(27, 80);
+            this.chk_gprw_motorZeroOffsetProfessional.Location = new System.Drawing.Point(17, 76);
             this.chk_gprw_motorZeroOffsetProfessional.Margin = new System.Windows.Forms.Padding(4);
             this.chk_gprw_motorZeroOffsetProfessional.Name = "chk_gprw_motorZeroOffsetProfessional";
-            this.chk_gprw_motorZeroOffsetProfessional.Size = new System.Drawing.Size(137, 58);
+            this.chk_gprw_motorZeroOffsetProfessional.Size = new System.Drawing.Size(170, 58);
             this.chk_gprw_motorZeroOffsetProfessional.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.chk_gprw_motorZeroOffsetProfessional.TabIndex = 84;
             this.chk_gprw_motorZeroOffsetProfessional.Text = "专家模式";
@@ -159,10 +159,10 @@
             // 
             // 
             this.labelX12.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.labelX12.Location = new System.Drawing.Point(35, 198);
+            this.labelX12.Location = new System.Drawing.Point(9, 198);
             this.labelX12.Margin = new System.Windows.Forms.Padding(4);
             this.labelX12.Name = "labelX12";
-            this.labelX12.Size = new System.Drawing.Size(180, 48);
+            this.labelX12.Size = new System.Drawing.Size(247, 48);
             this.labelX12.TabIndex = 79;
             this.labelX12.Text = "上报频率设定值:";
             // 
@@ -177,14 +177,14 @@
             this.dgv_motorParameter.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCellsExceptHeaders;
             this.dgv_motorParameter.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.dgv_motorParameter.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgv_motorParameter.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgv_motorParameter.DefaultCellStyle = dataGridViewCellStyle4;
             this.dgv_motorParameter.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(208)))), ((int)(((byte)(215)))), ((int)(((byte)(229)))));
             this.dgv_motorParameter.Location = new System.Drawing.Point(3, 120);
             this.dgv_motorParameter.Name = "dgv_motorParameter";
@@ -213,43 +213,71 @@
             this.btn_gprw_modifyMotorID.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.btn_gprw_modifyMotorID.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
-            this.btn_gprw_modifyMotorID.Location = new System.Drawing.Point(527, 11);
+            this.btn_gprw_modifyMotorID.Location = new System.Drawing.Point(509, 18);
             this.btn_gprw_modifyMotorID.Margin = new System.Windows.Forms.Padding(4);
             this.btn_gprw_modifyMotorID.Name = "btn_gprw_modifyMotorID";
-            this.btn_gprw_modifyMotorID.Size = new System.Drawing.Size(0, 60);
+            this.btn_gprw_modifyMotorID.Size = new System.Drawing.Size(206, 60);
             this.btn_gprw_modifyMotorID.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.btn_gprw_modifyMotorID.TabIndex = 76;
             this.btn_gprw_modifyMotorID.Text = "执行修改电机ID";
             this.btn_gprw_modifyMotorID.Click += new System.EventHandler(this.btn_gprw_modifyMotorID_Click);
             // 
-            // txt_gprw_destinationMotorID
+            // gp_singleMotor
+            // 
+            this.gp_singleMotor.CanvasColor = System.Drawing.SystemColors.Control;
+            this.gp_singleMotor.ColorSchemeStyle = DevComponents.DotNetBar.eDotNetBarStyle.Office2007;
+            this.gp_singleMotor.Controls.Add(this.txt_gprw_destinationMotorID);
+            this.gp_singleMotor.Controls.Add(this.labelX10);
+            this.gp_singleMotor.Controls.Add(this.txt_gprw_soureMotorID);
+            this.gp_singleMotor.Controls.Add(this.labelX11);
+            this.gp_singleMotor.Controls.Add(this.btn_gprw_modifyMotorID);
+            this.gp_singleMotor.Location = new System.Drawing.Point(15, 925);
+            this.gp_singleMotor.Name = "gp_singleMotor";
+            this.gp_singleMotor.Size = new System.Drawing.Size(736, 131);
             // 
             // 
             // 
+            this.gp_singleMotor.Style.BackColor2SchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBackground2;
+            this.gp_singleMotor.Style.BackColorGradientAngle = 90;
+            this.gp_singleMotor.Style.BackColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBackground;
+            this.gp_singleMotor.Style.BorderBottom = DevComponents.DotNetBar.eStyleBorderType.Solid;
+            this.gp_singleMotor.Style.BorderBottomWidth = 1;
+            this.gp_singleMotor.Style.BorderColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBorder;
+            this.gp_singleMotor.Style.BorderLeft = DevComponents.DotNetBar.eStyleBorderType.Solid;
+            this.gp_singleMotor.Style.BorderLeftWidth = 1;
+            this.gp_singleMotor.Style.BorderRight = DevComponents.DotNetBar.eStyleBorderType.Solid;
+            this.gp_singleMotor.Style.BorderRightWidth = 1;
+            this.gp_singleMotor.Style.BorderTop = DevComponents.DotNetBar.eStyleBorderType.Solid;
+            this.gp_singleMotor.Style.BorderTopWidth = 1;
+            this.gp_singleMotor.Style.CornerDiameter = 4;
+            this.gp_singleMotor.Style.CornerType = DevComponents.DotNetBar.eCornerType.Rounded;
+            this.gp_singleMotor.Style.TextAlignment = DevComponents.DotNetBar.eStyleTextAlignment.Center;
+            this.gp_singleMotor.Style.TextColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelText;
+            this.gp_singleMotor.Style.TextLineAlignment = DevComponents.DotNetBar.eStyleTextAlignment.Near;
             // 
-            this.txt_gprw_destinationMotorID.Border.Class = "TextBoxBorder";
-            this.txt_gprw_destinationMotorID.Border.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.txt_gprw_destinationMotorID.Location = new System.Drawing.Point(355, 18);
-            this.txt_gprw_destinationMotorID.Margin = new System.Windows.Forms.Padding(4);
-            this.txt_gprw_destinationMotorID.Multiline = true;
-            this.txt_gprw_destinationMotorID.Name = "txt_gprw_destinationMotorID";
-            this.txt_gprw_destinationMotorID.Size = new System.Drawing.Size(131, 48);
-            this.txt_gprw_destinationMotorID.TabIndex = 75;
-            this.txt_gprw_destinationMotorID.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txt_gprw_motorReprotInterval_KeyPress);
             // 
-            // labelX11
             // 
-            this.labelX11.BackColor = System.Drawing.Color.Transparent;
+            this.gp_singleMotor.StyleMouseDown.CornerType = DevComponents.DotNetBar.eCornerType.Square;
             // 
             // 
             // 
-            this.labelX11.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.labelX11.Location = new System.Drawing.Point(253, 18);
-            this.labelX11.Margin = new System.Windows.Forms.Padding(4);
-            this.labelX11.Name = "labelX11";
-            this.labelX11.Size = new System.Drawing.Size(108, 48);
-            this.labelX11.TabIndex = 74;
-            this.labelX11.Text = "修改为：";
+            this.gp_singleMotor.StyleMouseOver.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.gp_singleMotor.TabIndex = 86;
+            this.gp_singleMotor.Text = "单电机配置";
+            // 
+            // labelX10
+            // 
+            this.labelX10.BackColor = System.Drawing.Color.Transparent;
+            // 
+            // 
+            // 
+            this.labelX10.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.labelX10.Location = new System.Drawing.Point(4, 18);
+            this.labelX10.Margin = new System.Windows.Forms.Padding(4);
+            this.labelX10.Name = "labelX10";
+            this.labelX10.Size = new System.Drawing.Size(125, 48);
+            this.labelX10.TabIndex = 72;
+            this.labelX10.Text = "电机id:";
             // 
             // txt_gprw_soureMotorID
             // 
@@ -266,19 +294,34 @@
             this.txt_gprw_soureMotorID.TabIndex = 73;
             this.txt_gprw_soureMotorID.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txt_gprw_motorReprotInterval_KeyPress);
             // 
-            // labelX10
+            // labelX11
             // 
-            this.labelX10.BackColor = System.Drawing.Color.Transparent;
+            this.labelX11.BackColor = System.Drawing.Color.Transparent;
             // 
             // 
             // 
-            this.labelX10.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.labelX10.Location = new System.Drawing.Point(29, 18);
-            this.labelX10.Margin = new System.Windows.Forms.Padding(4);
-            this.labelX10.Name = "labelX10";
-            this.labelX10.Size = new System.Drawing.Size(100, 48);
-            this.labelX10.TabIndex = 72;
-            this.labelX10.Text = "电机id:";
+            this.labelX11.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.labelX11.Location = new System.Drawing.Point(253, 18);
+            this.labelX11.Margin = new System.Windows.Forms.Padding(4);
+            this.labelX11.Name = "labelX11";
+            this.labelX11.Size = new System.Drawing.Size(137, 48);
+            this.labelX11.TabIndex = 74;
+            this.labelX11.Text = "修改为：";
+            // 
+            // txt_gprw_destinationMotorID
+            // 
+            // 
+            // 
+            // 
+            this.txt_gprw_destinationMotorID.Border.Class = "TextBoxBorder";
+            this.txt_gprw_destinationMotorID.Border.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.txt_gprw_destinationMotorID.Location = new System.Drawing.Point(355, 18);
+            this.txt_gprw_destinationMotorID.Margin = new System.Windows.Forms.Padding(4);
+            this.txt_gprw_destinationMotorID.Multiline = true;
+            this.txt_gprw_destinationMotorID.Name = "txt_gprw_destinationMotorID";
+            this.txt_gprw_destinationMotorID.Size = new System.Drawing.Size(131, 48);
+            this.txt_gprw_destinationMotorID.TabIndex = 75;
+            this.txt_gprw_destinationMotorID.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txt_gprw_motorReprotInterval_KeyPress);
             // 
             // chk_gprw_isParameterHold
             // 
@@ -331,7 +374,7 @@
             this.labelX5.Location = new System.Drawing.Point(27, 36);
             this.labelX5.Margin = new System.Windows.Forms.Padding(4);
             this.labelX5.Name = "labelX5";
-            this.labelX5.Size = new System.Drawing.Size(102, 48);
+            this.labelX5.Size = new System.Drawing.Size(139, 48);
             this.labelX5.TabIndex = 52;
             this.labelX5.Text = "motorID:";
             // 
@@ -381,12 +424,12 @@
             // 
             this.txt_gprw_motorID.Border.Class = "TextBoxBorder";
             this.txt_gprw_motorID.Border.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.txt_gprw_motorID.Location = new System.Drawing.Point(174, 36);
+            this.txt_gprw_motorID.Location = new System.Drawing.Point(195, 36);
             this.txt_gprw_motorID.Margin = new System.Windows.Forms.Padding(4);
             this.txt_gprw_motorID.Multiline = true;
             this.txt_gprw_motorID.Name = "txt_gprw_motorID";
             this.txt_gprw_motorID.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txt_gprw_motorID.Size = new System.Drawing.Size(324, 84);
+            this.txt_gprw_motorID.Size = new System.Drawing.Size(303, 84);
             this.txt_gprw_motorID.TabIndex = 53;
             // 
             // btn_clearMotorError
@@ -462,10 +505,10 @@
             // 
             // 
             this.labelX6.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.labelX6.Location = new System.Drawing.Point(65, 33);
+            this.labelX6.Location = new System.Drawing.Point(29, 26);
             this.labelX6.Margin = new System.Windows.Forms.Padding(4);
             this.labelX6.Name = "labelX6";
-            this.labelX6.Size = new System.Drawing.Size(180, 48);
+            this.labelX6.Size = new System.Drawing.Size(216, 48);
             this.labelX6.TabIndex = 56;
             this.labelX6.Text = "motorRunMode:";
             // 
@@ -476,10 +519,10 @@
             // 
             // 
             this.labelX7.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.labelX7.Location = new System.Drawing.Point(61, 161);
+            this.labelX7.Location = new System.Drawing.Point(29, 152);
             this.labelX7.Margin = new System.Windows.Forms.Padding(4);
             this.labelX7.Name = "labelX7";
-            this.labelX7.Size = new System.Drawing.Size(180, 48);
+            this.labelX7.Size = new System.Drawing.Size(212, 48);
             this.labelX7.TabIndex = 58;
             this.labelX7.Text = "设置电机数据:";
             // 
@@ -532,10 +575,10 @@
             // 
             // 
             this.labelX8.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.labelX8.Location = new System.Drawing.Point(61, 235);
+            this.labelX8.Location = new System.Drawing.Point(29, 235);
             this.labelX8.Margin = new System.Windows.Forms.Padding(4);
             this.labelX8.Name = "labelX8";
-            this.labelX8.Size = new System.Drawing.Size(180, 48);
+            this.labelX8.Size = new System.Drawing.Size(212, 48);
             this.labelX8.TabIndex = 61;
             this.labelX8.Text = "电机设定值:";
             // 
@@ -559,14 +602,14 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupPanel1.CanvasColor = System.Drawing.SystemColors.Control;
             this.groupPanel1.ColorSchemeStyle = DevComponents.DotNetBar.eDotNetBarStyle.Office2007;
-            this.groupPanel1.Controls.Add(this.groupPanel4);
-            this.groupPanel1.Controls.Add(this.groupPanel5);
-            this.groupPanel1.Controls.Add(this.groupPanel3);
-            this.groupPanel1.Controls.Add(this.groupPanel2);
+            this.groupPanel1.Controls.Add(this.gp_singleMotor);
             this.groupPanel1.Controls.Add(this.labelX5);
             this.groupPanel1.Controls.Add(this.chk_gprw_motorZeroOffsetProfessional);
             this.groupPanel1.Controls.Add(this.btn_gprw_getAllMotor);
             this.groupPanel1.Controls.Add(this.txt_gprw_motorID);
+            this.groupPanel1.Controls.Add(this.groupPanel3);
+            this.groupPanel1.Controls.Add(this.groupPanel2);
+            this.groupPanel1.Controls.Add(this.groupPanel5);
             this.groupPanel1.Location = new System.Drawing.Point(12, 12);
             this.groupPanel1.Name = "groupPanel1";
             this.groupPanel1.Size = new System.Drawing.Size(1536, 1166);
@@ -599,6 +642,53 @@
             // 
             this.groupPanel1.StyleMouseOver.CornerType = DevComponents.DotNetBar.eCornerType.Square;
             this.groupPanel1.TabIndex = 85;
+            // 
+            // groupPanel3
+            // 
+            this.groupPanel3.CanvasColor = System.Drawing.SystemColors.Control;
+            this.groupPanel3.ColorSchemeStyle = DevComponents.DotNetBar.eDotNetBarStyle.Office2007;
+            this.groupPanel3.Controls.Add(this.labelX12);
+            this.groupPanel3.Controls.Add(this.btn_gprw_SetMotorReportInterval);
+            this.groupPanel3.Controls.Add(this.btn_gprw_UnEnableMotorReport);
+            this.groupPanel3.Controls.Add(this.btn_gprw_EnableMotorReport);
+            this.groupPanel3.Controls.Add(this.txt_gprw_motorReprotInterval);
+            this.groupPanel3.Controls.Add(this.btn_gprw_motorEnable);
+            this.groupPanel3.Controls.Add(this.btn_gprw_motorZero);
+            this.groupPanel3.Controls.Add(this.btn_gprw_motorUnEnable);
+            this.groupPanel3.Controls.Add(this.btn_clearMotorError);
+            this.groupPanel3.Location = new System.Drawing.Point(15, 141);
+            this.groupPanel3.Name = "groupPanel3";
+            this.groupPanel3.Size = new System.Drawing.Size(736, 364);
+            // 
+            // 
+            // 
+            this.groupPanel3.Style.BackColor2SchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBackground2;
+            this.groupPanel3.Style.BackColorGradientAngle = 90;
+            this.groupPanel3.Style.BackColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBackground;
+            this.groupPanel3.Style.BorderBottom = DevComponents.DotNetBar.eStyleBorderType.Solid;
+            this.groupPanel3.Style.BorderBottomWidth = 1;
+            this.groupPanel3.Style.BorderColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBorder;
+            this.groupPanel3.Style.BorderLeft = DevComponents.DotNetBar.eStyleBorderType.Solid;
+            this.groupPanel3.Style.BorderLeftWidth = 1;
+            this.groupPanel3.Style.BorderRight = DevComponents.DotNetBar.eStyleBorderType.Solid;
+            this.groupPanel3.Style.BorderRightWidth = 1;
+            this.groupPanel3.Style.BorderTop = DevComponents.DotNetBar.eStyleBorderType.Solid;
+            this.groupPanel3.Style.BorderTopWidth = 1;
+            this.groupPanel3.Style.CornerDiameter = 4;
+            this.groupPanel3.Style.CornerType = DevComponents.DotNetBar.eCornerType.Rounded;
+            this.groupPanel3.Style.TextAlignment = DevComponents.DotNetBar.eStyleTextAlignment.Center;
+            this.groupPanel3.Style.TextColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelText;
+            this.groupPanel3.Style.TextLineAlignment = DevComponents.DotNetBar.eStyleTextAlignment.Near;
+            // 
+            // 
+            // 
+            this.groupPanel3.StyleMouseDown.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            // 
+            // 
+            // 
+            this.groupPanel3.StyleMouseOver.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.groupPanel3.TabIndex = 86;
+            this.groupPanel3.Text = "一般性调试数据";
             // 
             // groupPanel2
             // 
@@ -649,96 +739,6 @@
             this.groupPanel2.StyleMouseOver.CornerType = DevComponents.DotNetBar.eCornerType.Square;
             this.groupPanel2.TabIndex = 85;
             this.groupPanel2.Text = "关键数据";
-            // 
-            // groupPanel3
-            // 
-            this.groupPanel3.CanvasColor = System.Drawing.SystemColors.Control;
-            this.groupPanel3.ColorSchemeStyle = DevComponents.DotNetBar.eDotNetBarStyle.Office2007;
-            this.groupPanel3.Controls.Add(this.labelX12);
-            this.groupPanel3.Controls.Add(this.btn_gprw_SetMotorReportInterval);
-            this.groupPanel3.Controls.Add(this.btn_gprw_UnEnableMotorReport);
-            this.groupPanel3.Controls.Add(this.btn_gprw_EnableMotorReport);
-            this.groupPanel3.Controls.Add(this.txt_gprw_motorReprotInterval);
-            this.groupPanel3.Controls.Add(this.btn_gprw_motorEnable);
-            this.groupPanel3.Controls.Add(this.btn_gprw_motorZero);
-            this.groupPanel3.Controls.Add(this.btn_gprw_motorUnEnable);
-            this.groupPanel3.Controls.Add(this.btn_clearMotorError);
-            this.groupPanel3.Location = new System.Drawing.Point(15, 141);
-            this.groupPanel3.Name = "groupPanel3";
-            this.groupPanel3.Size = new System.Drawing.Size(736, 364);
-            // 
-            // 
-            // 
-            this.groupPanel3.Style.BackColor2SchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBackground2;
-            this.groupPanel3.Style.BackColorGradientAngle = 90;
-            this.groupPanel3.Style.BackColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBackground;
-            this.groupPanel3.Style.BorderBottom = DevComponents.DotNetBar.eStyleBorderType.Solid;
-            this.groupPanel3.Style.BorderBottomWidth = 1;
-            this.groupPanel3.Style.BorderColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBorder;
-            this.groupPanel3.Style.BorderLeft = DevComponents.DotNetBar.eStyleBorderType.Solid;
-            this.groupPanel3.Style.BorderLeftWidth = 1;
-            this.groupPanel3.Style.BorderRight = DevComponents.DotNetBar.eStyleBorderType.Solid;
-            this.groupPanel3.Style.BorderRightWidth = 1;
-            this.groupPanel3.Style.BorderTop = DevComponents.DotNetBar.eStyleBorderType.Solid;
-            this.groupPanel3.Style.BorderTopWidth = 1;
-            this.groupPanel3.Style.CornerDiameter = 4;
-            this.groupPanel3.Style.CornerType = DevComponents.DotNetBar.eCornerType.Rounded;
-            this.groupPanel3.Style.TextAlignment = DevComponents.DotNetBar.eStyleTextAlignment.Center;
-            this.groupPanel3.Style.TextColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelText;
-            this.groupPanel3.Style.TextLineAlignment = DevComponents.DotNetBar.eStyleTextAlignment.Near;
-            // 
-            // 
-            // 
-            this.groupPanel3.StyleMouseDown.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            // 
-            // 
-            // 
-            this.groupPanel3.StyleMouseOver.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.groupPanel3.TabIndex = 86;
-            this.groupPanel3.Text = "一般性调试数据";
-            // 
-            // groupPanel4
-            // 
-            this.groupPanel4.CanvasColor = System.Drawing.SystemColors.Control;
-            this.groupPanel4.ColorSchemeStyle = DevComponents.DotNetBar.eDotNetBarStyle.Office2007;
-            this.groupPanel4.Controls.Add(this.labelX10);
-            this.groupPanel4.Controls.Add(this.txt_gprw_soureMotorID);
-            this.groupPanel4.Controls.Add(this.labelX11);
-            this.groupPanel4.Controls.Add(this.btn_gprw_modifyMotorID);
-            this.groupPanel4.Controls.Add(this.txt_gprw_destinationMotorID);
-            this.groupPanel4.Location = new System.Drawing.Point(15, 925);
-            this.groupPanel4.Name = "groupPanel4";
-            this.groupPanel4.Size = new System.Drawing.Size(530, 131);
-            // 
-            // 
-            // 
-            this.groupPanel4.Style.BackColor2SchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBackground2;
-            this.groupPanel4.Style.BackColorGradientAngle = 90;
-            this.groupPanel4.Style.BackColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBackground;
-            this.groupPanel4.Style.BorderBottom = DevComponents.DotNetBar.eStyleBorderType.Solid;
-            this.groupPanel4.Style.BorderBottomWidth = 1;
-            this.groupPanel4.Style.BorderColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBorder;
-            this.groupPanel4.Style.BorderLeft = DevComponents.DotNetBar.eStyleBorderType.Solid;
-            this.groupPanel4.Style.BorderLeftWidth = 1;
-            this.groupPanel4.Style.BorderRight = DevComponents.DotNetBar.eStyleBorderType.Solid;
-            this.groupPanel4.Style.BorderRightWidth = 1;
-            this.groupPanel4.Style.BorderTop = DevComponents.DotNetBar.eStyleBorderType.Solid;
-            this.groupPanel4.Style.BorderTopWidth = 1;
-            this.groupPanel4.Style.CornerDiameter = 4;
-            this.groupPanel4.Style.CornerType = DevComponents.DotNetBar.eCornerType.Rounded;
-            this.groupPanel4.Style.TextAlignment = DevComponents.DotNetBar.eStyleTextAlignment.Center;
-            this.groupPanel4.Style.TextColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelText;
-            this.groupPanel4.Style.TextLineAlignment = DevComponents.DotNetBar.eStyleTextAlignment.Near;
-            // 
-            // 
-            // 
-            this.groupPanel4.StyleMouseDown.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            // 
-            // 
-            // 
-            this.groupPanel4.StyleMouseOver.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.groupPanel4.TabIndex = 86;
-            this.groupPanel4.Text = "单电机配置";
             // 
             // groupPanel5
             // 
@@ -795,10 +795,10 @@
             this.Text = "电机配置";
             this.Load += new System.EventHandler(this.Frm_MotorInterope_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dgv_motorParameter)).EndInit();
+            this.gp_singleMotor.ResumeLayout(false);
             this.groupPanel1.ResumeLayout(false);
-            this.groupPanel2.ResumeLayout(false);
             this.groupPanel3.ResumeLayout(false);
-            this.groupPanel4.ResumeLayout(false);
+            this.groupPanel2.ResumeLayout(false);
             this.groupPanel5.ResumeLayout(false);
             this.ResumeLayout(false);
 
@@ -842,7 +842,7 @@
         private DevComponents.DotNetBar.Controls.GroupPanel groupPanel1;
         private DevComponents.DotNetBar.Controls.GroupPanel groupPanel2;
         private DevComponents.DotNetBar.Controls.GroupPanel groupPanel3;
-        private DevComponents.DotNetBar.Controls.GroupPanel groupPanel4;
+        private DevComponents.DotNetBar.Controls.GroupPanel gp_singleMotor;
         private DevComponents.DotNetBar.Controls.GroupPanel groupPanel5;
     }
 }
