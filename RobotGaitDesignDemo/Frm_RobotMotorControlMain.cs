@@ -367,11 +367,21 @@ namespace RobotGaitDesign
             cmb_comList.Items.Clear();
 
             //扫描是不是有canAlyst2设备
-            int num1 = CanFDAdapter.CanAlyst2_Interope.VCI_FindUsbDevice2(ref _VCI_BOARD_INFOS[0]);
-            for (int i = 0; i < num1; i++)
+            int num1=0;
+            try
             {
-                cmb_comList.Items.Add($"CanAlyst2_{i}");
+                num1 = CanFDAdapter.CanAlyst2_Interope.VCI_FindUsbDevice2(ref _VCI_BOARD_INFOS[0]);
+
+                for (int i = 0; i < num1; i++)
+                {
+                    cmb_comList.Items.Add($"CanAlyst2_{i}");
+                }
             }
+            catch (Exception ex)
+            {
+                ShowMessage(ex.Message);
+            }
+
             //扫描COM设备
             // List<string> comList = CanFDAdapter.COM_Server.GetComlist();
             _comDic = CanFDAdapter.COM_Server.GetComPortsWithNames();
@@ -784,10 +794,11 @@ namespace RobotGaitDesign
 
         private void btn_clearShowMessage_Click(object sender, EventArgs e)
         {
-            this.txt_showMessage.Text = "";
+
             if (DialogResult.OK == BaseFrmControl.ShowtMessageBoxWithReturn(this, "确定要清除LOG列表的信息吗？"))
             {
                 _sb_txt_showMessage.Clear();
+                this.txt_showMessage.Text = "";
             }
 
         }
@@ -1083,9 +1094,28 @@ namespace RobotGaitDesign
             }
         }
 
+        /// <summary>
+        /// 调试的时候快速打开各个按钮
+        /// </summary>
+        int testCount11 = 0;
+        private void labelX3_Click(object sender, EventArgs e)
+        {
+            if (!btn_connect.Enabled)
+            {
+                return;
+            }
 
+            if (testCount11++==5)
+            {
+                SetButtonsEnable(this, true);
+                this.btn_connect.Enabled = true;
+                this.btn_refresh_ext.Enabled = true;
+                this.btn_disConnect.Enabled = true;
+                this.cmb_comList.Enabled = true;
+                testCount11 =0;
+                ShowMessage("调试模式强制打开所有的按钮");
+            }
 
-
-
+        }
     }
 }

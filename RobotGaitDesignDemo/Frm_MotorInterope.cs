@@ -52,6 +52,10 @@ namespace RobotGaitDesignDemo
                 {
                     continue;
                 }
+                else if (value.ToString().EndsWith("exc"))
+                {
+                    continue;
+                }
                 cmb_gprw_SetMotorParameter.Items.Add(value.ToString());
             }
 
@@ -571,7 +575,7 @@ namespace RobotGaitDesignDemo
                 Enum_MotorParameter.drv_fault,
                 Enum_MotorParameter.drv_temp,
                 Enum_MotorParameter.zero_sta零位状态,
-                Enum_MotorParameter.add_offset零位偏置,
+                Enum_MotorParameter.add_offset零位偏置_exc,
                 Enum_MotorParameter.EPScan_time
             };
 
@@ -735,13 +739,13 @@ namespace RobotGaitDesignDemo
                 BaseFrmControl.ShowErrorMessageBox(this, "只允许同时修改1台设备");
                 return;
             }
-            object value = MotorParameterValueProcess.GetRealMotorParameterValueByEnumDescription<object>(Enum_MotorParameter.add_offset零位偏置, txt_gprw_motorZeroOffset.Text);
+            object value = MotorParameterValueProcess.GetRealMotorParameterValueByEnumDescription<object>(Enum_MotorParameter.add_offset零位偏置_exc, txt_gprw_motorZeroOffset.Text);
             if (!chk_gprw_motorZeroOffsetProfessional.Checked && ((float)value < -5 || (float)value > 5))
             {
                 BaseFrmControl.ShowErrorMessageBox(this, "允许修改的角度范围为-5到5度");
                 return;
             }
-            SaveMotorParameter(Enum_MotorParameter.add_offset零位偏置, (float)((float)value / 57.296), 0, chk_gprw_isParameterHold.Checked);
+            SaveMotorParameter(Enum_MotorParameter.add_offset零位偏置_exc, (float)((float)value / 57.296), 0, chk_gprw_isParameterHold.Checked);
         }
 
         private void btn_gprw_clearDgv_motorParameter_Click(object sender, EventArgs e)

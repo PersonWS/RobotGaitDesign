@@ -8,6 +8,9 @@ namespace LZMotor
 {
     public enum Enum_RunMode:byte
     {
+        /// <summary>
+        /// 运控模式
+        /// </summary>
         MotionControl = 0x0,
         /// <summary>
         /// pp

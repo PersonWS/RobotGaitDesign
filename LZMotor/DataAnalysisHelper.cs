@@ -16,6 +16,12 @@ namespace LZMotor
         static DataTable _dt_motorReadParameter = new DataTable();
         static DataTable _dt_SetParameterUnhold = new DataTable();
         static DataTable _dt_getMotorID = new DataTable();
+        /// <summary>
+        /// 弧度每秒转圈每分钟的系数
+        /// </summary>
+        static float _radPerSecondToRPM_Rate = 9.5493F;
+
+        static float _radToDegree_Rate = 57.29578F;
         static DataAnalysisHelper()
         {
             _dt_motorAck.Columns.Add("canIdSend");
@@ -210,20 +216,36 @@ namespace LZMotor
             switch (motor_BaseInfo.Type)
             {
                 case Enum_MotorType.RS01:
-                    dr["Angle"] = (MapUInt16ToFloat(new byte[] { data[1], data[0] }) * 57.29578F).ToString("0.0000");
-                    dr["RotSpeed"] = (MapUInt16ToFloat(new byte[] { data[3], data[2] }, -44, 44) * 19.1082).ToString("0.0000");
-                    dr["Torque"] = (MapUInt16ToFloat(new byte[] { data[5], data[4] }, -17, 17)).ToString("0.0000");
-                    dr["Temperature"] = BitConverter.ToUInt16(new byte[] { data[7], data[6] }, 0) / 10;
+
+                    switch (motor_BaseInfo.Version)
+                    {
+                        case "0.1.3.13"://默认带温度的
+                            dr["Angle"] = (MapUInt16ToFloat(new byte[] { data[1], data[0] }) * _radToDegree_Rate).ToString("0.0000");
+                            dr["RotSpeed"] = (MapUInt16ToFloat(new byte[] { data[3], data[2] }, -44, 44) * _radPerSecondToRPM_Rate).ToString("0.0000");
+                            dr["Torque"] = (MapUInt16ToFloat(new byte[] { data[5], data[4] }, -17, 17)).ToString("0.0000");
+                            dr["Temperature"] = BitConverter.ToUInt16(new byte[] { data[7], data[6] }, 0) / 10;
+                            break;
+                        case "0.1.4.1":
+                            dr["Angle"] = (BitConverter.ToSingle(data, 0) * _radToDegree_Rate).ToString("0.0000");
+                            dr["RotSpeed"] = (MapUInt16ToFloat(new byte[] { data[5], data[4] }, -44, 44) * _radPerSecondToRPM_Rate).ToString("0.0000");//* 114.61968
+                            dr["Torque"] = (MapUInt16ToFloat(new byte[] { data[7], data[6] }, -17f, 17f)).ToString("0.0000");
+                            break;
+                        default:
+                            goto case "0.1.4.1";
+                            break;
+                    }
                     break;
+
                 case Enum_MotorType.RS02:
-                    dr["Angle"] = (MapUInt16ToFloat(new byte[] { data[1], data[0] }) * 57.29578F).ToString("0.0000");
-                    dr["RotSpeed"] = (MapUInt16ToFloat(new byte[] { data[3], data[2] }, -44, 44) * 19.1082).ToString("0.0000");
+                    dr["Angle"] = (MapUInt16ToFloat(new byte[] { data[1], data[0] }) * _radToDegree_Rate).ToString("0.0000");
+                    dr["RotSpeed"] = (MapUInt16ToFloat(new byte[] { data[3], data[2] }, -44, 44) * _radPerSecondToRPM_Rate).ToString("0.0000");
                     dr["Torque"] = (MapUInt16ToFloat(new byte[] { data[5], data[4] }, -17, 17)).ToString("0.0000");
                     dr["Temperature"] = BitConverter.ToUInt16(new byte[] { data[7], data[6] }, 0) / 10;
                     break;
+
                 case Enum_MotorType.RS03:
-                    dr["Angle"] = (MapUInt16ToFloat(new byte[] { data[1], data[0] }) * 57.29578F).ToString("0.0000");
-                    dr["RotSpeed"] = (MapUInt16ToFloat(new byte[] { data[3], data[2] }, -20, 20) * 19.1082).ToString("0.0000");
+                    dr["Angle"] = (MapUInt16ToFloat(new byte[] { data[1], data[0] }) * _radToDegree_Rate).ToString("0.0000");
+                    dr["RotSpeed"] = (MapUInt16ToFloat(new byte[] { data[3], data[2] }, -20, 20) * _radPerSecondToRPM_Rate).ToString("0.0000");
                     dr["Torque"] = (MapUInt16ToFloat(new byte[] { data[5], data[4] }, -60, 60)).ToString("0.0000");
                     dr["Temperature"] = BitConverter.ToUInt16(new byte[] { data[7], data[6] }, 0) / 10;
                     break;
@@ -231,19 +253,23 @@ namespace LZMotor
 
                     switch (motor_BaseInfo.Version)
                     {
+                        case "0.4.2.1"://默认版本带温度的
+                            dr["Angle"] = (MapUInt16ToFloat(new byte[] { data[1], data[0] }) * _radToDegree_Rate).ToString("0.0000");
+                            dr["RotSpeed"] = (MapUInt16ToFloat(new byte[] { data[3], data[2] }, -15, 15) * _radPerSecondToRPM_Rate).ToString("0.0000");
+                            dr["Torque"] = (MapUInt16ToFloat(new byte[] { data[5], data[4] }, -120, 120)).ToString("0.0000");
+                            dr["Temperature"] = BitConverter.ToUInt16(new byte[] { data[7], data[6] }, 0) / 10;
+                            break;
                         case "0.4.2.2":
-                            dr["Angle"] = (BitConverter.ToSingle(data, 0) * 57.2975F).ToString("0.0000");
-                            dr["RotSpeed"] = (MapUInt16ToFloat(new byte[] { data[5], data[4] }, -44, 44) * 19.1082).ToString("0.0000");
-                            dr["Torque"] = (MapUInt16ToFloat(new byte[] { data[7], data[6] }, -17, 17)).ToString("0.0000");
+                            dr["Angle"] = (BitConverter.ToSingle(data, 0) * _radToDegree_Rate).ToString("0.0000");
+                            dr["RotSpeed"] = (MapUInt16ToFloat(new byte[] { data[5], data[4] }, -15, 15) * _radPerSecondToRPM_Rate).ToString("0.0000");
+                            dr["Torque"] = (MapUInt16ToFloat(new byte[] { data[7], data[6] }, -120, 120)).ToString("0.0000");
+                            dr["Temperature"] = -1;
                             break;
                         case "0.4.2.3":
                             goto case "0.4.2.2";
                             break;
                         default:
-                            dr["Angle"] = (MapUInt16ToFloat(new byte[] { data[1], data[0] }) * 57.29578F).ToString("0.0000");
-                            dr["RotSpeed"] = (MapUInt16ToFloat(new byte[] { data[3], data[2] }, -15, 15) * 19.1082).ToString("0.0000");
-                            dr["Torque"] = (MapUInt16ToFloat(new byte[] { data[5], data[4] }, -120, 120)).ToString("0.0000");
-                            dr["Temperature"] = BitConverter.ToUInt16(new byte[] { data[7], data[6] }, 0) / 10;
+                            goto case "0.4.2.2";
                             break;
                     }
                     break;
@@ -251,26 +277,46 @@ namespace LZMotor
 
                     switch (motor_BaseInfo.Version)
                     {
+                        case "0.5.0.9"://默认带温度的
+                            dr["Angle"] = (MapUInt16ToFloat(new byte[] { data[1], data[0] }) * _radToDegree_Rate).ToString("0.0000");
+                            dr["RotSpeed"] = (MapUInt16ToFloat(new byte[] { data[3], data[2] }, -50, 50) * _radPerSecondToRPM_Rate).ToString("0.0000");//* 114.61968
+                            dr["Torque"] = (MapUInt16ToFloat(new byte[] { data[5], data[4] }, -5.5f, 5.5f)).ToString("0.0000");
+                            dr["Temperature"] = BitConverter.ToUInt16(new byte[] { data[7], data[6] }, 0) / 10;
+                            break;
                         case "0.5.3.1":
-                            dr["Angle"] = (BitConverter.ToSingle(data, 0) * 57.2975F).ToString("0.0000");
-                            dr["RotSpeed"] = (MapUInt16ToFloat(new byte[] { data[5], data[4] }, -50, 50) * 19.1082).ToString("0.0000");//* 114.61968
+                            dr["Angle"] = (BitConverter.ToSingle(data, 0) * _radToDegree_Rate).ToString("0.0000");
+                            dr["RotSpeed"] = (MapUInt16ToFloat(new byte[] { data[5], data[4] }, -50, 50) * _radPerSecondToRPM_Rate).ToString("0.0000");//* 114.61968
                             dr["Torque"] = (MapUInt16ToFloat(new byte[] { data[7], data[6] }, -5.5f, 5.5f)).ToString("0.0000");
                             break;
                         case "0.5.3.2":
                             goto case "0.5.3.1";
                         default:
-                            dr["Angle"] = (MapUInt16ToFloat(new byte[] { data[1], data[0] }) * 57.29578F).ToString("0.0000");
-                            dr["RotSpeed"] = (MapUInt16ToFloat(new byte[] { data[3], data[2] }, -50, 50) * 19.1082).ToString("0.0000");//* 114.61968
-                            dr["Torque"] = (MapUInt16ToFloat(new byte[] { data[5], data[4] }, -5.5f, 5.5f)).ToString("0.0000");
-                            dr["Temperature"] = BitConverter.ToUInt16(new byte[] { data[7], data[6] }, 0) / 10;
+                            goto case "0.5.3.1";
                             break;
                     }
                     break;
                 case Enum_MotorType.RS06:
-                    dr["Angle"] = (MapUInt16ToFloat(new byte[] { data[1], data[0] }) * 57.29578F).ToString("0.0000");
-                    dr["RotSpeed"] = (MapUInt16ToFloat(new byte[] { data[3], data[2] }, -50, 50) * 19.1082).ToString("0.0000");
-                    dr["Torque"] = (MapUInt16ToFloat(new byte[] { data[5], data[4] }, -36, 36)).ToString("0.0000");
-                    dr["Temperature"] = BitConverter.ToUInt16(new byte[] { data[7], data[6] }, 0) / 10;
+                    switch (motor_BaseInfo.Version)
+                    {
+                        case "0.6.0.6"://默认带温度的
+                            dr["Angle"] = (MapUInt16ToFloat(new byte[] { data[1], data[0] }) * _radToDegree_Rate).ToString("0.0000");
+                            dr["RotSpeed"] = (MapUInt16ToFloat(new byte[] { data[3], data[2] }, -50, 50) * _radPerSecondToRPM_Rate).ToString("0.0000");
+                            dr["Torque"] = (MapUInt16ToFloat(new byte[] { data[5], data[4] }, -36, 36)).ToString("0.0000");
+                            dr["Temperature"] = BitConverter.ToUInt16(new byte[] { data[7], data[6] }, 0) / 10;
+                            break;
+                        case "0.6.0.7"://默认带温度的
+                            goto case "0.6.0.6";
+                            break;
+                        case "0.6.2.1":
+                            dr["Angle"] = (BitConverter.ToSingle(data, 0) * _radToDegree_Rate).ToString("0.0000");
+                            dr["RotSpeed"] = (MapUInt16ToFloat(new byte[] { data[5], data[4] }, -50, 50) * _radPerSecondToRPM_Rate).ToString("0.0000");//* 114.61968
+                            dr["Torque"] = (MapUInt16ToFloat(new byte[] { data[7], data[6] }, -36f, 36f)).ToString("0.0000");
+                            break;
+                        default:
+                            goto case "0.6.2.1";
+                            break;
+                    }
+
                     break;
                 default:
                     Log.log.Warn($"发现无配置信息的电机，id：{id.MotorIDSend}, 使用RS04电机默认配置进行电机ACK数据转换");
@@ -427,7 +473,7 @@ namespace LZMotor
                 case Enum_MotorParameter.zero_sta零位状态:
                     dr["parameterValue"] = value.ToString();
                     break;
-                case Enum_MotorParameter.add_offset零位偏置:
+                case Enum_MotorParameter.add_offset零位偏置_exc:
                     dr["parameterValue"] = value.ToString();
                     break;
                 default:
@@ -454,7 +500,13 @@ namespace LZMotor
 
 
 
-
+        /// <summary>
+        /// 将fUNIT16准换位olat值进行存储
+        /// </summary>
+        /// <param name="byteArray">源数据</param>
+        /// <param name="minOutput">最小的float值</param>
+        /// <param name="maxOutput">最大的float值</param>
+        /// <returns></returns>
         public static float MapUInt16ToFloat(byte[] byteArray, float minOutput = -12.57f, float maxOutput = 12.57f)
         {
             return MapUInt16ToFloat(BitConverter.ToUInt16(byteArray, 0), minOutput, maxOutput);

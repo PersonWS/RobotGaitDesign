@@ -194,6 +194,7 @@
             this.labelX3.Size = new System.Drawing.Size(86, 52);
             this.labelX3.TabIndex = 7;
             this.labelX3.Text = "COM:";
+            this.labelX3.Click += new System.EventHandler(this.labelX3_Click);
             // 
             // btn_connect
             // 

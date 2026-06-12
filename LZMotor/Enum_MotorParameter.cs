@@ -122,7 +122,7 @@ namespace LZMotor
         zero_sta零位状态 = 0x7029,
 
         [Description("float")]
-        add_offset零位偏置 = 0x702B
+        add_offset零位偏置_exc = 0x702B
 
     }
     public class MotorParameterValueProcess
