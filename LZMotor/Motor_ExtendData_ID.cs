@@ -35,16 +35,29 @@ namespace LZMotor
         /// </summary>
         public byte CommunicationTypeByte;
 
+        private Enum_CanIdType _CanIdType;
+
         public byte[] DataBytes { get => new byte[] { CommunicationTypeByte, UserDefineByte, MotorIDSend, MotorIDReceive }; }
 
         //public ExtendData_ID() { }
-        public Motor_ExtendData_ID(byte[] dataByte)
+        public Motor_ExtendData_ID(Enum_CanIdType canIdType,byte[] dataByte)
         {
-            this._dataBytes = dataByte;
-            MotorIDReceive = _dataBytes[3];
-            MotorIDSend = _dataBytes[2];
-            UserDefineByte = _dataBytes[1];
-            CommunicationTypeByte = _dataBytes[0];
+            switch (canIdType)
+            {
+                case Enum_CanIdType.can2_0b_Standard:
+                    break;
+                case Enum_CanIdType.can2_0b_extend:
+                    this._dataBytes = dataByte;
+                    MotorIDReceive = _dataBytes[3];
+                    MotorIDSend = _dataBytes[2];
+                    UserDefineByte = _dataBytes[1];
+                    CommunicationTypeByte = _dataBytes[0];
+                    _CanIdType = canIdType;
+                    break;
+                default:
+                    break;
+            }
+
         }
         public Motor_ExtendData_ID(string hexDataString)
         {
@@ -110,6 +123,15 @@ namespace LZMotor
 
 
 
+
+    }
+
+
+
+    public enum Enum_CanIdType
+    { 
+        can2_0b_Standard=211,//CAN 2.0 B 11位标准id
+        can2_0b_extend = 229//CAN 2.0B 29位拓展id
 
     }
 }

@@ -71,6 +71,9 @@
             this.grp_information = new DevComponents.DotNetBar.Controls.GroupPanel();
             this.grp_motorInterope = new DevComponents.DotNetBar.Controls.GroupPanel();
             this.groupPanel2 = new DevComponents.DotNetBar.Controls.GroupPanel();
+            this.btn_send = new DevComponents.DotNetBar.ButtonX();
+            this.labelX8 = new DevComponents.DotNetBar.LabelX();
+            this.cmb_baud = new DevComponents.DotNetBar.Controls.ComboBoxEx();
             this.groupPanel1.SuspendLayout();
             this.grp_motorInfo.SuspendLayout();
             this.grp_chDevice.SuspendLayout();
@@ -86,7 +89,7 @@
             this.btn_analysis.Location = new System.Drawing.Point(428, 12);
             this.btn_analysis.Margin = new System.Windows.Forms.Padding(4);
             this.btn_analysis.Name = "btn_analysis";
-            this.btn_analysis.Size = new System.Drawing.Size(127, 278);
+            this.btn_analysis.Size = new System.Drawing.Size(113, 278);
             this.btn_analysis.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.btn_analysis.TabIndex = 0;
             this.btn_analysis.Text = "analysis";
@@ -246,7 +249,7 @@
             this.cmb_comList.Location = new System.Drawing.Point(127, 21);
             this.cmb_comList.Margin = new System.Windows.Forms.Padding(4);
             this.cmb_comList.Name = "cmb_comList";
-            this.cmb_comList.Size = new System.Drawing.Size(534, 32);
+            this.cmb_comList.Size = new System.Drawing.Size(324, 32);
             this.cmb_comList.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.cmb_comList.TabIndex = 12;
             // 
@@ -317,6 +320,7 @@
             // 
             this.groupPanel1.CanvasColor = System.Drawing.SystemColors.Control;
             this.groupPanel1.ColorSchemeStyle = DevComponents.DotNetBar.eDotNetBarStyle.Office2007;
+            this.groupPanel1.Controls.Add(this.btn_send);
             this.groupPanel1.Controls.Add(this.txt_id);
             this.groupPanel1.Controls.Add(this.txt_motorData);
             this.groupPanel1.Controls.Add(this.labelX1);
@@ -325,7 +329,7 @@
             this.groupPanel1.Location = new System.Drawing.Point(1417, 12);
             this.groupPanel1.Margin = new System.Windows.Forms.Padding(4);
             this.groupPanel1.Name = "groupPanel1";
-            this.groupPanel1.Size = new System.Drawing.Size(576, 336);
+            this.groupPanel1.Size = new System.Drawing.Size(683, 336);
             // 
             // 
             // 
@@ -580,6 +584,7 @@
             this.btn_StepExecute_ext.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.btn_StepExecute_ext.TabIndex = 47;
             this.btn_StepExecute_ext.Text = "步态执行";
+            this.btn_StepExecute_ext.Click += new System.EventHandler(this.btn_StepExecute_ext_Click);
             // 
             // grp_motorInfo
             // 
@@ -709,6 +714,8 @@
             // 
             this.grp_chDevice.CanvasColor = System.Drawing.SystemColors.Control;
             this.grp_chDevice.ColorSchemeStyle = DevComponents.DotNetBar.eDotNetBarStyle.Office2007;
+            this.grp_chDevice.Controls.Add(this.cmb_baud);
+            this.grp_chDevice.Controls.Add(this.labelX8);
             this.grp_chDevice.Controls.Add(this.cmb_comList);
             this.grp_chDevice.Controls.Add(this.labelX3);
             this.grp_chDevice.Controls.Add(this.btn_connect);
@@ -875,6 +882,47 @@
             this.groupPanel2.StyleMouseOver.CornerType = DevComponents.DotNetBar.eCornerType.Square;
             this.groupPanel2.TabIndex = 52;
             // 
+            // btn_send
+            // 
+            this.btn_send.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
+            this.btn_send.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
+            this.btn_send.Location = new System.Drawing.Point(558, 12);
+            this.btn_send.Margin = new System.Windows.Forms.Padding(4);
+            this.btn_send.Name = "btn_send";
+            this.btn_send.Size = new System.Drawing.Size(108, 278);
+            this.btn_send.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this.btn_send.TabIndex = 5;
+            this.btn_send.Text = "analysis";
+            // 
+            // labelX8
+            // 
+            this.labelX8.BackColor = System.Drawing.Color.Transparent;
+            // 
+            // 
+            // 
+            this.labelX8.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.labelX8.Location = new System.Drawing.Point(478, 11);
+            this.labelX8.Margin = new System.Windows.Forms.Padding(4);
+            this.labelX8.Name = "labelX8";
+            this.labelX8.Size = new System.Drawing.Size(86, 52);
+            this.labelX8.TabIndex = 13;
+            this.labelX8.Text = "Baud:";
+            // 
+            // cmb_baud
+            // 
+            this.cmb_baud.DisplayMember = "Text";
+            this.cmb_baud.DropDownHeight = 200;
+            this.cmb_baud.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmb_baud.FormattingEnabled = true;
+            this.cmb_baud.IntegralHeight = false;
+            this.cmb_baud.ItemHeight = 24;
+            this.cmb_baud.Location = new System.Drawing.Point(548, 21);
+            this.cmb_baud.Margin = new System.Windows.Forms.Padding(4);
+            this.cmb_baud.Name = "cmb_baud";
+            this.cmb_baud.Size = new System.Drawing.Size(125, 32);
+            this.cmb_baud.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this.cmb_baud.TabIndex = 14;
+            // 
             // Frm_RobotMotorControlMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(192F, 192F);
@@ -948,6 +996,9 @@
         private DevComponents.DotNetBar.LabelX labelX6;
         public DevComponents.DotNetBar.Controls.ComboBoxEx cmb_motrorBrand;
         private DevComponents.DotNetBar.LabelX labelX7;
+        private DevComponents.DotNetBar.ButtonX btn_send;
+        private DevComponents.DotNetBar.LabelX labelX8;
+        private DevComponents.DotNetBar.Controls.ComboBoxEx cmb_baud;
     }
 }
 

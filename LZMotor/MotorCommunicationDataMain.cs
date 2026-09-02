@@ -16,7 +16,7 @@ namespace LZMotor
         public MotorCommunicationDataMain()
         {
             data_Motor = new Motor_Data(new byte[8]);
-            extendData_ID=new Motor_ExtendData_ID(new byte[8]);
+            extendData_ID=new Motor_ExtendData_ID(Enum_CanIdType.can2_0b_extend, new byte[8]);
         }
         public MotorCommunicationDataMain(Motor_ExtendData_ID e ,Motor_Data d)
         {

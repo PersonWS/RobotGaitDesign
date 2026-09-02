@@ -703,15 +703,22 @@ namespace RobotGaitDesignDemo
                 BaseFrmControl.ShowErrorMessageBox(this, $"电机id不可为空");
                 return;
             }
-            byte sourceID, destID;
-            byte.TryParse(txt_gprw_soureMotorID.Text, out sourceID); byte.TryParse(txt_gprw_destinationMotorID.Text, out destID);
-            if (sourceID < 0 || sourceID > 127 || destID < 0 || destID > 127)
+            int sourceID, destID;
+            int.TryParse(txt_gprw_soureMotorID.Text, out sourceID); int.TryParse(txt_gprw_destinationMotorID.Text, out destID);
+
+            if (!chk_gprw_motorZeroOffsetProfessional.Checked)
             {
-                BaseFrmControl.ShowErrorMessageBox(this, $"电机id不可小于0或大于127");
-                return;
+                if (sourceID < LZ_PublicPriority._MotorID_Min || sourceID > LZ_PublicPriority._MotorID_Max || destID < LZ_PublicPriority._MotorID_Min || destID > LZ_PublicPriority._MotorID_Max)
+                {
+                    BaseFrmControl.ShowErrorMessageBox(this, $"电机id不可小于{LZ_PublicPriority._MotorID_Min}或大于{LZ_PublicPriority._MotorID_Max}");
+                    return;
+                }
             }
 
-            List<byte[]> sendBufferTemp = LZMotor.LZMotoInteropeMain.W_SetMotorCanID(new List<byte>() { sourceID }, destID);//生成发送的buffer
+
+
+
+            List<byte[]> sendBufferTemp = LZMotor.LZMotoInteropeMain.W_SetMotorCanID(new List<byte>() { (byte)sourceID },(byte) destID);//生成发送的buffer
             List<byte[]> sendBuffer = _baseForm._canFDAdapterMain?.CanAdapterDataProcess.GenerateSendMotorData(sendBufferTemp);
             string str = BitConverter.ToString(sendBuffer[0]).Replace("-", " ");
             _baseForm._canFDAdapterMain?.Send(sendBuffer);
@@ -793,3 +800,6 @@ namespace RobotGaitDesignDemo
         }
     }
 }
+
+
+

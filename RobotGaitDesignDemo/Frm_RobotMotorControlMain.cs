@@ -87,7 +87,7 @@ namespace RobotGaitDesign
         /// <summary>
         /// 电机的基础信息   byte ： 电机id
         /// </summary>
-       public  Dictionary<byte, Motor_BaseInfo> _dic_MotorBaseInfo = new System.Collections.Generic.Dictionary<byte, Motor_BaseInfo>();
+        public Dictionary<byte, Motor_BaseInfo> _dic_MotorBaseInfo = new System.Collections.Generic.Dictionary<byte, Motor_BaseInfo>();
         #endregion
 
 
@@ -125,6 +125,22 @@ namespace RobotGaitDesign
 
             cmb_motrorBrand.Items.Add("灵族时代");
             cmb_motrorBrand.SelectedIndex = 0;
+
+            cmb_baud.Items.Add("10");
+            cmb_baud.Items.Add("20");
+            cmb_baud.Items.Add("50");
+            cmb_baud.Items.Add("100");
+            cmb_baud.Items.Add("125");
+            cmb_baud.Items.Add("250");
+            cmb_baud.Items.Add("500");
+            cmb_baud.Items.Add("800");
+            cmb_baud.Items.Add("921.6");
+            cmb_baud.Items.Add("1000");
+            cmb_baud.Items.Add("2500");
+            cmb_baud.Text = "921.6";
+
+
+
 
 
         }
@@ -367,7 +383,7 @@ namespace RobotGaitDesign
             cmb_comList.Items.Clear();
 
             //扫描是不是有canAlyst2设备
-            int num1=0;
+            int num1 = 0;
             try
             {
                 num1 = CanFDAdapter.CanAlyst2_Interope.VCI_FindUsbDevice2(ref _VCI_BOARD_INFOS[0]);
@@ -409,7 +425,7 @@ namespace RobotGaitDesign
                 return;
             }
             ShowMessage($"准备连接:{cmb_comList.Text}");
-            int baudRate = 921600;
+            int baudRate =(int)( float.Parse(cmb_baud.Text) * 1000);//921600;
             if (_canFDAdapterMain != null)
             {
                 ShowMessage($"canFDAdapterMain 存在，释放canFDAdapterMain...");
@@ -423,7 +439,7 @@ namespace RobotGaitDesign
 
             if (cmb_comList.Text.Contains("CH340"))
             {
-                baudRate = 921600;
+                 baudRate = 921600;
                 _canFDAdapterEntity = new CanFDAdapter.CanAdapterEntity(_comDic[cmb_comList.Text], baudRate);
                 _canFDAdapterEntity.ChipType = CanFDAdapter.CanAdapterTypeEnum.CH340;
                 //_canFDAdapterEntity.Description = txt_batchCan.Text;
@@ -433,7 +449,7 @@ namespace RobotGaitDesign
             else if (cmb_comList.Text.Contains("USB 串行设备"))
             {
 
-                baudRate = 921600;
+                //  baudRate = 921600;
                 _canFDAdapterEntity = new CanFDAdapter.CanAdapterEntity(_comDic[cmb_comList.Text], baudRate);
                 _canFDAdapterEntity.ChipType = CanFDAdapter.CanAdapterTypeEnum.canAlyst2;
                 //_canFDAdapterEntity.Description = txt_batchCan.Text;
@@ -686,8 +702,9 @@ namespace RobotGaitDesign
                     this.cmb_idFilter.Items.Clear();
                     foreach (var item in sortedDict.Keys)
                     {
-                        if (item > 127)
+                        if (item > 255)
                         {
+                            log.Error($"IniMotorIdFilterCmb ，异常电机id:{item}");
                             continue;
                         }
                         this.cmb_idFilter.Items.Add(item);
@@ -750,12 +767,12 @@ namespace RobotGaitDesign
                 if (_dic_MotorBaseInfo.Keys.Contains(id))
                 {
                     lab_motorType.Text = _dic_MotorBaseInfo[id].Type.ToString();
-                    lab_motorVersion.Text = string.IsNullOrEmpty( _dic_MotorBaseInfo[id].Version)?"Null" : _dic_MotorBaseInfo[id].Version;
+                    lab_motorVersion.Text = string.IsNullOrEmpty(_dic_MotorBaseInfo[id].Version) ? "Null" : _dic_MotorBaseInfo[id].Version;
                 }
                 else
                 {
                     lab_motorType.Text = "Null";
-                    lab_motorVersion.Text ="Null";
+                    lab_motorVersion.Text = "Null";
                 }
             }
             catch (Exception)
@@ -868,7 +885,7 @@ namespace RobotGaitDesign
                 BaseFrmControl.ShowErrorMessageBox(this, "正在搜索电机中，请稍后");
                 return;
             }
-            ShowMessage("开始搜索1-127号电机是否存在..");
+            ShowMessage($"开始搜索{LZMotor.LZ_PublicPriority._MotorID_Min}-{LZMotor.LZ_PublicPriority._MotorID_Max}号电机是否存在..");
             _isScanner = true;
             chk_OnlyFeedBackData.Checked = false;
             chk_OnlyWriteToMotorData.Checked = false;
@@ -881,7 +898,7 @@ namespace RobotGaitDesign
                     byte[] template = new byte[] { 0, 0, 0xfd, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0 };
                     List<byte[]> sendByte = new List<byte[]>();
                     sendByte.Add(template);
-                    for (byte i = 1; i < 128; i++)
+                    for (byte i = 0; i < 255; i++)
                     {
                         byte[] data = new byte[template.Length];
                         Array.Copy(template, data, template.Length);
@@ -892,6 +909,7 @@ namespace RobotGaitDesign
                     List<byte[]> sendBuffer = _canFDAdapterMain?.CanAdapterDataProcess.GenerateSendMotorData(sendByte);
                     //string str = BitConverter.ToString(sendBuffer[0]).Replace("-", " ");
                     _canFDAdapterMain?.Send(sendBuffer);
+
                     Thread.Sleep(100);
                     ShowMessage("电机轮询完成！");
                 }
@@ -1105,17 +1123,23 @@ namespace RobotGaitDesign
                 return;
             }
 
-            if (testCount11++==5)
+            if (testCount11++ == 5)
             {
                 SetButtonsEnable(this, true);
                 this.btn_connect.Enabled = true;
                 this.btn_refresh_ext.Enabled = true;
                 this.btn_disConnect.Enabled = true;
                 this.cmb_comList.Enabled = true;
-                testCount11 =0;
+                testCount11 = 0;
                 ShowMessage("调试模式强制打开所有的按钮");
             }
 
+        }
+
+        private void btn_StepExecute_ext_Click(object sender, EventArgs e)
+        {
+            Frm_StepExecute ext = new Frm_StepExecute(this);
+            ext.ShowDialog();
         }
     }
 }

@@ -88,7 +88,7 @@ namespace LZMotor
             byte[] idArray = new byte[] { anaBytes.Data[3], anaBytes.Data[2], anaBytes.Data[1], anaBytes.Data[0] };
             int dataLength = BitConverter.ToInt16(new byte[] { anaBytes.Data[7], anaBytes.Data[6] }, 0);
             byte[] dataArray = anaBytes.Data.Skip(8).Take(anaBytes.Data[7]).ToArray();
-            LZMotorDataMain data = new LZMotorDataMain(new LZMotor.Motor_Data(dataArray), new LZMotor.Motor_ExtendData_ID(idArray), dataEntity.TimeStamp);
+            LZMotorDataMain data = new LZMotorDataMain(new LZMotor.Motor_Data(dataArray), new LZMotor.Motor_ExtendData_ID(Enum_CanIdType.can2_0b_extend, idArray), dataEntity.TimeStamp);
             return data;
         }
 

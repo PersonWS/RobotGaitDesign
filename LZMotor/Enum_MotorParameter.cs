@@ -9,6 +9,10 @@ using System.Web;
 
 namespace LZMotor
 {
+    public static readonly Byte _MotorID_Max = 127;
+    /// <summary>
+    /// 电机参数名称及对应的地址
+    /// </summary>
     public enum Enum_MotorParameter : Int16
     {
 

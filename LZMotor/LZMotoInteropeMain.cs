@@ -291,7 +291,7 @@ namespace LZMotor
 
             foreach (var motorId in motorIds)
             {
-                Motor_ExtendData_ID m = new Motor_ExtendData_ID(new byte[8]);
+                Motor_ExtendData_ID m = new Motor_ExtendData_ID(Enum_CanIdType.can2_0b_extend, new byte[8]);
                 m.CommunicationTypeByte = communicationTypeByte;
                 m.MotorIDSend = SendID;
                 m.MotorIDReceive = motorId;

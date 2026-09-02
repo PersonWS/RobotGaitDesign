@@ -40,6 +40,7 @@ namespace CanFDAdapter
                             if (_buffer.Count - i > 16)
                             {
                                 dataEntity.Data = _buffer.Skip(i).Take(9 + (_buffer[i + 6])).ToArray();//分解出整段报文
+                                log.Debug($"can data ：{BitConverter.ToString(dataEntity.Data)}");
                                 list.Add(dataEntity);
                                 i = i + dataEntity.Data.Length - 1;
                             }
@@ -48,6 +49,11 @@ namespace CanFDAdapter
                                 break;
                             }
                         }
+                        //else
+                        //{
+                        //    dataEntity.Data = _buffer.Skip(i).Take(9 + (_buffer[i + 6])).ToArray();//分解出整段报文
+                        //    log.Debug($"can data ：{BitConverter.ToString(dataEntity.Data)}");
+                        //}
                         processTag = i + 1;
                     }
                     ////处理剩余字符

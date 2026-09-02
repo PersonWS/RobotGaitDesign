@@ -74,7 +74,7 @@ namespace CanFDAdapter
         /// <param name="baudUsedRefreshRate"></param>
         /// <param name="reserved">保留参数</param>
         /// <returns>true：连接成功   false ：连接失败，查看日志确定错误信息</returns>
-        public virtual bool Connect(int baudUsedRefreshRate = 500,int reserved=0)
+        public virtual bool Connect(int baudUsedRefreshRate = 500, int reserved = 0)
         {
             List<string> comList = COM_Server.GetComlist(false); //首先获取本机关联的串行端口列表            
             if (comList.Count == 0)
@@ -159,6 +159,10 @@ namespace CanFDAdapter
 
                     bool ret = _comServer.SendDataSync(send);
                     sendCount += send.Length;
+                    if (!ret)
+                    {
+                        Log.log.Error($"发送数据异常,ret:{ret},sendBuffer:{BitConverter.ToString(send)}");
+                    }
                     ThreadHelper.ThreadSlep_HighPrecisionDelay_Media(1);//CAN模块性能不足时使用
                 }
                 catch (Exception ex)
@@ -198,6 +202,7 @@ namespace CanFDAdapter
 
         protected virtual List<CanAdapterReceivedDataEntity> BeforeMessageReceiveEventInvoke(byte[] b)
         {
+            log.Debug($"can data ：{BitConverter.ToString(b)}");
             return new List<CanAdapterReceivedDataEntity>() { new CanAdapterReceivedDataEntity(b, DateTime.Now) };
         }
 

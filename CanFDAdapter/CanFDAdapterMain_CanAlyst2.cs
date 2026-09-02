@@ -14,7 +14,9 @@ namespace CanFDAdapter
         VCI_BOARD_INFO? _VCI_BOARD_INFOS = null;
 
         static UInt32 m_devtype = 4;//USBCAN2
-
+        /// <summary>
+        /// 模块打开标记  0：关闭   1：打开
+        /// </summary>
         UInt32 m_bOpen = 0;
         UInt32 m_canind = 0;
         /// <summary>
@@ -193,10 +195,14 @@ namespace CanFDAdapter
 
                 res = CanAlyst2_Interope.VCI_Receive(this._canAdapterEntity_CanAlyst2.DeviceType, this._canAdapterEntity_CanAlyst2.DeviceIndex, m_canind, m_recobj, 2500, 100);
 
-                if (res == 0xFFFFFFFF || res == 0)
+                if (res == 0xFFFFFFFF || res == 0)//当设备未初始化时，返回0xFFFFFFFF，不进行列表显示。
                 {
                     return;
-                };//当设备未初始化时，返回0xFFFFFFFF，不进行列表显示。
+                }
+                else if (res == -1)//设备已关闭
+                {
+                return ;
+                }
 
                 for (UInt32 i = 0; i < res; i++)
                 {
@@ -219,7 +225,11 @@ namespace CanFDAdapter
                     dataList.Add(new CanAdapterReceivedDataEntity(bytes.ToArray(), _timerStamp.AddMilliseconds((m_recobj[i].TimeStamp - _timerStampSpan) / 10)));
                     //dataList.Add(new CanAdapterReceivedDataEntity(bytes.ToArray(), this.m_ConnecTime.AddMilliseconds(m_recobj[i].TimeStamp/10)));
                 }
-                base.MessageReceiveEventExecute(dataList);
+                if (dataList.Count>0)
+                {
+                    base.MessageReceiveEventExecute(dataList);
+                }
+
             }
             catch (Exception e)
             {
@@ -255,15 +265,17 @@ namespace CanFDAdapter
 
         public override int Send(List<CanAdapterReceivedDataEntity> sendList)
         {
-            if (m_bOpen == 0)
-            {
-                return -1;
-            }
+
             int sendCount = 0;
             //int ret = _comServer.SendDataASync(sendList);
 
             foreach (CanAdapterReceivedDataEntity send in sendList)
             {
+                if (m_bOpen == 0)
+                {
+                    log.Error($"Send data failed ，module is closed，CanAlyst2:{this.VCI_BOARD_INFOS.Value}");
+                    return -1;
+                }
                 try
                 {
                     //格式化发给can分析仪的数据
@@ -284,7 +296,7 @@ namespace CanFDAdapter
                     }
                     else
                     {
-                        log.Error($"CAN发送数据失败,设备类型:{this._canAdapterEntity_CanAlyst2.DeviceType}，设备索引号:{this._canAdapterEntity_CanAlyst2.DeviceIndex}，通道:{send.Channel}, ret:{ret}!");
+                        log.Error($"CAN发送失败:{BitConverter.ToString(send.Data)},设备类型:{this._canAdapterEntity_CanAlyst2.DeviceType}，设备索引号:{this._canAdapterEntity_CanAlyst2.DeviceIndex}，通道:{send.Channel}, ret:{ret}!");
                     }
                     sendCount += 1;
                 }
@@ -299,6 +311,7 @@ namespace CanFDAdapter
 
         public override void DisConnect()
         {
+            _isReceivedContinue = false;
             lock (_lock)
             {
                 if (m_bOpen == 1)
