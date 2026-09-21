@@ -11,11 +11,11 @@ namespace LZMotor
         /// <summary>
         /// 运控模式
         /// </summary>
-        MotionControl = 0x0,
+        MIT_MotionControl = 0x0,
         /// <summary>
         /// pp
         /// </summary>
-        PositionPosition= 0x01,
+        PP_PositionPosition= 0x01,
         /// <summary>
         /// 速度模式
         /// </summary>
@@ -23,6 +23,6 @@ namespace LZMotor
         /// <summary>
         /// CSP
         /// </summary>
-        CyclicSynchronousPosition = 0x05,
+        CSP_CyclicSynchronousPosition = 0x05,
     }
 }

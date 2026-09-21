@@ -53,6 +53,7 @@
     <Compile Include="Enum_MotorParameter.cs" />
     <Compile Include="Enum_MotorType.cs" />
     <Compile Include="LZMotorServerMain.cs" />
+    <Compile Include="LZ_PublicPriority.cs" />
     <Compile Include="MotorCommunicationDataMain.cs" />
     <Compile Include="DataAnalysisHelper.cs" />
     <Compile Include="Enum_CommunicationType.cs" />

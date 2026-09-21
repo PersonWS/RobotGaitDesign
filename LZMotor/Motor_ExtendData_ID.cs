@@ -11,6 +11,7 @@ namespace LZMotor
     /// </summary>
     public class Motor_ExtendData_ID
     {
+        public static readonly Byte _MotorID_Max = 127;
         /// <summary>
         /// 输入的数据
         /// </summary>
