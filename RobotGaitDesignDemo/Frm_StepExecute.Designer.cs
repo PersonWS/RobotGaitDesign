@@ -39,6 +39,8 @@
             this.btn_stopExcute = new DevComponents.DotNetBar.ButtonX();
             this.cmb_stepGainName = new DevComponents.DotNetBar.Controls.ComboBoxEx();
             this.labelX1 = new DevComponents.DotNetBar.LabelX();
+            this.labelX2 = new DevComponents.DotNetBar.LabelX();
+            this.cmb_motorControlMode = new DevComponents.DotNetBar.Controls.ComboBoxEx();
             this.gp_motorInfo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgv_motorInfo)).BeginInit();
             this.gp_stepInfo.SuspendLayout();
@@ -220,7 +222,7 @@
             this.cmb_stepGainName.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmb_stepGainName.FormattingEnabled = true;
             this.cmb_stepGainName.ItemHeight = 29;
-            this.cmb_stepGainName.Location = new System.Drawing.Point(366, 31);
+            this.cmb_stepGainName.Location = new System.Drawing.Point(365, 12);
             this.cmb_stepGainName.Name = "cmb_stepGainName";
             this.cmb_stepGainName.Size = new System.Drawing.Size(294, 35);
             this.cmb_stepGainName.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
@@ -234,17 +236,44 @@
             // 
             // 
             this.labelX1.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.labelX1.Location = new System.Drawing.Point(217, 26);
+            this.labelX1.Location = new System.Drawing.Point(216, 7);
             this.labelX1.Name = "labelX1";
             this.labelX1.Size = new System.Drawing.Size(133, 46);
             this.labelX1.TabIndex = 6;
             this.labelX1.Text = "选择步态：";
+            // 
+            // labelX2
+            // 
+            this.labelX2.BackColor = System.Drawing.Color.Transparent;
+            // 
+            // 
+            // 
+            this.labelX2.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.labelX2.Location = new System.Drawing.Point(216, 67);
+            this.labelX2.Name = "labelX2";
+            this.labelX2.Size = new System.Drawing.Size(133, 46);
+            this.labelX2.TabIndex = 7;
+            this.labelX2.Text = "电机模式：";
+            // 
+            // cmb_motorControlMode
+            // 
+            this.cmb_motorControlMode.DisplayMember = "Text";
+            this.cmb_motorControlMode.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmb_motorControlMode.FormattingEnabled = true;
+            this.cmb_motorControlMode.ItemHeight = 29;
+            this.cmb_motorControlMode.Location = new System.Drawing.Point(365, 78);
+            this.cmb_motorControlMode.Name = "cmb_motorControlMode";
+            this.cmb_motorControlMode.Size = new System.Drawing.Size(294, 35);
+            this.cmb_motorControlMode.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this.cmb_motorControlMode.TabIndex = 8;
             // 
             // Frm_StepExecute
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1566, 778);
+            this.Controls.Add(this.cmb_motorControlMode);
+            this.Controls.Add(this.labelX2);
             this.Controls.Add(this.labelX1);
             this.Controls.Add(this.cmb_stepGainName);
             this.Controls.Add(this.btn_stopExcute);
@@ -274,5 +303,7 @@
         private DevComponents.DotNetBar.Controls.DataGridViewX dgv_stepInfo;
         private DevComponents.DotNetBar.Controls.ComboBoxEx cmb_stepGainName;
         private DevComponents.DotNetBar.LabelX labelX1;
+        private DevComponents.DotNetBar.LabelX labelX2;
+        private DevComponents.DotNetBar.Controls.ComboBoxEx cmb_motorControlMode;
     }
 }

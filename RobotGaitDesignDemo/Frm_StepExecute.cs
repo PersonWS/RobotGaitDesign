@@ -184,7 +184,7 @@ namespace RobotGaitDesignDemo
                     {
                         if (!string.IsNullOrEmpty(dt1.Rows[0][j].ToString()))
                         {
-                            dt1.Columns[j].ColumnName = dt1.Rows[0][j].ToString();
+                            dt1.Columns[j].ColumnName = dt1.Rows[0][j].ToString()+ dt1.Rows[1][(j/2*2)];
                         }
                     }
                 }
