@@ -54,6 +54,7 @@ namespace LZMotor
         public LZMotorServerMain(CanAdapterEntity canFDAdapterEntity)
         {
             this._canFDAdapterEntity = canFDAdapterEntity;
+            _motorMsgReceivedQueue=new Queue<List<CanAdapterReceivedDataEntity>>();
         }
 
 

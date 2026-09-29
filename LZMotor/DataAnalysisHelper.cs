@@ -10,6 +10,12 @@ namespace LZMotor
 {
     public class DataAnalysisHelper
     {
+
+        // 
+        private static readonly CanAdapterDataProcess _process_CH340 = new CanAdapterDataProcess_RobstrideDynamics(null);
+        private static readonly CanAdapterDataProcess _process_ch341 = new CanAdapterDataProcess_BaoFengFD(null);
+        private static readonly CanAdapterDataProcess _process_canAlyst2 = new CanAdapterDataProcess_CanAlyst2(null);
+
         Motor_ExtendData_ID id;
         Motor_Data motorData;
         static DataTable _dt_motorAck = new DataTable();
@@ -60,31 +66,44 @@ namespace LZMotor
             CanAdapterDataProcess canAdapterDataProcess;
             switch (canAdapterEntity.ChipType)
             {
-                case CanFDAdapter.CanAdapterTypeEnum.CH340:
-                    canAdapterDataProcess = new CanAdapterDataProcess_RobstrideDynamics(null);
-                    lZMotorData = AnalysisBytesArrayToCanidAndCandataSub(canAdapterDataProcess, dataEntity);
+                case CanAdapterTypeEnum.CH340:
+                    canAdapterDataProcess = _process_CH340;
                     break;
-                case CanFDAdapter.CanAdapterTypeEnum.ch341:
-                    canAdapterDataProcess = new CanAdapterDataProcess_BaoFengFD(null);
-                    lZMotorData = AnalysisBytesArrayToCanidAndCandataSub(canAdapterDataProcess, dataEntity);
+                case CanAdapterTypeEnum.ch341:
+                    canAdapterDataProcess = _process_ch341;
                     break;
-                case CanFDAdapter.CanAdapterTypeEnum.canAlyst2:
-                    canAdapterDataProcess = new CanAdapterDataProcess_CanAlyst2(null);
-                    lZMotorData = AnalysisBytesArrayToCanidAndCandataSub(canAdapterDataProcess, dataEntity);
+                case CanAdapterTypeEnum.canAlyst2:
+                    canAdapterDataProcess = _process_canAlyst2;
                     break;
                 default:
                     Log.log.Error($"AnalysisBytesArrayToCanidAndCandata,unkonwn type:{canAdapterEntity.ChipType}");
-                    return null;
-                    break;
+                    return null;          // 顺手删掉后面不可达的 break（CS0162）
             }
+             lZMotorData = AnalysisBytesArrayToCanidAndCandataSub(canAdapterDataProcess, dataEntity);
+            if (lZMotorData == null)
+            {
+                return null;
+            }
+
             Log.log.Debug($"解析adapter数据，source：{BitConverter.ToString(dataEntity.Data)} , result:,{BitConverter.ToString(lZMotorData.ExtendData_ID.DataBytes)}  {lZMotorData.Data_Motor.DataBytes.Length.ToString().PadLeft(2, '0')}  {BitConverter.ToString(lZMotorData.Data_Motor.DataBytes)}");
             return lZMotorData;
 
         }
+        /// <summary>
+        /// 解析can报文数据子项目
+        /// </summary>
+        /// <param name="canAdapterDataProcess"></param>
+        /// <param name="dataEntity"></param>
+        /// <returns></returns>
         private static LZMotorDataMain AnalysisBytesArrayToCanidAndCandataSub(CanAdapterDataProcess canAdapterDataProcess, CanAdapterReceivedDataEntity dataEntity)
         {
             CanAdapterReceivedDataEntity anaBytes = canAdapterDataProcess.AnalysisMotorRetData(dataEntity);
-
+            byte[] bytes = anaBytes?.Data;
+            if (bytes == null || bytes.Length < 8)
+            {
+                Log.log.Error($"AnalysisBytesArrayToCanidAndCandataSub，长度不足 8，source：{BitConverter.ToString(bytes ?? new byte[0])}");
+                return null;                     
+            }
             byte[] idArray = new byte[] { anaBytes.Data[3], anaBytes.Data[2], anaBytes.Data[1], anaBytes.Data[0] };
             int dataLength = BitConverter.ToInt16(new byte[] { anaBytes.Data[7], anaBytes.Data[6] }, 0);
             byte[] dataArray = anaBytes.Data.Skip(8).Take(anaBytes.Data[7]).ToArray();
@@ -207,7 +226,7 @@ namespace LZMotor
             DataRow dr = dataTable.NewRow();
             dr["canIdSend"] = id.MotorIDSend;
             //dr["canIdRec"] = id.MotorIDReceive;
-            if (data.Length<8)
+            if (data.Length < 8)
             {
                 Log.log.Error($"AnalysisDataInternal_AckInformation，data：{BitConverter.ToString(data)}, 需要长度8，实际长度{data.Length}");
                 throw new Exception($"AnalysisDataInternal_AckInformation，data：{BitConverter.ToString(data)}, 需要长度8，实际长度{data.Length}");
@@ -348,7 +367,7 @@ namespace LZMotor
                 {
                     dr["Alarm"] = dr["Alarm"].ToString() + "  " + "unCalibrate";
                 }
-                if ((byte)(id.UserDefineByte & (byte)MotorAralmInfo1.lockedMotor) == ((byte)MotorAralmInfo1.unCalibrate))
+                if ((byte)(id.UserDefineByte & (byte)MotorAralmInfo1.lockedMotor) == ((byte)MotorAralmInfo1.lockedMotor))
                 {
                     dr["Alarm"] = dr["Alarm"].ToString() + "  " + "lockedMotor";
                 }
@@ -405,7 +424,7 @@ namespace LZMotor
             }
             else
             {
-                Log.log.Error($"AnalysisDataInternal_SetParameterUnhold,ExtendData_ID:{BitConverter.ToString(id.DataBytes)},data:{BitConverter.ToString(data)},解析数据失败");
+                Log.log.Debug($"AnalysisDataInternal_SetParameterUnhold,ExtendData_ID:{BitConverter.ToString(id.DataBytes)},data:{BitConverter.ToString(data)},解析数据失败");
             }
             switch (enum_MotorParameter)
             {
@@ -484,6 +503,12 @@ namespace LZMotor
             return dataTable;
         }
 
+        /// <summary>
+        /// 获取电机ID数据
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="data"></param>
+        /// <returns></returns>
         private static DataTable AnalysisDataInternal_GetMotorID(Motor_ExtendData_ID id, byte[] data)
         {
             DataTable dataTable = _dt_getMotorID.Clone();
@@ -491,8 +516,8 @@ namespace LZMotor
             DataRow dr = dataTable.NewRow();
             dr["canIdSend"] = id.MotorIDSend;
             //dr["canIdReceive"] = id.MotorIDReceive;
-            Array.Reverse(data);
-            dr["mucId"] = BitConverter.ToString(data).Replace("-", "");
+            //Array.Reverse(data);
+            dr["mucId"] = BitConverter.ToString(data.Reverse().ToArray()).Replace("-", "");
 
             dataTable.Rows.Add(dr);
             return dataTable;

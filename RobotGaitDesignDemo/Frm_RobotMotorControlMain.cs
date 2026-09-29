@@ -163,39 +163,37 @@ namespace RobotGaitDesign
                     for (int i = 0; i < strsID.Length; i++)
                     {
                         byte id = 0;
-                        if (byte.TryParse(strsID[i], out id) || id > 127)
+                        if (!byte.TryParse(strsID[i], out id) || id > 127)
                         {
-                            Enum_MotorType type;
-                            if (Enum.TryParse<Enum_MotorType>(strsType[i], out type))
+                            log.Error($"AppConfigSetData.MotorID :{strsID[i]}，非数值或数值超过127");
+                            continue;
+                        }
+                        Enum_MotorType type;
+                        if (Enum.TryParse<Enum_MotorType>(strsType[i], out type))
+                        {
+                            if (_dic_MotorBaseInfo.Keys.Contains(id))
                             {
-                                if (_dic_MotorBaseInfo.Keys.Contains(id))
-                                {
-                                    _dic_MotorBaseInfo[id].Type = type;
-                                    continue;
-                                }
-                                Motor_BaseInfo motor_BaseInfo = new Motor_BaseInfo();
-                                motor_BaseInfo.ID = id;
-                                motor_BaseInfo.Type = type;
-                                string[] ver = strsVersion[i].Split('.');
-                                if (ver.Length == 4)
-                                {
-                                    motor_BaseInfo.VersionBytes = new byte[] { (byte)ver[0][0], (byte)ver[1][0], (byte)ver[2][0], (byte)ver[3][0] };
-                                }
-                                else
-                                {
-                                    log.Error($" motor_BaseInfo.ID :{motor_BaseInfo.ID}, motor_BaseInfo.VersionBytes 转换失败，源数据：{strsVersion[i]}");
-                                }
-
-                                _dic_MotorBaseInfo.Add(motor_BaseInfo.ID, motor_BaseInfo);
+                                _dic_MotorBaseInfo[id].Type = type;
+                                continue;
+                            }
+                            Motor_BaseInfo motor_BaseInfo = new Motor_BaseInfo();
+                            motor_BaseInfo.ID = id;
+                            motor_BaseInfo.Type = type;
+                            string[] ver = strsVersion[i].Split('.');
+                            if (ver.Length == 4)
+                            {
+                                motor_BaseInfo.VersionBytes = new byte[] { (byte)ver[0][0], (byte)ver[1][0], (byte)ver[2][0], (byte)ver[3][0] };
                             }
                             else
                             {
-                                log.Error($"AppConfigSetData.MotorID :{strsID[i]}，对应Motor类型：{strsType[i]}不存在");
+                                log.Error($" motor_BaseInfo.ID :{motor_BaseInfo.ID}, motor_BaseInfo.VersionBytes 转换失败，源数据：{strsVersion[i]}");
                             }
+
+                            _dic_MotorBaseInfo.Add(motor_BaseInfo.ID, motor_BaseInfo);
                         }
                         else
                         {
-                            log.Error($"AppConfigSetData.MotorID :{strsID[i]}，非数值或数值超过127");
+                            log.Error($"AppConfigSetData.MotorID :{strsID[i]}，对应Motor类型：{strsType[i]}不存在");
                         }
                     }
                 }
@@ -425,7 +423,7 @@ namespace RobotGaitDesign
                 return;
             }
             ShowMessage($"准备连接:{cmb_comList.Text}");
-            int baudRate =(int)( float.Parse(cmb_baud.Text) * 1000);//921600;
+            int baudRate = (int)(float.Parse(cmb_baud.Text) * 1000);//921600;
             if (_canFDAdapterMain != null)
             {
                 ShowMessage($"canFDAdapterMain 存在，释放canFDAdapterMain...");
@@ -439,7 +437,7 @@ namespace RobotGaitDesign
 
             if (cmb_comList.Text.Contains("CH340"))
             {
-                 baudRate = 921600;
+                baudRate = 921600;
                 _canFDAdapterEntity = new CanFDAdapter.CanAdapterEntity(_comDic[cmb_comList.Text], baudRate);
                 _canFDAdapterEntity.ChipType = CanFDAdapter.CanAdapterTypeEnum.CH340;
                 //_canFDAdapterEntity.Description = txt_batchCan.Text;
@@ -491,6 +489,8 @@ namespace RobotGaitDesign
             }
             else
             {
+                _canFDAdapterMain.DisConnect();
+                _canFDAdapterMain = null;
                 ShowMessage($"{cmb_comList.Text}   连接失败");
             }
 
@@ -502,9 +502,9 @@ namespace RobotGaitDesign
             lock (_motorMsgReceivedLock)
             {
                 _motorMsgReceivedQueue.Enqueue(msg);
-                this.MessageReceiveEvent?.Invoke(msg);
-                log.Debug($"ComMessageReceivedCount:{receiedCount++}");
             }
+            this.MessageReceiveEvent?.Invoke(msg);
+            log.Debug($"ComMessageReceivedCount:{receiedCount++}");
 
         }
 
@@ -516,7 +516,7 @@ namespace RobotGaitDesign
             {
                 DateTime dtSpan = DateTime.Now;
                 ProcessComMessageSub();
-                total = (int)(9 - (dtSpan - DateTime.Now).TotalMilliseconds);
+                total = (int)(9 - (DateTime.Now - dtSpan).TotalMilliseconds);
                 if (total > 0)
                 {
                     ThreadHelper.ThreadSlep_HighPrecisionDelay_Media(total);
@@ -739,8 +739,9 @@ namespace RobotGaitDesign
             //_isProcessQueueThreadContiue = false;
             if (_canFDAdapterMain != null)
             {
-                _canFDAdapterMain.DisConnect();
                 _canFDAdapterMain.MessageReceiveEvent -= ComMessageReceived;
+                _canFDAdapterMain.DisConnect();
+                _canFDAdapterMain = null;
             }
             _canFDAdapterMain = null;
             ShowMessage($"{cmb_comList.Text}   连接已断开");

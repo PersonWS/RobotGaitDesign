@@ -51,7 +51,7 @@ namespace CanFDAdapter
 
         public CanFDAdapterMain_CanAlyst2(CanAdapterEntity canAdapterEntity) : base(canAdapterEntity)
         {
-            _canAdapterEntity_CanAlyst2 = (CanAdapterEntity_CanAlyst2)canAdapterEntity;
+            _canAdapterEntity_CanAlyst2 = canAdapterEntity as CanAdapterEntity_CanAlyst2;
             if (_canAdapterEntity_CanAlyst2 == null)
             {
                 log.Error($"CanFDAdapterMain_CanAlyst2 传递的canAdapterEntity类型错误！传递的类型为：{canAdapterEntity.GetType().Name}");
@@ -201,7 +201,7 @@ namespace CanFDAdapter
                 }
                 else if (res == -1)//设备已关闭
                 {
-                return ;
+                    return;
                 }
 
                 for (UInt32 i = 0; i < res; i++)
@@ -219,13 +219,13 @@ namespace CanFDAdapter
                     }
                     if (_timerStampSpan > m_recobj[i].TimeStamp)//如果值溢出了，则进行溢出值的计算
                     {
-                        _timerStamp.AddMilliseconds(4294967295 - _timerStampSpan / 10);
+                        _timerStamp = _timerStamp.AddMilliseconds(4294967295 - _timerStampSpan / 10);
                         _timerStampSpan = m_recobj[i].TimeStamp;
                     }
                     dataList.Add(new CanAdapterReceivedDataEntity(bytes.ToArray(), _timerStamp.AddMilliseconds((m_recobj[i].TimeStamp - _timerStampSpan) / 10)));
                     //dataList.Add(new CanAdapterReceivedDataEntity(bytes.ToArray(), this.m_ConnecTime.AddMilliseconds(m_recobj[i].TimeStamp/10)));
                 }
-                if (dataList.Count>0)
+                if (dataList.Count > 0)
                 {
                     base.MessageReceiveEventExecute(dataList);
                 }
@@ -273,7 +273,14 @@ namespace CanFDAdapter
             {
                 if (m_bOpen == 0)
                 {
-                    log.Error($"Send data failed ，module is closed，CanAlyst2:{this.VCI_BOARD_INFOS.Value}");
+                    if (VCI_BOARD_INFOS != null)
+                    {
+                        log.Error($"Send data failed ，module is closed，CanAlyst2:{this.VCI_BOARD_INFOS.Value}");
+                    }
+                    else
+                    {
+                        log.Error($"Send data failed ，module is closed，CanAlyst2: null");
+                    }
                     return -1;
                 }
                 try
@@ -312,6 +319,7 @@ namespace CanFDAdapter
         public override void DisConnect()
         {
             _isReceivedContinue = false;
+            Thread.Sleep(200);//等待数据处理结束
             lock (_lock)
             {
                 if (m_bOpen == 1)
@@ -319,8 +327,10 @@ namespace CanFDAdapter
                     for (uint i = 0; i < channelSum; i++)
                     {
                         CanAlyst2_Interope.VCI_ResetCAN(_canAdapterEntity_CanAlyst2.DeviceType, _canAdapterEntity_CanAlyst2.DeviceIndex, i);
+                        CanAlyst2_Interope.VCI_CloseDevice(_canAdapterEntity_CanAlyst2.DeviceType, _canAdapterEntity_CanAlyst2.DeviceIndex);
                     }
                     m_bOpen = 0;
+
                 }
             }
 

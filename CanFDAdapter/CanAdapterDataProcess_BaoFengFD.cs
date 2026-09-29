@@ -16,6 +16,11 @@ namespace CanFDAdapter
         }
         public override CanAdapterReceivedDataEntity AnalysisMotorRetData(CanAdapterReceivedDataEntity sourceData)
         {
+            if (sourceData.Data.Length < 6)
+            {
+                Log.log.Error($"CanAdapterDataProcess_BaoFengFD:AnalysisMotorRetData ,发现异常data:{BitConverter.ToString(sourceData.Data)}");
+                return sourceData;
+            }
             byte[] data = sourceData.Data.Skip(1).Take(sourceData.Data.Length - 2).ToArray();
             data[4] = (byte)((byte)(data[4] << 3) >> 3);
             sourceData.Data = data;

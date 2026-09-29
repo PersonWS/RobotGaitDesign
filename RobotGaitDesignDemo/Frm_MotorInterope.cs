@@ -16,6 +16,7 @@ using DevComponents.DotNetBar;
 using FormSet;
 using LogHelper;
 using LZMotor;
+using NPOI.SS.Formula.Functions;
 using RobotGaitDesign;
 
 namespace RobotGaitDesignDemo
@@ -79,7 +80,15 @@ namespace RobotGaitDesignDemo
         {
             while (_baseForm._isMotorReadParameterReceivedContiue)
             {
-                ProcessReadParameterMessageSub();
+                try
+                {
+                    ProcessReadParameterMessageSub();
+                }
+                catch (Exception ex)
+                {
+                    _baseForm.ShowMessage($"ProcessReadParameterMessage error , ex:{ex.ToString()}");
+                }
+
                 Thread.Sleep(100);
             }
         }
@@ -158,20 +167,13 @@ namespace RobotGaitDesignDemo
                 return;
             }
 
-            List<byte> listId = new List<byte>();
-            foreach (var item in txt_gprw_motorID.Text.Replace("\r", "").Replace("\n", "").Replace(" ", "").Split(','))
+            List<byte> listId = GetMotorIdList();
+            if (listId.Count == 0)
             {
-                byte id;
-                if (byte.TryParse(item, out id))
-                {
-                    listId.Add(id);
-                }
-                else
-                {
-                    _baseForm.ShowMessage($"电机id:{item}错误！", true, Enum_Log4Net_RecordLevel.ERROR);
-                }
-
+                BaseFrmControl.ShowErrorMessageBox(this, "解析后获得的电机ID为空，检查电机ID是否输入错误");
+                return;
             }
+
             List<byte[]> sendBufferTemp = LZMotor.LZMotoInteropeMain.W_MotorEnable(listId);//生成发送的buffer
             List<byte[]> sendBuffer = _baseForm._canFDAdapterMain?.CanAdapterDataProcess.GenerateSendMotorData(sendBufferTemp);
             string str = BitConverter.ToString(sendBuffer[0]).Replace("-", " ");
@@ -210,20 +212,11 @@ namespace RobotGaitDesignDemo
             {
                 return;
             }
-
-            List<byte> listId = new List<byte>();
-            foreach (var item in txt_gprw_motorID.Text.Replace("\r", "").Replace("\n", "").Replace(" ", "").Split(','))
+            List<byte> listId = GetMotorIdList();
+            if (listId.Count == 0)
             {
-                byte id;
-                if (byte.TryParse(item, out id))
-                {
-                    listId.Add(id);
-                }
-                else
-                {
-                    _baseForm.ShowMessage($"电机id:{item}错误！", true, Enum_Log4Net_RecordLevel.ERROR);
-                }
-
+                BaseFrmControl.ShowErrorMessageBox(this, "解析后获得的电机ID为空，检查电机ID是否输入错误");
+                return;
             }
             List<byte[]> sendBufferTemp = LZMotor.LZMotoInteropeMain.W_MotorDisable(listId, false);//生成发送的buffer
             List<byte[]> sendBuffer = _baseForm._canFDAdapterMain?.CanAdapterDataProcess.GenerateSendMotorData(sendBufferTemp);
@@ -247,22 +240,15 @@ namespace RobotGaitDesignDemo
             {
                 return;
             }
-            List<byte> listId = new List<byte>();
-            foreach (var item in txt_gprw_motorID.Text.Replace("\r", "").Replace("\n", "").Replace(" ", "").Split(','))
-            {
-                byte id;
-                if (byte.TryParse(item, out id))
-                {
-                    listId.Add(id);
-                }
-                else
-                {
-                    _baseForm.ShowMessage($"电机id:{item}错误！", true, Enum_Log4Net_RecordLevel.ERROR);
-                }
 
+            List<byte> listId = GetMotorIdList();
+            if (listId.Count == 0)
+            {
+                BaseFrmControl.ShowErrorMessageBox(this, "解析后获得的电机ID为空，检查电机ID是否输入错误");
+                return;
             }
             //更新CSP的期望值
-            SaveMotorParameter(Enum_MotorParameter.loc_ref_电机目标角度, (float)0, 0, false);
+            SaveMotorParameter(listId, Enum_MotorParameter.loc_ref_电机目标角度, (float)0, 0, false);
             //设定零位
             List<byte[]> sendBufferTemp = LZMotor.LZMotoInteropeMain.W_SetMotorZero(listId);//生成发送的buffer
             List<byte[]> sendBuffer = _baseForm._canFDAdapterMain?.CanAdapterDataProcess.GenerateSendMotorData(sendBufferTemp);
@@ -273,26 +259,17 @@ namespace RobotGaitDesignDemo
         /// 保存电机参数
         /// </summary>
         /// <typeparam name="T"></typeparam>
+        /// <param name="listId">需要进行电机参数保存的ID👌</param>
         /// <param name="enum_MotorParameter"></param>
         /// <param name="parameter"></param>
         /// <param name="userDefine"></param>
         /// <param name="isNeedHold"></param>
-        private void SaveMotorParameter<T>(Enum_MotorParameter enum_MotorParameter, T parameter, byte userDefine = 0, bool isNeedHold = true)
+        private void SaveMotorParameter<T>(List<byte> listId ,Enum_MotorParameter enum_MotorParameter, T parameter, byte userDefine = 0, bool isNeedHold = true)
         {
-
-            List<byte> listId = new List<byte>();
-            foreach (var item in txt_gprw_motorID.Text.Replace("\r", "").Replace("\n", "").Replace(" ", "").Split(','))
+            if (parameter==null)
             {
-                byte id;
-                if (byte.TryParse(item, out id))
-                {
-                    listId.Add(id);
-                }
-                else
-                {
-                    _baseForm.ShowMessage($"电机id:{item}错误！", true, Enum_Log4Net_RecordLevel.ERROR);
-                }
-
+                BaseFrmControl.ShowErrorMessageBox(this, "输入的值为空或格式错误");
+                return;
             }
             //修改值
             List<byte[]> sendBufferTemp = LZMotor.LZMotoInteropeMain.W_SetMotorParameter
@@ -326,19 +303,11 @@ namespace RobotGaitDesignDemo
                 return;
             }
 
-            List<byte> listId = new List<byte>();
-            foreach (var item in txt_gprw_motorID.Text.Replace("\r", "").Replace("\n", "").Replace(" ", "").Split(','))
+            List<byte> listId = GetMotorIdList();
+            if (listId.Count == 0)
             {
-                byte id;
-                if (byte.TryParse(item, out id))
-                {
-                    listId.Add(id);
-                }
-                else
-                {
-                    _baseForm.ShowMessage($"电机id:{item}错误！", true, Enum_Log4Net_RecordLevel.ERROR);
-                }
-
+                BaseFrmControl.ShowErrorMessageBox(this, "解析后获得的电机ID为空，检查电机ID是否输入错误");
+                return;
             }
             //修改值
             List<byte[]> sendBufferTemp = LZMotor.LZMotoInteropeMain.W_SetMotorParameter
@@ -360,9 +329,15 @@ namespace RobotGaitDesignDemo
                 BaseFrmControl.ShowErrorMessageBox(this, "需输入需要改变参数的电机id，多个id可以用【,】分割。需要输入参数值");
                 return;
             }
+            List<byte> listId = GetMotorIdList();
+            if (listId.Count == 0)
+            {
+                BaseFrmControl.ShowErrorMessageBox(this, "解析后获得的电机ID为空，检查电机ID是否输入错误");
+                return;
+            }
             Enum_MotorParameter enum_MotorParameter = (Enum_MotorParameter)Enum.Parse(typeof(Enum_MotorParameter), cmb_gprw_SetMotorParameter.Text);
             object value = MotorParameterValueProcess.GetRealMotorParameterValueByEnumDescription<object>(enum_MotorParameter, txt_gprw_SetMotorParameter.Text);
-            SaveMotorParameter(enum_MotorParameter, value, 0, chk_gprw_isParameterHold.Checked);
+            SaveMotorParameter(listId, enum_MotorParameter, value, 0, chk_gprw_isParameterHold.Checked);
         }
 
         private void btn_clearMotorError_Click(object sender, EventArgs e)
@@ -382,19 +357,11 @@ namespace RobotGaitDesignDemo
                 return;
             }
 
-            List<byte> listId = new List<byte>();
-            foreach (var item in txt_gprw_motorID.Text.Replace("\r", "").Replace("\n", "").Replace(" ", "").Split(','))
+            List<byte> listId = GetMotorIdList();
+            if (listId.Count == 0)
             {
-                byte id;
-                if (byte.TryParse(item, out id))
-                {
-                    listId.Add(id);
-                }
-                else
-                {
-                    _baseForm.ShowMessage($"电机id:{item}错误！", true, Enum_Log4Net_RecordLevel.ERROR);
-                }
-
+                BaseFrmControl.ShowErrorMessageBox(this, "解析后获得的电机ID为空，检查电机ID是否输入错误");
+                return;
             }
             List<byte[]> sendBufferTemp = LZMotor.LZMotoInteropeMain.W_MotorDisable(listId, true);//生成发送的buffer
             List<byte[]> sendBuffer = _baseForm._canFDAdapterMain?.CanAdapterDataProcess.GenerateSendMotorData(sendBufferTemp);
@@ -420,20 +387,11 @@ namespace RobotGaitDesignDemo
                 BaseFrmControl.ShowErrorMessageBox(this, "需输入需要控制的电机id，多个id可以用【,】分割");
                 return;
             }
-
-            List<byte> listId = new List<byte>();
-            foreach (var item in txt_gprw_motorID.Text.Replace("\r", "").Replace("\n", "").Replace(" ", "").Split(','))
+            List<byte> listId = GetMotorIdList();
+            if (listId.Count == 0)
             {
-                byte id;
-                if (byte.TryParse(item, out id))
-                {
-                    listId.Add(id);
-                }
-                else
-                {
-                    _baseForm.ShowMessage($"电机id:{item}错误！", true, Enum_Log4Net_RecordLevel.ERROR);
-                }
-
+                BaseFrmControl.ShowErrorMessageBox(this, "解析后获得的电机ID为空，检查电机ID是否输入错误");
+                return;
             }
             _isMotorParameterRead = true;
 
@@ -547,6 +505,28 @@ namespace RobotGaitDesignDemo
         //    }
 
         //}
+        /// <summary>
+        /// 返回解析的电机id
+        /// </summary>
+        /// <returns></returns>
+        private List<byte> GetMotorIdList()
+        {
+            List<byte> listId = new List<byte>();
+            foreach (var item in txt_gprw_motorID.Text.Replace("\r", "").Replace("\n", "").Replace(" ", "").Split(','))
+            {
+                byte id;
+                if (byte.TryParse(item, out id))
+                {
+                    listId.Add(id);
+                }
+                else
+                {
+                    _baseForm.ShowMessage($"电机id:{item}错误！", true, Enum_Log4Net_RecordLevel.ERROR);
+                }
+
+            }
+            return listId;
+        }
 
         ///// <summary>
         ///// 读取电机参数的函数
@@ -621,8 +601,15 @@ namespace RobotGaitDesignDemo
                 BaseFrmControl.ShowErrorMessageBox(this, "需要输入上报间隔的值");
                 return;
             }
+            List<byte> listId = GetMotorIdList();
+            if (listId.Count == 0)
+            {
+                BaseFrmControl.ShowErrorMessageBox(this, "解析后获得的电机ID为空，检查电机ID是否输入错误");
+                return;
+            }
+
             uint eps = uint.Parse(txt_gprw_motorReprotInterval.Text) < 10 ? 10 : uint.Parse(txt_gprw_motorReprotInterval.Text);
-            SaveMotorParameter(Enum_MotorParameter.EPScan_time, eps / 5 - 2, 0, false);
+            SaveMotorParameter(listId, Enum_MotorParameter.EPScan_time, eps / 5 - 2, 0, false);
         }
 
         private void btn_gprw_UnEnableMotorReport_Click(object sender, EventArgs e)
@@ -638,19 +625,11 @@ namespace RobotGaitDesignDemo
                 return;
             }
 
-            List<byte> listId = new List<byte>();
-            foreach (var item in txt_gprw_motorID.Text.Replace("\r", "").Replace("\n", "").Replace(" ", "").Split(','))
+            List<byte> listId = GetMotorIdList();
+            if (listId.Count == 0)
             {
-                byte id;
-                if (byte.TryParse(item, out id))
-                {
-                    listId.Add(id);
-                }
-                else
-                {
-                    _baseForm.ShowMessage($"电机id:{item}错误！", true, Enum_Log4Net_RecordLevel.ERROR);
-                }
-
+                BaseFrmControl.ShowErrorMessageBox(this, "解析后获得的电机ID为空，检查电机ID是否输入错误");
+                return;
             }
             List<byte[]> sendBufferTemp = LZMotor.LZMotoInteropeMain.W_MotorReport(listId, false);//生成发送的buffer
             List<byte[]> sendBuffer = _baseForm._canFDAdapterMain?.CanAdapterDataProcess.GenerateSendMotorData(sendBufferTemp);
@@ -671,19 +650,11 @@ namespace RobotGaitDesignDemo
                 return;
             }
 
-            List<byte> listId = new List<byte>();
-            foreach (var item in txt_gprw_motorID.Text.Replace("\r", "").Replace("\n", "").Replace(" ", "").Split(','))
+            List<byte> listId = GetMotorIdList();
+            if (listId.Count == 0)
             {
-                byte id;
-                if (byte.TryParse(item, out id))
-                {
-                    listId.Add(id);
-                }
-                else
-                {
-                    _baseForm.ShowMessage($"电机id:{item}错误！", true, Enum_Log4Net_RecordLevel.ERROR);
-                }
-
+                BaseFrmControl.ShowErrorMessageBox(this, "解析后获得的电机ID为空，检查电机ID是否输入错误");
+                return;
             }
             List<byte[]> sendBufferTemp = LZMotor.LZMotoInteropeMain.W_MotorReport(listId, true);//生成发送的buffer
             List<byte[]> sendBuffer = _baseForm._canFDAdapterMain?.CanAdapterDataProcess.GenerateSendMotorData(sendBufferTemp);
@@ -752,7 +723,18 @@ namespace RobotGaitDesignDemo
                 BaseFrmControl.ShowErrorMessageBox(this, "允许修改的角度范围为-5到5度");
                 return;
             }
-            SaveMotorParameter(Enum_MotorParameter.add_offset零位偏置_exc, (float)((float)value / 57.296), 0, chk_gprw_isParameterHold.Checked);
+            List<byte> listId = GetMotorIdList();
+            if (listId.Count == 0)
+            {
+                BaseFrmControl.ShowErrorMessageBox(this, "解析后获得的电机ID为空，检查电机ID是否输入错误");
+                return;
+            }
+            if (listId.Count > 1&& !chk_gprw_motorZeroOffsetProfessional.Checked)
+            {
+                BaseFrmControl.ShowErrorMessageBox(this, "为确保安全，非专家模式下一次只能进行一个电机偏置的写入");
+                return;
+            }
+            SaveMotorParameter(listId, Enum_MotorParameter.add_offset零位偏置_exc, (float)((float)value / 57.296), 0, chk_gprw_isParameterHold.Checked);
         }
 
         private void btn_gprw_clearDgv_motorParameter_Click(object sender, EventArgs e)

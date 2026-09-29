@@ -57,6 +57,17 @@ namespace LZMotor
         [Description("uint8")]
         run_mode运行模式 = 0X7005,
 
+        /// <summary>
+        /// 电流模式Iq指令
+        /// </summary>
+        [Description("float")]
+        iq_ref电流模式Iq指令 = 0X7006,
+
+        /// <summary>
+        /// spd_ref转速模式转速指令
+        /// </summary>
+        [Description("float")]
+        spd_ref转速模式转速指令= 0X700A,
 
         /// <summary>
         /// 转矩限制
@@ -177,34 +188,46 @@ namespace LZMotor
             T value = default(T);
             string description = GetDescription(enum_MotorParameter);
             inputValue = inputValue.Trim().Replace("\r", "").Replace("\n", "").Replace(" ", "");
-            switch (description)
+            try
             {
-                case "uint8":
-                    value = (T)(object)Convert.ToByte(inputValue);
-                    break;
-                case "int8":
-                    value = (T)(object)Convert.ToByte(inputValue);
-                    break;
-                case "uint16":
-                    value = (T)(object)Convert.ToUInt16(inputValue);
-                    break;
-                case "int16":
-                    value = (T)(object)Convert.ToInt16(inputValue);
-                    break;
-                case "float":
-                    value = (T)(object)Convert.ToSingle(inputValue);
-                    break;
-                case "int32":
-                    value = (T)(object)Convert.ToInt32(inputValue);
-                    break;
-                case "uint32":
-                    value = (T)(object)Convert.ToUInt32(inputValue);
-                    break;
-                default:
-                    throw new Exception($"电机参数：{enum_MotorParameter}，具备意料之外的description：{description}");
-                    break;
+                switch (description)
+                {
+                    case "uint8":
+                        value = (T)(object)Convert.ToByte(inputValue);
+                        break;
+                    case "int8":
+                        value = (T)(object)Convert.ToByte(inputValue);
+                        break;
+                    case "uint16":
+                        value = (T)(object)Convert.ToUInt16(inputValue);
+                        break;
+                    case "int16":
+                        value = (T)(object)Convert.ToInt16(inputValue);
+                        break;
+                    case "float":
+                        value = (T)(object)Convert.ToSingle(inputValue);
+                        break;
+                    case "int32":
+                        value = (T)(object)Convert.ToInt32(inputValue);
+                        break;
+                    case "uint32":
+                        value = (T)(object)Convert.ToUInt32(inputValue);
+                        break;
+                    default:
+                        throw new Exception($"电机参数：{enum_MotorParameter}，具备意料之外的description：{description}");
+                        break;
+                }
+                return value;
             }
-            return value;
+            catch (Exception ex)
+            {
+                Log.log.Error($"GetRealMotorParameterValueByEnumDescription 出现错误", ex);
+            }
+            finally
+            { 
+
+            }
+            return default(T);
         }
        
 

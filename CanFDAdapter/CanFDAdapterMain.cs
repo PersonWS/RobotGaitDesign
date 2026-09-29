@@ -108,7 +108,7 @@ namespace CanFDAdapter
         /// <returns></returns>
         public bool Send(object obj)
         {
-            obj = new byte[] { 123 };
+            //            obj = new byte[] { 123 };
             byte[] sendArray;
             switch (obj.GetType().ToString())
             {
@@ -125,7 +125,7 @@ namespace CanFDAdapter
                     sendArray = BitConverter.GetBytes((Int32)obj);
                     break;
                 case "System.Int64":
-                    sendArray = BitConverter.GetBytes((Int32)obj);
+                    sendArray = BitConverter.GetBytes((Int64)obj);
                     break;
                 case "System.Single":
                     sendArray = BitConverter.GetBytes((float)obj);
@@ -134,13 +134,22 @@ namespace CanFDAdapter
                     sendArray = BitConverter.GetBytes((Double)obj);
                     break;
                 case "System.Decimal":
-                    sendArray = BitConverter.GetBytes((float)obj);
+                    sendArray = DecimalToBytes((decimal)obj);
                     break;
                 default:
                     log.Error(string.Format("COM Send传入类型错误，传入类型：{0}", obj.GetType().ToString().ToLower()));
                     return false;
             }
             return _comServer.SendDataSync(sendArray);
+        }
+
+        // 辅助方法
+        private static byte[] DecimalToBytes(decimal d)
+        {
+            int[] bits = decimal.GetBits(d);
+            byte[] result = new byte[16];
+            Buffer.BlockCopy(bits, 0, result, 0, 16);
+            return result;
         }
 
         public virtual int Send(List<byte[]> sendList)

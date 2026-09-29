@@ -54,7 +54,10 @@ namespace CanFDAdapter
 
         // public int ReportInterval { get => _reportInterval; set { _reportInterval = value; _CAN_Rate = 1000 / _reportInterval * 8 * 1.25; } }
 
-        private CancellationTokenSource _readingCts; // 用于控制读取循环的取消
+        /// <summary>
+        /// 用于控制读取循环的取消
+        /// </summary>
+        private CancellationTokenSource _readingCts; 
         private Task _readingTask; // 保存读取任务的引用
         public COM_Server(string targetCOMPort, Int32 baudRate = 115200, Int32 reportInterval = 1000)
         {
@@ -66,10 +69,10 @@ namespace CanFDAdapter
             _timer_BusUseageRate.Start();
             _CAN_RateCoeff = 1000d / _reportInterval * 8 * 1.25;
         }
-        ~COM_Server()
-        {
-            _timer_BusUseageRate.Dispose();
-        }
+        //~COM_Server()
+        //{
+        //    _timer_BusUseageRate.Dispose();
+        //}
         /// <summary>
         /// 开启串口监听
         /// </summary>
@@ -249,8 +252,8 @@ namespace CanFDAdapter
             {
                 if (_serialPort != null)
                 {
-                    StopReading();
-                    _serialPort.Close();
+                    _timer_BusUseageRate.Dispose();//释放定时器
+                    DisConnect();   //中断连接
                 }
 
             }
@@ -261,6 +264,12 @@ namespace CanFDAdapter
 
         }
 
+        private void DisConnect()
+        {
+            StopReading();
+            _serialPort.Close();
+
+        }
 
 
         #endregion 串口监听
@@ -316,6 +325,8 @@ namespace CanFDAdapter
                 foreach (ManagementObject queryObj in searcher.Get())
                 {
                     string portName = queryObj["Caption"]?.ToString();
+                    if (string.IsNullOrEmpty(portName))
+                        { continue; }
                     portName = portName.Substring(portName.IndexOf('(') + 1, portName.LastIndexOf(')') - portName.IndexOf('(') - 1);
                     string description = queryObj["Caption"]?.ToString() ??
                                        queryObj["DeviceID"]?.ToString() ??

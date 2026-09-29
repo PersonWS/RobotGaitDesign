@@ -351,7 +351,7 @@ namespace LZMotor
             // 根据类型大小创建字节数组
             //int size = System.Runtime.InteropServices.Marshal.SizeOf(typeof(T));
             byte[] bytes = new byte[4];
-
+            
             // 使用Buffer.BlockCopy进行快速内存复制
             switch (value)
             {
@@ -365,6 +365,7 @@ namespace LZMotor
                     Buffer.BlockCopy(BitConverter.GetBytes(floatValue), 0, bytes, 0, sizeof(float));
                     break;
                 case double doubleValue:
+                    bytes = new byte[8];
                     Buffer.BlockCopy(BitConverter.GetBytes(doubleValue), 0, bytes, 0, sizeof(double));
                     break;
                 case bool boolValue:
@@ -383,9 +384,11 @@ namespace LZMotor
                     Buffer.BlockCopy(BitConverter.GetBytes(uintValue), 0, bytes, 0, sizeof(uint));
                     break;
                 case long longValue:
+                    bytes = new byte[8];
                     Buffer.BlockCopy(BitConverter.GetBytes(longValue), 0, bytes, 0, sizeof(long));
                     break;
                 case ulong ulongValue:
+                    bytes = new byte[8];
                     Buffer.BlockCopy(BitConverter.GetBytes(ulongValue), 0, bytes, 0, sizeof(ulong));
                     break;
                 default:

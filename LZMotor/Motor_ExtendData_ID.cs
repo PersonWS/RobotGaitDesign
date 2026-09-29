@@ -66,6 +66,7 @@ namespace LZMotor
             if (string.IsNullOrEmpty(this._hexDataString))
             {
                 Log.log.Error($"Data_Motor  input error ,data is null or empry");
+                return; 
             }
             this._hexDataString = hexDataString.Replace("0x", "").Replace(" ", "").Replace("-", "");
             if (this._hexDataString.Length > 8 || this._hexDataString.Length < 7)
