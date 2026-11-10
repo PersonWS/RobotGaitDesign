@@ -5,7 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using System.Reflection;
 namespace LZMotor
 {
     public class DataAnalysisHelper
@@ -79,7 +79,7 @@ namespace LZMotor
                     Log.log.Error($"AnalysisBytesArrayToCanidAndCandata,unkonwn type:{canAdapterEntity.ChipType}");
                     return null;          // 顺手删掉后面不可达的 break（CS0162）
             }
-             lZMotorData = AnalysisBytesArrayToCanidAndCandataSub(canAdapterDataProcess, dataEntity);
+            lZMotorData = AnalysisBytesArrayToCanidAndCandataSub(canAdapterDataProcess, dataEntity);
             if (lZMotorData == null)
             {
                 return null;
@@ -102,7 +102,7 @@ namespace LZMotor
             if (bytes == null || bytes.Length < 8)
             {
                 Log.log.Error($"AnalysisBytesArrayToCanidAndCandataSub，长度不足 8，source：{BitConverter.ToString(bytes ?? new byte[0])}");
-                return null;                     
+                return null;
             }
             byte[] idArray = new byte[] { anaBytes.Data[3], anaBytes.Data[2], anaBytes.Data[1], anaBytes.Data[0] };
             int dataLength = BitConverter.ToInt16(new byte[] { anaBytes.Data[7], anaBytes.Data[6] }, 0);
@@ -234,6 +234,13 @@ namespace LZMotor
 
             switch (motor_BaseInfo.Type)
             {
+                case Enum_MotorType.RS00:
+                    dr["Angle"] = (MapUInt16ToFloat(new byte[] { data[1], data[0] }) * _radToDegree_Rate).ToString("0.0000");
+                    dr["RotSpeed"] = (MapUInt16ToFloat(new byte[] { data[3], data[2] }, -33, 33) * _radPerSecondToRPM_Rate).ToString("0.0000");
+                    dr["Torque"] = (MapUInt16ToFloat(new byte[] { data[5], data[4] }, -14, 14)).ToString("0.0000");
+                    dr["Temperature"] = BitConverter.ToUInt16(new byte[] { data[7], data[6] }, 0) / 10;
+                    break;
+
                 case Enum_MotorType.RS01:
 
                     switch (motor_BaseInfo.Version)
@@ -349,27 +356,33 @@ namespace LZMotor
             {
                 if ((byte)(id.UserDefineByte & (byte)MotorAralmInfo1.encoderError) == ((byte)MotorAralmInfo1.encoderError))
                 {
-                    dr["Alarm"] = dr["Alarm"].ToString() + "  " + "encoderError";
+                    dr["Alarm"] = dr["Alarm"].ToString() + "  " + 
+                        typeof(MotorAralmInfo1).GetField(MotorAralmInfo1.encoderError.ToString()).GetCustomAttribute<System.ComponentModel.DescriptionAttribute>().Description;
                 }
                 if ((byte)(id.UserDefineByte & (byte)MotorAralmInfo1.highTemperature) == ((byte)MotorAralmInfo1.highTemperature))
                 {
-                    dr["Alarm"] = dr["Alarm"].ToString() + "  " + "highTemperature";
+                    dr["Alarm"] = dr["Alarm"].ToString() + "  " +
+                         typeof(MotorAralmInfo1).GetField(MotorAralmInfo1.highTemperature.ToString()).GetCustomAttribute<System.ComponentModel.DescriptionAttribute>().Description; 
                 }
                 if ((byte)(id.UserDefineByte & (byte)MotorAralmInfo1.driverError) == ((byte)MotorAralmInfo1.driverError))
                 {
-                    dr["Alarm"] = dr["Alarm"].ToString() + "  " + "driverError";
+                    dr["Alarm"] = dr["Alarm"].ToString() + "  " +
+                         typeof(MotorAralmInfo1).GetField(MotorAralmInfo1.driverError.ToString()).GetCustomAttribute<System.ComponentModel.DescriptionAttribute>().Description;
                 }
                 if ((byte)(id.UserDefineByte & (byte)MotorAralmInfo1.lowVoltage) == ((byte)MotorAralmInfo1.lowVoltage))
                 {
-                    dr["Alarm"] = dr["Alarm"].ToString() + "  " + "lowVoltage";
+                    dr["Alarm"] = dr["Alarm"].ToString() + "  " +
+                         typeof(MotorAralmInfo1).GetField(MotorAralmInfo1.lowVoltage.ToString()).GetCustomAttribute<System.ComponentModel.DescriptionAttribute>().Description;
                 }
                 if ((byte)(id.UserDefineByte & (byte)MotorAralmInfo1.unCalibrate) == ((byte)MotorAralmInfo1.unCalibrate))
                 {
-                    dr["Alarm"] = dr["Alarm"].ToString() + "  " + "unCalibrate";
+                    dr["Alarm"] = dr["Alarm"].ToString() + "  " +
+                         typeof(MotorAralmInfo1).GetField(MotorAralmInfo1.unCalibrate.ToString()).GetCustomAttribute<System.ComponentModel.DescriptionAttribute>().Description;
                 }
                 if ((byte)(id.UserDefineByte & (byte)MotorAralmInfo1.lockedMotor) == ((byte)MotorAralmInfo1.lockedMotor))
                 {
-                    dr["Alarm"] = dr["Alarm"].ToString() + "  " + "lockedMotor";
+                    dr["Alarm"] = dr["Alarm"].ToString() + "  " +
+                         typeof(MotorAralmInfo1).GetField(MotorAralmInfo1.lockedMotor.ToString()).GetCustomAttribute<System.ComponentModel.DescriptionAttribute>().Description;
                 }
                 if (string.IsNullOrEmpty(dr["Alarm"].ToString()))
                 {

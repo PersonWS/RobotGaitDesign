@@ -619,6 +619,10 @@ namespace RobotGaitDesign
 
                             }
                         }
+                        if (string.IsNullOrEmpty(ret))//如果是空数据则直接返回
+                        {
+                            continue;
+                        }
 
                         //先进行是否是电机数据返回的筛选
                         if (_isOnlyFeedBackData)//如果只显示电机返回的数据
@@ -638,9 +642,10 @@ namespace RobotGaitDesign
                                 continue;
                             }
                         }
-                        if (chk_analysisFailedShowSocketData.Checked && string.IsNullOrEmpty(ret))//如果没解析就直接显示原始报文
+
+                        if (chk_analysisFailedShowSocketData.Checked )//如果没解析就直接显示原始报文
                         {
-                            //   byte[] temp2 ;
+                           
                             ret = $"{item.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss.fff")}: id:{BitConverter.ToString(lZMotorData.ExtendData_ID.DataBytes)}, data:{BitConverter.ToString(lZMotorData.Data_Motor.DataBytes)}";
                         }
                         else
@@ -683,7 +688,7 @@ namespace RobotGaitDesign
                     { _IsProcessing = false; }
                 }
             }
-            if (sb.Length > 4)
+            if (sb.Length > 30)
             {
                 ShowMessage($"{sb.ToString()}", false);
             }
